@@ -132,7 +132,6 @@ import {
   IconReview,
   IconSparkles,
   IconStop,
-  IconTarget,
   IconTerminal,
   IconTrash,
   IconWorkflow,
@@ -142,6 +141,7 @@ import { useAppStore } from "../stores/app-store";
 import type { PendingPermission } from "../lib/pending-permissions";
 import { PermissionCard } from "./PermissionCard";
 import { TooltipButton } from "./ui";
+import { AgentAvatar, ConductorAvatar } from "./AgentAvatar";
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
@@ -852,7 +852,7 @@ const ToolRow = memo(function ToolRow({
           }}
         >
           <span className="subagent-topology-avatar" aria-hidden>
-            <IconBot size={15} />
+            <AgentAvatar agentName={agentName} size={28} />
             <span className="subagent-topology-status-icon">
               {outcome === "completed" ? (
                 <IconCheck size={8} />
@@ -1068,7 +1068,7 @@ function SubagentRunRows({
         className={dock ? "subagent-run-heading is-dock" : "subagent-run-heading"}
         id={headingId}
       >
-        {dock ? null : <IconBot size={13} aria-hidden />}
+        {dock ? null : <AgentAvatar agentName={agentName} size={13} />}
         <span>
           {dock
             ? t("chat.subagentProcess")
@@ -1352,7 +1352,7 @@ export function SubagentDetail({
       <header className="subagent-detail-hero">
         <div className="subagent-detail-heading">
           <span className="subagent-detail-avatar" aria-hidden>
-            <IconBot size={18} />
+            <AgentAvatar agentName={agentName} size={36} />
             <span className={`subagent-detail-status outcome-${outcomeClass}`} />
           </span>
           <div className="subagent-detail-heading-copy">
@@ -1462,7 +1462,7 @@ function SubagentTopology({
     <section className="subagent-topology" aria-labelledby={labelId}>
       <div className="subagent-topology-root">
         <span className="subagent-topology-root-icon" aria-hidden>
-          <IconTarget size={16} />
+          <ConductorAvatar size={28} />
         </span>
         <span className="subagent-topology-root-copy">
           <strong id={labelId}>{t("chat.subagentCoordinator")}</strong>

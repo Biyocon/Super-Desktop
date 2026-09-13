@@ -1818,6 +1818,17 @@
   color: var(--ds-text-secondary);
 }
 
+/* Kombi: per-agent avatars (Conductor role set) fill the delegate slots. */
+.agent-avatar {
+  display: block;
+  border-radius: var(--radius-round);
+  object-fit: cover;
+}
+
+.subagent-run-heading .agent-avatar {
+  flex: none;
+}
+
 .subagent-topology-root-copy,
 .subagent-topology-node-copy {
   display: flex;
