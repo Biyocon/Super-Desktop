@@ -1026,7 +1026,7 @@ export function installCaptureRig(): CaptureRig {
         const base = (ws.name || ws.path.split(/[\/]/).filter(Boolean).pop() || "").trim();
         if (base.length > 0 && base.length < 12) {
           useAppStore.setState({
-            workspace: { ...ws, name: "PI-Desktop" },
+            workspace: { ...ws, name: "Iqra-Desktop" },
           });
         }
       }
