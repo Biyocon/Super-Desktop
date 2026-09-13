@@ -38,6 +38,42 @@ const ROLE_AVATARS: Record<string, string> = {
   "the-arbiter": arbiterUrl,
 };
 
+/**
+ * The full Conductor role set, in workflow order. `SubagentTopology` renders
+ * this whole team (dimmed), then highlights the roles actually in use.
+ */
+export const CONDUCTOR_ROLES = [
+  "conductor",
+  "detective",
+  "strategist",
+  "devils-advocate",
+  "headsman",
+  "auditor",
+  "integrator",
+  "arbiter",
+] as const;
+
+export type ConductorRole = (typeof CONDUCTOR_ROLES)[number];
+
+/** Canonical avatar asset for a role id (no name normalisation applied). */
+export function roleAvatarUrl(role: ConductorRole): string {
+  return ROLE_AVATARS[role];
+}
+
+/**
+ * Resolve an arbitrary agent name to a Conductor role id, or `undefined` when
+ * the name is outside the role set. This is `avatarUrlFor` minus the asset
+ * lookup, so the team view and the per-agent avatar stay on one path.
+ */
+export function resolveRoleId(agentName: string | undefined): ConductorRole | undefined {
+  if (!agentName) return undefined;
+  const id = normalizeSubagentName(agentName)
+    .replace(/^conductor-/, "")
+    .replace(/['\\u2019]/g, "");
+  const role = BUILTIN_ROLE_ALIASES[id] ?? id;
+  return CONDUCTOR_ROLES.includes(role as ConductorRole) ? (role as ConductorRole) : undefined;
+}
+
 /** Built-in delegate ids mapped to the Conductor role with the same mandate. */
 const BUILTIN_ROLE_ALIASES: Record<string, string> = {
   explorer: "detective",
@@ -67,6 +103,7 @@ function avatarUrlFor(agentName: string | undefined): string | undefined {
     .replace(/['\u2019]/g, "");
   return ROLE_AVATARS[BUILTIN_ROLE_ALIASES[id] ?? id];
 }
+
 
 /**
  * One delegate's avatar, at the size of the icon it replaces. Unknown agents

@@ -3,7 +3,7 @@
   "version": "0.14.6",
   "desktopName": "pi-desktop.desktop",
   "private": true,
-  "description": "PI-Desktop Electron application",
+  "description": "Iqra-Desktop Electron application",
   "homepage": "https://github.com/vastsa/PI-Desktop",
   "author": {
     "name": "vastsa",
@@ -72,7 +72,7 @@
   },
   "build": {
     "appId": "com.pi-desktop.app",
-    "productName": "PI-Desktop",
+    "productName": "Iqra-Desktop",
     "directories": {
       "output": "release"
     },

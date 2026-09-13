@@ -141,7 +141,12 @@ import { useAppStore } from "../stores/app-store";
 import type { PendingPermission } from "../lib/pending-permissions";
 import { PermissionCard } from "./PermissionCard";
 import { TooltipButton } from "./ui";
-import { AgentAvatar, ConductorAvatar } from "./AgentAvatar";
+import {
+  AgentAvatar,
+  CONDUCTOR_ROLES,
+  ConductorAvatar,
+  resolveRoleId,
+} from "./AgentAvatar";
 
 type Translate = (key: string, options?: Record<string, unknown>) => string;
 
@@ -1458,6 +1463,18 @@ function SubagentTopology({
   const labelId = useId();
   const summary = summarizeSubagentActivity(items, delegationStatuses);
 
+  // Map each delegated item to the Conductor role it hit, so the full team
+  // can be rendered with the roles actually in use highlighted.
+  const itemsByRole = useMemo(() => {
+    const map = new Map<string, DelegationActivityItem>();
+    for (const item of items) {
+      const name = delegateAgentName(item.message, item.delegate);
+      const role = resolveRoleId(name);
+      if (role && !map.has(role)) map.set(role, item);
+    }
+    return map;
+  }, [items]);
+
   return (
     <section className="subagent-topology" aria-labelledby={labelId}>
       <div className="subagent-topology-root">
@@ -1477,17 +1494,39 @@ function SubagentTopology({
         role="list"
         aria-label={t("chat.subagentTopology")}
       >
-        {items.map((item) => (
-          <ToolRow
-            key={item.message.id}
-            message={item.message}
-            {...(item.delegate ? { delegate: item.delegate } : {})}
-            variant="topology"
-            onUserInteraction={onUserInteraction}
-            {...(delegationStatuses ? { delegationStatuses } : {})}
-            {...(delegationTimings ? { delegationTimings } : {})}
-          />
-        ))}
+        {CONDUCTOR_ROLES.filter((role) => role !== "conductor").map((role) => {
+          const item = itemsByRole.get(role);
+          if (item) {
+            return (
+              <ToolRow
+                key={item.message.id}
+                message={item.message}
+                {...(item.delegate ? { delegate: item.delegate } : {})}
+                variant="topology"
+                onUserInteraction={onUserInteraction}
+                {...(delegationStatuses ? { delegationStatuses } : {})}
+                {...(delegationTimings ? { delegationTimings } : {})}
+              />
+            );
+          }
+          return (
+            <div
+              key={role}
+              className="subagent-topology-node subagent-topology-idle"
+              role="listitem"
+              aria-label={role}
+            >
+              <span className="subagent-topology-avatar" aria-hidden>
+                <AgentAvatar agentName={role} size={28} />
+              </span>
+              <span className="subagent-topology-node-copy">
+                <span className="subagent-topology-node-title">
+                  {role}
+                </span>
+              </span>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
