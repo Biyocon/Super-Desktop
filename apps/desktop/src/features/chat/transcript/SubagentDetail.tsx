@@ -1,6 +1,6 @@
 import { useId } from "react";
 import { useTranslation } from "react-i18next";
-import { IconTarget } from "../../../components/icons";
+import { ConductorAvatar } from "../../../components/AgentAvatar";
 import {
   summarizeSubagentActivity,
   type DelegationActivityItem,
@@ -34,7 +34,7 @@ export function SubagentTopology({
     <section className="subagent-topology" aria-labelledby={labelId}>
       <div className="subagent-topology-root">
         <span className="subagent-topology-root-icon" aria-hidden>
-          <IconTarget size={16} />
+          <ConductorAvatar size={28} />
         </span>
         <span className="subagent-topology-root-copy">
           <strong id={labelId}>{t("chat.subagentCoordinator")}</strong>

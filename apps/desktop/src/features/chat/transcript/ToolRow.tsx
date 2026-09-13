@@ -53,13 +53,13 @@ import { ReviewChangeCard } from "../../../components/ReviewChangeCard";
 import { ToolChips, ToolDetailBlocks } from "../../../components/ToolDetails";
 import {
   IconArrowDown,
-  IconBot,
   IconCheck,
   IconChevronRight,
   IconCircleAlert,
   IconStop,
 } from "../../../components/icons";
 import { TooltipButton } from "../../../components/ui";
+import { AgentAvatar } from "../../../components/AgentAvatar";
 import { DisclosureAnchorContext } from "../../../lib/disclosure-anchor-context";
 import {
   AssistantErrorMessage,
@@ -384,7 +384,7 @@ export const ToolRow = memo(function ToolRow({
           }}
         >
           <span className="subagent-topology-avatar" aria-hidden>
-            <IconBot size={15} />
+            <AgentAvatar agentName={agentName} size={28} />
             <span className="subagent-topology-status-icon">
               {outcome === "completed" ? (
                 <IconCheck size={8} />
@@ -611,7 +611,7 @@ export const SubagentRunRows = memo(function SubagentRunRows({
         className={dock ? "subagent-run-heading is-dock" : "subagent-run-heading"}
         id={headingId}
       >
-        {dock ? null : <IconBot size={13} aria-hidden />}
+        {dock ? null : <AgentAvatar agentName={agentName} size={13} />}
         <span>
           {dock
             ? t("chat.subagentProcess")
