@@ -11,6 +11,7 @@
 //
 // A user-defined delegate named after a role (`detective`, `strategist`, … or
 // `conductor-detective`, …) resolves to that role's image. Anything else falls
+import { normalizeSubagentName } from "@pi-desktop/shared";
 // back to the generic bot glyph, so an unknown agent still reads correctly.
 
 import conductorUrl from "../assets/agent-avatars/conductor.png";
@@ -44,14 +45,25 @@ const BUILTIN_ROLE_ALIASES: Record<string, string> = {
   fixer: "headsman",
 };
 
-/** Delegate id (or Conductor role id) to its avatar asset, if one exists. */
+/**
+ * Delegate id (or Conductor role id) to its avatar asset, if one exists.
+ *
+ * Uses the canonical `normalizeSubagentName` from `@pi-desktop/shared` — the
+ * same function the runtime uses to turn a definition file (or frontmatter
+ * name) into a Task argument. Normalizing identically here means the avatar
+ * lookup can never drift from the id the UI actually receives, and it strips
+ * paths and `.md` for free (`/…/Code_Reviewer.md` -> `code-reviewer`).
+ *
+ * The canonical normalizer keeps apostrophes, so a definition named
+ * `Devil's Advocate.md` becomes `devil's-advocate` — an id the asset is not
+ * filed under. We drop apostrophes before the lookup so the role still
+ * resolves; every other separator is left to the canonical function.
+ */
 function avatarUrlFor(agentName: string | undefined): string | undefined {
   if (!agentName) return undefined;
-  const id = agentName
-    .trim()
-    .toLowerCase()
-    .replace(/['\s_]+/g, "-")
-    .replace(/^conductor-/, "");
+  const id = normalizeSubagentName(agentName)
+    .replace(/^conductor-/, "")
+    .replace(/['\u2019]/g, "");
   return ROLE_AVATARS[BUILTIN_ROLE_ALIASES[id] ?? id];
 }
 
