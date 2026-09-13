@@ -11,8 +11,9 @@
 //
 // A user-defined delegate named after a role (`detective`, `strategist`, … or
 // `conductor-detective`, …) resolves to that role's image. Anything else falls
-import { normalizeSubagentName } from "@pi-desktop/shared";
 // back to the generic bot glyph, so an unknown agent still reads correctly.
+
+import { normalizeSubagentName } from "@pi-desktop/shared";
 
 import conductorUrl from "../assets/agent-avatars/conductor.png";
 import detectiveUrl from "../assets/agent-avatars/detective.png";
