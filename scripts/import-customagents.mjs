@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * Import CustomAgents `profile.md` personas into Iqra-Desktop subagent
- * definitions (`~/.agents/subagents/*.md`).
+ * Import CustomAgents `profile.md` personas into Iqra-Desktop's read-only
+ * CustomAgents library (`~/.agents/subagent-library/customagents/*.md`).
  *
- * POC for the mapping in Kombi `docs/10-customagents-to-iqra-mapping.md` §6.1.
- * The script is read-only on the CustomAgents repo and only ever writes into
- * the Iqra user-global subagent directory (or an explicit `--out` override).
+ * The script is read-only on the CustomAgents repo. It writes to the library
+ * (or an explicit `--out` override), never to the active runtime registry by
+ * default, and never overwrites a non-identical existing definition.
  *
  * Adapter rules (see docs/10 §3–§4):
  *   1. `id` (or `name`) is normalized to `[a-z0-9-]`, max 40 chars. A
@@ -18,7 +18,8 @@
  *      persona has no System Prompt (the BDK "rig" variant), the prompt is
  *      synthesized from role / Formaal / Kernekompetencer / mapped roles.
  *   5. `tools` default to read-only `[Read, Glob, Grep]`; override with
- *      `--tools` for roles that genuinely mutate.
+ *      `--tools` for roles that genuinely mutate. Output stays under the
+ *      host's 32 KiB per-definition limit.
  *
  * Usage:
  *   node scripts/import-customagents.mjs <profile.md>... [--out DIR] [--tools a,b,c] [--dry-run] [--verify]
@@ -34,6 +35,7 @@ import { basename, dirname, join } from "node:path";
 import { parseSubagentDefinition } from "../packages/shared/dist/subagent-definition.js";
 
 const DEFAULT_TOOLS = ["Read", "Glob", "Grep"];
+const MAX_SUBAGENT_BYTES = 32 * 1024;
 
 // ---------------------------------------------------------------------------
 // Argument handling
@@ -45,7 +47,7 @@ function usage() {
       "Usage: node scripts/import-customagents.mjs <profile.md>... [options]",
       "",
       "Options:",
-      "  --out DIR      output directory (default: ~/.agents/subagents)",
+      "  --out DIR      output directory (default: ~/.agents/subagent-library/customagents)",
       "  --tools a,b,c  delegate tools (default: Read,Glob,Grep)",
       "  --dry-run      print the generated documents, write nothing",
       "  --verify       run parseSubagentDefinition on each generated document",
@@ -238,12 +240,12 @@ function yamlQuote(value) {
 function generateDefinition(fm, prompt, tools, id) {
   const name = normalizeId(fm.id || fm.name || id);
   const description = synthesizeDescription(fm);
-  const toolsBlock = tools.map((tool) => `  - ${tool}`).join("\n");
+  const toolsInline = tools.join(", ");
   return (
     `---\n` +
     `name: ${name}\n` +
     `description: ${yamlQuote(description)}\n` +
-    `tools:\n${toolsBlock}\n` +
+    `tools: [${toolsInline}]\n` +
     `---\n\n` +
     `${prompt}\n`
   );
@@ -263,7 +265,8 @@ async function main() {
     return;
   }
 
-  const outDir = opts.out ?? join(homedir(), ".agents", "subagents");
+  const outDir =
+    opts.out ?? join(homedir(), ".agents", "subagent-library", "customagents");
   const tools = opts.tools ?? DEFAULT_TOOLS;
 
   const results = [];
@@ -274,8 +277,14 @@ async function main() {
     if (!id) throw new Error(`Could not derive an agent id from ${profilePath}`);
     const prompt = extractSystemPrompt(body) || synthesizePrompt(fm, body);
     const definition = generateDefinition(fm, prompt, tools, id);
+    const sizeBytes = Buffer.byteLength(definition, "utf8");
+    if (sizeBytes > MAX_SUBAGENT_BYTES) {
+      throw new Error(
+        `${profilePath}: generated definition is ${sizeBytes} bytes; maximum is ${MAX_SUBAGENT_BYTES}`,
+      );
+    }
     const outPath = join(outDir, `${id}.md`);
-    results.push({ id, prompt, definition, outPath, profilePath });
+    results.push({ id, prompt, definition, outPath, profilePath, sizeBytes });
   }
 
   // Never silently overwrite two profiles that normalize (or truncate) to
@@ -297,6 +306,28 @@ async function main() {
     throw new Error(`Duplicate normalized agent id(s); nothing was written:\n${details}`);
   }
 
+  // Preflight every target before the first visible write. Identical files are
+  // idempotent; non-identical files are conflicts and are never overwritten.
+  const targetConflicts = [];
+  for (const result of results) {
+    try {
+      const existing = await readFile(result.outPath, "utf8");
+      if (existing === result.definition) result.writeStatus = "unchanged";
+      else targetConflicts.push(result);
+    } catch (error) {
+      if (error?.code === "ENOENT") result.writeStatus = "new";
+      else throw error;
+    }
+  }
+  if (targetConflicts.length) {
+    const details = targetConflicts
+      .map((result) => `  ${result.id}: ${result.outPath}`)
+      .join("\n");
+    throw new Error(
+      `Existing non-identical library definition(s); nothing was written:\n${details}`,
+    );
+  }
+
   if (opts.verify) {
     for (const result of results) {
       result.parsed = parseSubagentDefinition(result.definition, {
@@ -310,7 +341,8 @@ async function main() {
   if (!opts.dryRun) {
     await mkdir(outDir, { recursive: true });
     for (const result of results) {
-      await writeFile(result.outPath, result.definition, "utf8");
+      if (result.writeStatus !== "new") continue;
+      await writeFile(result.outPath, result.definition, { encoding: "utf8", flag: "wx" });
     }
   }
 
@@ -320,6 +352,7 @@ async function main() {
     console.log(`  source : ${result.profilePath}`);
     console.log(`  output : ${result.outPath}${opts.dryRun ? " (dry-run)" : ""}`);
     console.log(`  prompt : ${result.prompt.length} chars`);
+    console.log(`  status : ${opts.dryRun ? "dry-run" : result.writeStatus}`);
     if (parsed) {
       if (parsed.ok) {
         const d = parsed.definition;
@@ -335,8 +368,10 @@ async function main() {
     }
   }
 
+  const created = results.filter((result) => result.writeStatus === "new").length;
+  const unchanged = results.length - created;
   console.log(
-    `\n${opts.dryRun ? "Dry run" : "Wrote"} ${results.length} document(s) -> ${outDir}`,
+    `\n${opts.dryRun ? "Dry run" : "Library ready"}: ${results.length} document(s), ${created} new, ${unchanged} unchanged -> ${outDir}`,
   );
 }
 
