@@ -345,7 +345,7 @@ test("Settings lists shipped builtin subagents with a switch of their own", () =
   assert.match(subagentSettings, /api\.subagentCatalog/);
   assert.match(subagentSettings, /item\.source === "builtin"/);
   assert.match(subagentSettings, /fallbackBuiltinDefinitions/);
-  assert.match(subagentSettings, /owned\.filter\(\(row\) => row\.enabled\)/);
+  assert.match(subagentSettings, /records\.filter\(\(row\) => row\.enabled\)/);
   assert.match(subagentSettings, /catalog\.builtins/);
   assert.match(subagents, /extensions\.subagents\.sourceBuiltin/);
   assert.match(subagents, /extensions\.subagents\.copy/);
@@ -379,6 +379,36 @@ test("Settings lists shipped builtin subagents with a switch of their own", () =
   assert.doesNotMatch(toggle.slice(0, toggle.indexOf("catch")), /await load\(\)/);
   assert.match(toggle, /catch[\s\S]*?enabled: builtin\.enabled/);
   assert.match(api, /setBuiltinSubagentEnabled: \(id: string, enabled: boolean\) =>/);
+});
+
+test("CustomAgents library is selectable, capped, and read-only in Settings", () => {
+  const sharedTypes = read("../../../packages/shared/src/types/capabilities.ts");
+  const registry = read("../../../crates/host-core/src/user_subagents.rs");
+  const configCapture = read("../../../crates/host-core/src/config_sync/domains_capture.rs");
+
+  assert.match(sharedTypes, /source\?: "registry" \| "customagents"/);
+  assert.match(subagentSettings, /row\.source === "customagents"/);
+  assert.match(subagents, /visibleLibrary\.map\(renderRow\)/);
+  assert.match(subagents, /CUSTOMAGENTS_LIBRARY_PATH/);
+  assert.match(subagents, /extensions\.subagents\.sourceLibrary/);
+  assert.match(subagents, /activeCount >= MAX_SUBAGENT_DEFINITIONS/);
+  assert.match(subagents, /extensions\.subagents\.activeCount/);
+
+  const row = subagents.slice(
+    subagents.indexOf("const renderRow"),
+    subagents.indexOf("const addButton"),
+  );
+  assert.match(row, /const isLibrary = subagent\.source === "customagents"/);
+  assert.match(row, /!isLibrary \? \(/);
+  assert.match(row, /<CapabilityToggle/);
+  assert.match(row, /void reveal\(subagent\)/);
+
+  assert.match(registry, /SUBAGENT_LIBRARY_SOURCE: &str = "customagents"/);
+  assert.match(registry, /SUBAGENT_READ_ONLY/);
+  assert.match(registry, /SUBAGENT_LIMIT/);
+  assert.match(registry, /enabled_with_default\([\s\S]*?false,/);
+  assert.match(configCapture, /record\.source != "registry"/);
+  assert.match(configCapture, /"path", "source", "sizeBytes"/);
 });
 
 test("a capability can be moved between the global and a project level", () => {

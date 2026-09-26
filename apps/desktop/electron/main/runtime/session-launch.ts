@@ -168,7 +168,7 @@ export function createSessionLaunchRuntime({
     for (const record of records) {
       try {
         documents.push({
-          id: record.id,
+          id: record.name,
           document: await readFile(record.path, "utf8"),
           filePath: record.path,
         });
