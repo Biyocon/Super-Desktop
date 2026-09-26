@@ -2034,6 +2034,17 @@
   color: var(--ds-text-secondary);
 }
 
+/* Kombi: per-agent avatars (Conductor role set) fill the delegate slots. */
+.agent-avatar {
+  display: block;
+  border-radius: var(--radius-round);
+  object-fit: cover;
+}
+
+.subagent-run-heading .agent-avatar {
+  flex: none;
+}
+
 .subagent-topology-root-copy,
 .subagent-topology-node-copy {
   display: flex;
@@ -2090,6 +2101,28 @@
   border-radius: var(--radius-md);
   background: var(--ds-raised);
   box-shadow: var(--ds-raised-shadow);
+}
+
+/* Iqra rebrand: the full Conductor team is always shown while a delegation
+ * runs; roles not in use are dimmed so the active ones stand out. */
+.subagent-topology-node.subagent-topology-idle {
+  display: flex;
+  min-height: 70px;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px;
+  background: transparent;
+  box-shadow: none;
+  opacity: 0.38;
+}
+
+.subagent-topology-node.subagent-topology-idle .subagent-topology-avatar {
+  /* Keep the round avatar, but no status badge ring in idle state. */
+  background: transparent;
+}
+
+.subagent-topology-node.subagent-topology-idle :where(.subagent-topology-node-title) {
+  color: var(--ds-text-muted);
 }
 
 .subagent-topology-node::before {

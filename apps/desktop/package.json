@@ -3,8 +3,8 @@
   "version": "0.15.7-beta.1",
   "desktopName": "pi-desktop.desktop",
   "private": true,
-  "description": "PI-Desktop Electron application",
-  "homepage": "https://github.com/vastsa/PI-Desktop",
+  "description": "Iqra-Desktop Electron application",
+  "homepage": "https://github.com/Biyocon/Super-Desktop",
   "author": {
     "name": "vastsa",
     "email": "hhxk666@gmail.com"
@@ -80,15 +80,15 @@
   },
   "build": {
     "appId": "net.aiuo.pi-desktop",
-    "productName": "PI-Desktop",
+    "productName": "Iqra-Desktop",
     "directories": {
       "output": "release"
     },
     "publish": [
       {
         "provider": "github",
-        "owner": "vastsa",
-        "repo": "PI-Desktop"
+        "owner": "Biyocon",
+        "repo": "Super-Desktop"
       }
     ],
     "extraMetadata": {
