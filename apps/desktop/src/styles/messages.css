@@ -2121,7 +2121,7 @@
   background: transparent;
 }
 
-.subagent-topology-node.subagent-topology-idle .subagent-topology-node-title {
+.subagent-topology-node.subagent-topology-idle :where(.subagent-topology-node-title) {
   color: var(--ds-text-muted);
 }
 

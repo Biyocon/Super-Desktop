@@ -19,6 +19,10 @@ const minimapSource = await readFile(
   new URL("../src/components/ConversationMinimap.tsx", import.meta.url),
   "utf8",
 );
+const agentAvatarSource = await readFile(
+  new URL("../src/components/AgentAvatar.tsx", import.meta.url),
+  "utf8",
+);
 
 test("user turns keep a compact right-aligned plate", () => {
   const userBubbleStyles = stylesSource.match(
@@ -164,6 +168,36 @@ test("tool-call disclosure headers span the conversation band", () => {
   assert.ok(row);
   assert.match(row, /width:\s*100%;/);
   assert.match(row, /min-width:\s*0;/);
+});
+
+test("delegation topology shows the full Conductor team and distinguishes active roles", () => {
+  for (const role of [
+    "conductor",
+    "detective",
+    "strategist",
+    "devils-advocate",
+    "headsman",
+    "auditor",
+    "integrator",
+    "arbiter",
+  ]) {
+    assert.match(agentAvatarSource, new RegExp(`"${role}"`), role);
+  }
+  assert.match(
+    transcriptSource,
+    /CONDUCTOR_ROLES\.filter\(\(role\) => role !== "conductor"\)\.map/,
+  );
+  assert.match(transcriptSource, /const item = itemsByRole\.get\(role\);/);
+  assert.match(transcriptSource, /className="subagent-topology-node subagent-topology-idle"/);
+  assert.match(transcriptSource, /<AgentAvatar agentName=\{role\} size=\{28\} \/>/);
+  assert.match(transcriptSource, /<ConductorAvatar size=\{28\} \/>/);
+  assert.match(transcriptSource, /<AgentAvatar agentName=\{agentName\} size=\{28\} \/>/);
+
+  const idle = stylesSource.match(
+    /\.subagent-topology-node\.subagent-topology-idle \{([^}]*)\}/,
+  )?.[1];
+  assert.ok(idle);
+  assert.match(idle, /opacity:\s*0\.38;/);
 });
 
 test("delegation node copy wraps within the responsive card", () => {
