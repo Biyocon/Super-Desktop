@@ -8,13 +8,16 @@
  * the Iqra user-global subagent directory (or an explicit `--out` override).
  *
  * Adapter rules (see docs/10 §3–§4):
- *   1. `id` (or `name`) is normalized to `[a-z0-9-]`, max 40 chars.
- *   2. `description` becomes one routing line: the persona's own `description`
+ *   1. `id` (or `name`) is normalized to `[a-z0-9-]`, max 40 chars. A
+ *      `profile.md` without either uses its containing agent directory.
+ *   2. Normalized id collisions abort the whole batch before anything is
+ *      written; profiles are never silently overwritten.
+ *   3. `description` becomes one routing line: the persona's own `description`
  *      when present and short, otherwise `role` + the first capabilities.
- *   3. `## System Prompt`'s fenced block becomes the delegate prompt; when a
+ *   4. `## System Prompt`'s fenced block becomes the delegate prompt; when a
  *      persona has no System Prompt (the BDK "rig" variant), the prompt is
  *      synthesized from role / Formaal / Kernekompetencer / mapped roles.
- *   4. `tools` default to read-only `[Read, Glob, Grep]`; override with
+ *   5. `tools` default to read-only `[Read, Glob, Grep]`; override with
  *      `--tools` for roles that genuinely mutate.
  *
  * Usage:
@@ -27,7 +30,7 @@
 
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { homedir } from "node:os";
-import { basename, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 import { parseSubagentDefinition } from "../packages/shared/dist/subagent-definition.js";
 
 const DEFAULT_TOOLS = ["Read", "Glob", "Grep"];
@@ -208,6 +211,18 @@ function normalizeId(value) {
     .slice(0, 40);
 }
 
+/**
+ * A CustomAgents profile is conventionally named `profile.md`; when its
+ * frontmatter has no id/name, the containing agent directory is the identity.
+ * Other markdown filenames keep their stem as the fallback.
+ */
+function fallbackIdForProfile(profilePath) {
+  const filename = basename(profilePath);
+  return /^profile\.md$/i.test(filename)
+    ? basename(dirname(profilePath))
+    : filename.replace(/\.md$/i, "");
+}
+
 function synthesizeDescription(fm) {
   const own = typeof fm.description === "string" ? fm.description.trim() : "";
   if (own) return own;
@@ -220,8 +235,8 @@ function yamlQuote(value) {
   return JSON.stringify(value);
 }
 
-function generateDefinition(fm, prompt, tools) {
-  const name = normalizeId(fm.id || fm.name);
+function generateDefinition(fm, prompt, tools, id) {
+  const name = normalizeId(fm.id || fm.name || id);
   const description = synthesizeDescription(fm);
   const toolsBlock = tools.map((tool) => `  - ${tool}`).join("\n");
   return (
@@ -255,13 +270,31 @@ async function main() {
   for (const profilePath of profiles) {
     const raw = await readFile(profilePath, "utf8");
     const { fm, body } = parseCustomFrontmatter(raw);
-    const id = normalizeId(
-      fm.id || fm.name || basename(profilePath).replace(/\.md$/i, ""),
-    );
+    const id = normalizeId(fm.id || fm.name || fallbackIdForProfile(profilePath));
+    if (!id) throw new Error(`Could not derive an agent id from ${profilePath}`);
     const prompt = extractSystemPrompt(body) || synthesizePrompt(fm, body);
-    const definition = generateDefinition(fm, prompt, tools);
+    const definition = generateDefinition(fm, prompt, tools, id);
     const outPath = join(outDir, `${id}.md`);
     results.push({ id, prompt, definition, outPath, profilePath });
+  }
+
+  // Never silently overwrite two profiles that normalize (or truncate) to
+  // the same output name. Abort before creating the destination directory.
+  const sourcesById = new Map();
+  for (const result of results) {
+    const sources = sourcesById.get(result.id) ?? [];
+    sources.push(result.profilePath);
+    sourcesById.set(result.id, sources);
+  }
+  const collisions = [...sourcesById].filter(([, sources]) => sources.length > 1);
+  if (collisions.length) {
+    const details = collisions
+      .map(([id, sources]) => {
+        const list = sources.map((source) => `    - ${source}`).join("\n");
+        return `  ${id}:\n${list}`;
+      })
+      .join("\n");
+    throw new Error(`Duplicate normalized agent id(s); nothing was written:\n${details}`);
   }
 
   if (opts.verify) {
