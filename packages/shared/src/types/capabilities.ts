@@ -171,6 +171,8 @@ export type UserSubagentRecord = {
   level?: "global";
   description: string;
   enabled: boolean;
+  /** Writable user registry or read-only CustomAgents library; absent means registry. */
+  source?: "registry" | "customagents";
   scope?: ActivationScope;
   /**
    * Resolved tool grant, never empty. May start with `inherit` when the

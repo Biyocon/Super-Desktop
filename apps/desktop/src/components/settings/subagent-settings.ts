@@ -13,27 +13,33 @@ import { api } from "../../lib/api";
  */
 export type BuiltinSubagentRow = SubagentDefinition & { enabled: boolean };
 
-/** User-owned documents plus the shipped defaults, switched off ones included. */
+/** User-owned registry/library documents plus shipped defaults. */
 export type SubagentPageData = {
   owned: UserSubagentRecord[];
+  library: UserSubagentRecord[];
   builtins: BuiltinSubagentRow[];
 };
 
 export const EMPTY_SUBAGENT_PAGE: SubagentPageData = {
   owned: [],
+  library: [],
   builtins: [],
 };
 
 /**
- * Settings lists two sources: the writable global registry, and the shipped
- * defaults `Task` offers. Catalog load failures must not hide the user list, so
- * builtins fall back to the shared preset catalog — reported enabled, because a
- * failed read cannot say which handles the user turned off.
+ * Settings lists three sources: writable registry files, the read-only
+ * CustomAgents library, and shipped defaults. Catalog load failures must not
+ * hide either user-owned source; builtins fall back to the shared preset
+ * catalog and are reported enabled when their host state is unavailable.
  */
 export async function fetchSubagentPageData(): Promise<SubagentPageData> {
   const ownedResult = await api.listUserSubagents({ level: "global" });
-  const owned = ownedResult.subagents ?? [];
-  const enabledHandles = new Set(owned.filter((row) => row.enabled).map((row) => row.id));
+  const records = ownedResult.subagents ?? [];
+  const owned = records.filter((row) => row.source !== "customagents");
+  const library = records.filter((row) => row.source === "customagents");
+  const enabledHandles = new Set(
+    records.filter((row) => row.enabled).map((row) => row.name || row.id),
+  );
   try {
     const catalog = await api.subagentCatalog();
     // Older main processes answer without `builtins`; derive the group from the
@@ -46,6 +52,7 @@ export async function fetchSubagentPageData(): Promise<SubagentPageData> {
         .map((item) => ({ ...item, enabled: true }));
     return {
       owned,
+      library,
       builtins: builtins.filter(
         (item) => item.source === "builtin" && !enabledHandles.has(item.name),
       ),
@@ -53,6 +60,7 @@ export async function fetchSubagentPageData(): Promise<SubagentPageData> {
   } catch {
     return {
       owned,
+      library,
       builtins: fallbackBuiltinDefinitions()
         .map((item) => ({ ...item, enabled: true }))
         .filter((item) => !enabledHandles.has(item.name)),

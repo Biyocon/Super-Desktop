@@ -80,6 +80,57 @@ fn state_defaults_on_and_is_project_specific() {
 }
 
 #[test]
+fn state_can_default_off_and_persist_an_explicit_true() {
+    let dir = tempdir().unwrap();
+    let mut state = CapabilityState::new(dir.path(), "subagent-library");
+    assert!(!state.enabled_with_default(
+        "subagent-library",
+        CapabilityLevel::Global,
+        "customagents:worker",
+        None,
+        false,
+    ));
+    state
+        .set_enabled_with_default(
+            "subagent-library",
+            CapabilityLevel::Global,
+            "customagents:worker",
+            None,
+            true,
+            false,
+        )
+        .unwrap();
+    let reopened = CapabilityState::new(dir.path(), "subagent-library");
+    assert!(reopened.enabled_with_default(
+        "subagent-library",
+        CapabilityLevel::Global,
+        "customagents:worker",
+        None,
+        false,
+    ));
+}
+
+#[test]
+fn corrupt_primary_state_recovers_the_last_valid_backup() {
+    let dir = tempdir().unwrap();
+    let mut state = CapabilityState::new(dir.path(), "skills");
+    state
+        .set_enabled("skills", CapabilityLevel::Global, "review", None, false)
+        .unwrap();
+    state
+        .set_enabled("skills", CapabilityLevel::Global, "review", None, true)
+        .unwrap();
+    fs::write(
+        dir.path().join("agent-capabilities/skills.json"),
+        "{ truncated",
+    )
+    .unwrap();
+
+    let recovered = CapabilityState::new(dir.path(), "skills");
+    assert!(!recovered.enabled("skills", CapabilityLevel::Global, "review", None));
+}
+
+#[test]
 fn suffix_keeps_the_preferred_id_when_it_is_free() {
     let taken = HashSet::new();
     assert_eq!(

@@ -328,14 +328,19 @@ async function main() {
     );
   }
 
-  if (opts.verify) {
-    for (const result of results) {
-      result.parsed = parseSubagentDefinition(result.definition, {
-        source: "user",
-        fallbackName: result.id,
-        filePath: result.outPath,
-      });
-    }
+  for (const result of results) {
+    result.parsed = parseSubagentDefinition(result.definition, {
+      source: "user",
+      fallbackName: result.id,
+      filePath: result.outPath,
+    });
+  }
+  const invalid = results.filter((result) => !result.parsed.ok);
+  if (invalid.length) {
+    const details = invalid
+      .map((result) => `  ${result.id}: ${result.parsed.errors.join("; ")}`)
+      .join("\n");
+    throw new Error(`Generated invalid definition(s); nothing was written:\n${details}`);
   }
 
   if (!opts.dryRun) {
@@ -353,7 +358,7 @@ async function main() {
     console.log(`  output : ${result.outPath}${opts.dryRun ? " (dry-run)" : ""}`);
     console.log(`  prompt : ${result.prompt.length} chars`);
     console.log(`  status : ${opts.dryRun ? "dry-run" : result.writeStatus}`);
-    if (parsed) {
+    if (opts.verify && parsed) {
       if (parsed.ok) {
         const d = parsed.definition;
         console.log(`  VERIFY : OK  name="${d.name}" tools=[${d.tools.join(", ")}]`);

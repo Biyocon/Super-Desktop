@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::collections::{BTreeMap, HashSet};
 use std::fs;
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::time::SystemTime;
 
@@ -60,12 +61,31 @@ impl CapabilityState {
         let path = data_dir
             .join("agent-capabilities")
             .join(format!("{kind}.json"));
-        let values = fs::read_to_string(&path)
+        let values = Self::read_values(&path)
+            .or_else(|| Self::read_values(&Self::sidecar_path(&path, ".bak")))
+            .unwrap_or_default();
+        Self { path, values }
+    }
+
+    fn sidecar_path(path: &Path, suffix: &str) -> PathBuf {
+        let mut value = path.as_os_str().to_os_string();
+        value.push(suffix);
+        PathBuf::from(value)
+    }
+
+    fn read_values(path: &Path) -> Option<BTreeMap<String, bool>> {
+        fs::read_to_string(path)
             .ok()
             .and_then(|raw| serde_json::from_str::<StateFile>(&raw).ok())
             .map(|file| file.values)
-            .unwrap_or_default();
-        Self { path, values }
+    }
+
+    fn persist_or_restore(&mut self, before: BTreeMap<String, bool>) -> Result<()> {
+        if let Err(error) = self.save() {
+            self.values = before;
+            return Err(error);
+        }
+        Ok(())
     }
 
     fn key(kind: &str, level: CapabilityLevel, id: &str, project_path: Option<&str>) -> String {
@@ -90,6 +110,28 @@ impl CapabilityState {
             .copied()
     }
 
+    /// Resolve one capability with an explicit default. Global registry
+    /// records use `true`; library records use `false` so merely importing a
+    /// document never adds it to the model's prompt catalog.
+    pub fn enabled_with_default(
+        &self,
+        kind: &str,
+        level: CapabilityLevel,
+        id: &str,
+        project_path: Option<&str>,
+        default_enabled: bool,
+    ) -> bool {
+        match level {
+            CapabilityLevel::Global => project_path
+                .and_then(|path| self.get(kind, level, id, Some(path)))
+                .or_else(|| self.get(kind, level, id, None))
+                .unwrap_or(default_enabled),
+            CapabilityLevel::Project => self
+                .get(kind, level, id, project_path)
+                .unwrap_or(default_enabled),
+        }
+    }
+
     /// Global records default on. A global record may have a per-project
     /// override, while a project record has one state for its owning project.
     pub fn enabled(
@@ -99,13 +141,39 @@ impl CapabilityState {
         id: &str,
         project_path: Option<&str>,
     ) -> bool {
+        self.enabled_with_default(kind, level, id, project_path, true)
+    }
+
+    pub fn set_enabled_with_default(
+        &mut self,
+        kind: &str,
+        level: CapabilityLevel,
+        id: &str,
+        project_path: Option<&str>,
+        enabled: bool,
+        default_enabled: bool,
+    ) -> Result<()> {
+        let before = self.values.clone();
+        let path = project_path.map(normalize_project_path);
+        let key = Self::key(kind, level, id, path.as_deref());
         match level {
-            CapabilityLevel::Global => project_path
-                .and_then(|path| self.get(kind, level, id, Some(path)))
-                .or_else(|| self.get(kind, level, id, None))
-                .unwrap_or(true),
-            CapabilityLevel::Project => self.get(kind, level, id, project_path).unwrap_or(true),
+            CapabilityLevel::Global if path.is_some() => {
+                let global_default = self.get(kind, level, id, None).unwrap_or(default_enabled);
+                if enabled == global_default {
+                    self.values.remove(&key);
+                } else {
+                    self.values.insert(key, enabled);
+                }
+            }
+            CapabilityLevel::Global | CapabilityLevel::Project => {
+                if enabled == default_enabled {
+                    self.values.remove(&key);
+                } else {
+                    self.values.insert(key, enabled);
+                }
+            }
         }
+        self.persist_or_restore(before)
     }
 
     pub fn set_enabled(
@@ -116,33 +184,7 @@ impl CapabilityState {
         project_path: Option<&str>,
         enabled: bool,
     ) -> Result<()> {
-        let path = project_path.map(normalize_project_path);
-        let key = Self::key(kind, level, id, path.as_deref());
-        match level {
-            CapabilityLevel::Global if path.is_some() => {
-                let global_default = self.get(kind, level, id, None).unwrap_or(true);
-                if enabled == global_default {
-                    self.values.remove(&key);
-                } else {
-                    self.values.insert(key, enabled);
-                }
-            }
-            CapabilityLevel::Global => {
-                if enabled {
-                    self.values.remove(&key);
-                } else {
-                    self.values.insert(key, false);
-                }
-            }
-            CapabilityLevel::Project => {
-                if enabled {
-                    self.values.remove(&key);
-                } else {
-                    self.values.insert(key, false);
-                }
-            }
-        }
-        self.save()
+        self.set_enabled_with_default(kind, level, id, project_path, enabled, true)
     }
 
     /// Every id of `kind` at `level` whose stored value is an explicit `false`.
@@ -176,8 +218,8 @@ impl CapabilityState {
         project_path: Option<&str>,
         ids: &std::collections::HashSet<String>,
     ) -> Result<()> {
+        let snapshot = self.values.clone();
         let normalized_project = project_path.map(normalize_project_path);
-        let before = self.values.len();
         self.values.retain(|raw_key, _| {
             let Ok(key) = serde_json::from_str::<StateKey>(raw_key) else {
                 return false;
@@ -197,8 +239,8 @@ impl CapabilityState {
                 },
             }
         });
-        if before != self.values.len() {
-            self.save()?;
+        if snapshot.len() != self.values.len() {
+            self.persist_or_restore(snapshot)?;
         }
         Ok(())
     }
@@ -218,7 +260,7 @@ impl CapabilityState {
         id: &str,
         project_path: Option<&str>,
     ) -> Result<()> {
-        let before = self.values.len();
+        let snapshot = self.values.clone();
         self.values.retain(|raw_key, _| {
             let Ok(key) = serde_json::from_str::<StateKey>(raw_key) else {
                 return false;
@@ -235,8 +277,8 @@ impl CapabilityState {
                 },
             }
         });
-        if before != self.values.len() {
-            self.save()?;
+        if snapshot.len() != self.values.len() {
+            self.persist_or_restore(snapshot)?;
         }
         Ok(())
     }
@@ -245,10 +287,27 @@ impl CapabilityState {
         if let Some(parent) = self.path.parent() {
             fs::create_dir_all(parent)?;
         }
-        let file = StateFile {
+        let raw = serde_json::to_vec_pretty(&StateFile {
             values: self.values.clone(),
-        };
-        fs::write(&self.path, serde_json::to_string_pretty(&file)?)?;
+        })?;
+        let temp = Self::sidecar_path(&self.path, ".tmp");
+        let backup = Self::sidecar_path(&self.path, ".bak");
+        {
+            let mut file = fs::File::create(&temp)?;
+            file.write_all(&raw)?;
+            file.sync_all()?;
+        }
+        if self.path.exists() {
+            fs::copy(&self.path, &backup)?;
+            fs::remove_file(&self.path)?;
+        }
+        if let Err(error) = fs::rename(&temp, &self.path) {
+            if backup.exists() {
+                let _ = fs::copy(&backup, &self.path);
+            }
+            let _ = fs::remove_file(&temp);
+            return Err(error.into());
+        }
         Ok(())
     }
 }

@@ -267,6 +267,9 @@ fn capture_subagents(
     let mut result = Vec::new();
     let mut resources = BTreeMap::new();
     for record in st.user_subagents.list()? {
+        if record.source != "registry" {
+            continue;
+        }
         let bytes = st
             .user_subagents
             .read(&record.id)?
@@ -277,7 +280,7 @@ fn capture_subagents(
         let mut payload = serde_json::to_value(&record)?;
         strip_keys(
             &mut payload,
-            &["path", "sizeBytes", "createdAt", "updatedAt"],
+            &["path", "source", "sizeBytes", "createdAt", "updatedAt"],
         );
         if let Some(object) = payload.as_object_mut() {
             object.insert(
