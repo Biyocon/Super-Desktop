@@ -1,6 +1,10 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { SubagentDefinition, UserSubagentRecord } from "@pi-desktop/shared";
+import {
+  MAX_SUBAGENT_DEFINITIONS,
+  type SubagentDefinition,
+  type UserSubagentRecord,
+} from "@pi-desktop/shared";
 import { api } from "../../lib/api";
 import { useAppStore } from "../../stores/app-store";
 import { useHostCollection } from "../../hooks/use-host-collection";
@@ -42,6 +46,7 @@ import {
 } from "../icons";
 import { TooltipButton } from "../ui";
 const GLOBAL_SUBAGENTS_PATH = "~/.agents/subagents";
+const CUSTOMAGENTS_LIBRARY_PATH = "~/.agents/subagent-library/customagents";
 
 type SubagentEditorState = {
   draft: SubagentDraft;
@@ -62,7 +67,7 @@ export function AgentSubagentsPage() {
   const { t } = useTranslation();
   const showToast = useAppStore((state) => state.showToast);
   const {
-    data: { owned, builtins },
+    data: { owned, library, builtins },
     setData: setSubagents,
     loading,
     refreshing,
@@ -77,6 +82,17 @@ export function AgentSubagentsPage() {
   const [saving, setSaving] = useState(false);
   const { armed, setArmed } = useArmedDelete();
   const ownedHandles = useMemo(() => new Set(owned.map((row) => row.id)), [owned]);
+  const activeCount = useMemo(() => {
+    const handles = new Set(
+      [...owned, ...library]
+        .filter((row) => row.enabled)
+        .map((row) => row.name || row.id),
+    );
+    for (const builtin of builtins) {
+      if (builtin.enabled) handles.add(builtin.name);
+    }
+    return handles.size;
+  }, [builtins, library, owned]);
 
   /**
    * The switch flips locally first and only reverts if the host refuses, so one
@@ -85,10 +101,20 @@ export function AgentSubagentsPage() {
   const toggle = async (subagent: UserSubagentRecord) => {
     if (busyId === subagent.id) return;
     const next = !subagent.enabled;
+    if (next && activeCount >= MAX_SUBAGENT_DEFINITIONS) {
+      showToast(
+        t("extensions.subagents.activeLimit", { max: MAX_SUBAGENT_DEFINITIONS }),
+        { variant: "error" },
+      );
+      return;
+    }
     setBusyId(subagent.id);
     setSubagents((current) => ({
       ...current,
       owned: current.owned.map((row) =>
+        row.id === subagent.id ? { ...row, enabled: next } : row,
+      ),
+      library: current.library.map((row) =>
         row.id === subagent.id ? { ...row, enabled: next } : row,
       ),
     }));
@@ -104,6 +130,9 @@ export function AgentSubagentsPage() {
       setSubagents((current) => ({
         ...current,
         owned: current.owned.map((row) =>
+          row.id === subagent.id ? { ...row, enabled: subagent.enabled } : row,
+        ),
+        library: current.library.map((row) =>
           row.id === subagent.id ? { ...row, enabled: subagent.enabled } : row,
         ),
       }));
@@ -122,6 +151,13 @@ export function AgentSubagentsPage() {
     const handle = builtin.name;
     if (busyId === `builtin:${handle}`) return;
     const next = !builtin.enabled;
+    if (next && activeCount >= MAX_SUBAGENT_DEFINITIONS) {
+      showToast(
+        t("extensions.subagents.activeLimit", { max: MAX_SUBAGENT_DEFINITIONS }),
+        { variant: "error" },
+      );
+      return;
+    }
     setBusyId(`builtin:${handle}`);
     setSubagents((current) => ({
       ...current,
@@ -240,6 +276,13 @@ export function AgentSubagentsPage() {
       ),
     [search, owned],
   );
+  const visibleLibrary = useMemo(
+    () =>
+      library.filter((subagent) =>
+        matchesCapabilitySearch(search, subagent.name, subagent.id, subagent.description),
+      ),
+    [library, search],
+  );
 
   const visibleBuiltins = useMemo(
     () =>
@@ -256,7 +299,11 @@ export function AgentSubagentsPage() {
 
   const openCreate = () => setEditor({ draft: emptySubagentDraft(), editing: null });
   const searching = Boolean(search.trim());
-  const noMatches = searching && visibleOwned.length === 0 && visibleBuiltins.length === 0;
+  const noMatches =
+    searching &&
+    visibleOwned.length === 0 &&
+    visibleLibrary.length === 0 &&
+    visibleBuiltins.length === 0;
   const showOwnedGroup = !searching || visibleOwned.length > 0;
 
   const renderBuiltin = (definition: BuiltinSubagentRow) => {
@@ -311,6 +358,7 @@ export function AgentSubagentsPage() {
   const renderRow = (subagent: UserSubagentRecord) => {
     const name = subagent.name || subagent.id;
     const busy = busyId === subagent.id;
+    const isLibrary = subagent.source === "customagents";
     const isArmed = armed === subagent.id;
     const items: CapabilityMenuItem[] = [
       {
@@ -322,7 +370,9 @@ export function AgentSubagentsPage() {
           void reveal(subagent);
         },
       },
-      {
+    ];
+    if (!isLibrary) {
+      items.push({
         key: "remove",
         label: isArmed
           ? t("settings.capabilityRemoveConfirm")
@@ -337,8 +387,8 @@ export function AgentSubagentsPage() {
             setArmed(subagent.id);
           }
         },
-      },
-    ];
+      });
+    }
     return (
       <CapabilityRow
         key={subagent.id}
@@ -346,7 +396,11 @@ export function AgentSubagentsPage() {
         name={name}
         off={!subagent.enabled}
         menuOpen={menuFor === subagent.id}
-        badges={<span className="agent-capability-badge">{t("settings.globalOnly")}</span>}
+        badges={
+          <span className="agent-capability-badge">
+            {t(isLibrary ? "extensions.subagents.sourceLibrary" : "settings.globalOnly")}
+          </span>
+        }
         description={subagent.description || t("settings.noCapabilityDescription")}
         meta={
           subagent.tools?.length ? (
@@ -359,16 +413,18 @@ export function AgentSubagentsPage() {
         }
         actions={
           <>
-            <TooltipButton
-              type="button"
-              className="settings-icon-button"
-              ariaLabel={t("extensions.subagents.rowActions", { name })}
-              tooltip={t("extensions.subagents.edit")}
-              disabled={busy}
-              onClick={() => void openEdit(subagent)}
-            >
-              <IconPencil size={15} />
-            </TooltipButton>
+            {!isLibrary ? (
+              <TooltipButton
+                type="button"
+                className="settings-icon-button"
+                ariaLabel={t("extensions.subagents.rowActions", { name })}
+                tooltip={t("extensions.subagents.edit")}
+                disabled={busy}
+                onClick={() => void openEdit(subagent)}
+              >
+                <IconPencil size={15} />
+              </TooltipButton>
+            ) : null}
             <CapabilityRowMenu
               label={t("extensions.subagents.rowActions", { name })}
               items={items}
@@ -406,7 +462,17 @@ export function AgentSubagentsPage() {
           search={search}
           onSearchChange={setSearch}
           searchPlaceholder={t("extensions.subagents.searchPlaceholder")}
-          actions={addButton}
+          actions={
+            <>
+              <span className="agent-capability-badge">
+                {t("extensions.subagents.activeCount", {
+                  current: activeCount,
+                  max: MAX_SUBAGENT_DEFINITIONS,
+                })}
+              </span>
+              {addButton}
+            </>
+          }
         />
       }
     >
@@ -447,6 +513,16 @@ export function AgentSubagentsPage() {
                 ) : (
                   visibleOwned.map(renderRow)
                 )}
+              </>
+            ) : null}
+            {visibleLibrary.length > 0 ? (
+              <>
+                <CapabilityGroupHeader
+                  label={t("extensions.subagents.sourceLibrary")}
+                  path={CUSTOMAGENTS_LIBRARY_PATH}
+                  count={visibleLibrary.length}
+                />
+                {visibleLibrary.map(renderRow)}
               </>
             ) : null}
           </>

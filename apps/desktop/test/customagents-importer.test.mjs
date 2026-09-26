@@ -148,3 +148,22 @@ test("definitions beyond the host 32 KiB limit are rejected before writing", asy
   assert.match(result.stderr, /maximum is 32768/);
   assert.equal(existsSync(out), false);
 });
+
+test("invalid generated definitions never write even without --verify", async (t) => {
+  const root = await mkdtemp(join(tmpdir(), "iqra-customagents-invalid-"));
+  t.after(() => rm(root, { recursive: true, force: true }));
+  const agentDir = join(root, "invalid-agent");
+  const source = join(agentDir, "profile.md");
+  const out = join(root, "out");
+  await mkdir(agentDir, { recursive: true });
+  await writeFile(source, profile(), "utf8");
+
+  const result = spawnSync(
+    process.execPath,
+    [importer, source, "--out", out, "--tools", "Nope"],
+    { encoding: "utf8", windowsHide: true },
+  );
+  assert.notEqual(result.status, 0);
+  assert.match(result.stderr, /Generated invalid definition\(s\); nothing was written/);
+  assert.equal(existsSync(out), false);
+});
