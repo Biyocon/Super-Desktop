@@ -564,7 +564,7 @@ export class McpServerClient {
         {
           protocolVersion: MCP_PROTOCOL_VERSION,
           capabilities: {},
-          clientInfo: { name: "Iqra-Desktop", version: "1" },
+          clientInfo: { name: "Super-Desktop", version: "1" },
         },
         timeoutMs,
       );

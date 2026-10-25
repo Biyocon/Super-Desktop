@@ -87,7 +87,7 @@ export function installCaptureRig(): CaptureRig {
       useAppStore.getState().collapseWorkPanel();
     },
     /**
-     * Reveals the panel with whatever tabs the session already has — none, in
+     * Reveals the panel with whatever tabs the session already has â€” none, in
      * the capture suite, which is the point: this is how the no-resource
      * empty body is photographed. Production reaches it via `Cmd/Ctrl+J`.
      */
@@ -113,35 +113,35 @@ export function installCaptureRig(): CaptureRig {
       }
       const base = Date.parse("2026-07-20T09:00:00Z");
       const samples: [role: "user" | "assistant", content: string][] = [
-        ["user", "帮我配置一下这个项目并启动"],
+        ["user", "å¸®æˆ‘é…ç½®ä¸€ä¸‹è¿™ä¸ªé¡¹ç›®å¹¶å¯åŠ¨"],
         [
           "assistant",
-          "好的。先安装依赖并生成本地配置：\n\n1. `pnpm install`\n2. 复制 `.env.example` 为 `.env`\n3. `pnpm dev` 启动开发服务\n\n启动后默认监听 5173 端口。",
+          "å¥½çš„ã€‚å…ˆå®‰è£…ä¾èµ–å¹¶ç”Ÿæˆæœ¬åœ°é…ç½®ï¼š\n\n1. `pnpm install`\n2. å¤åˆ¶ `.env.example` ä¸º `.env`\n3. `pnpm dev` å¯åŠ¨å¼€å‘æœåŠ¡\n\nå¯åŠ¨åŽé»˜è®¤ç›‘å¬ 5173 ç«¯å£ã€‚",
         ],
-        ["user", "启动报错了，说找不到 host 二进制"],
+        ["user", "å¯åŠ¨æŠ¥é”™äº†ï¼Œè¯´æ‰¾ä¸åˆ° host äºŒè¿›åˆ¶"],
         [
           "assistant",
-          "这是因为 Rust 侧还没编译。运行 `cargo build -p pi-desktop-host-core`，产物会出现在 `target/debug/` 下，Electron 主进程会自动拾取。",
+          "è¿™æ˜¯å› ä¸º Rust ä¾§è¿˜æ²¡ç¼–è¯‘ã€‚è¿è¡Œ `cargo build -p pi-desktop-host-core`ï¼Œäº§ç‰©ä¼šå‡ºçŽ°åœ¨ `target/debug/` ä¸‹ï¼ŒElectron ä¸»è¿›ç¨‹ä¼šè‡ªåŠ¨æ‹¾å–ã€‚",
         ],
-        ["user", "编译通过了，界面也起来了"],
+        ["user", "ç¼–è¯‘é€šè¿‡äº†ï¼Œç•Œé¢ä¹Ÿèµ·æ¥äº†"],
         [
           "assistant",
-          "很好。接下来可以在设置里添加模型提供方并保存 API 密钥，然后打开一个项目文件夹就能开始对话了。",
+          "å¾ˆå¥½ã€‚æŽ¥ä¸‹æ¥å¯ä»¥åœ¨è®¾ç½®é‡Œæ·»åŠ æ¨¡åž‹æä¾›æ–¹å¹¶ä¿å­˜ API å¯†é’¥ï¼Œç„¶åŽæ‰“å¼€ä¸€ä¸ªé¡¹ç›®æ–‡ä»¶å¤¹å°±èƒ½å¼€å§‹å¯¹è¯äº†ã€‚",
         ],
-        ["user", "顺便把侧边栏最近会话按项目分组"],
+        ["user", "é¡ºä¾¿æŠŠä¾§è¾¹æ æœ€è¿‘ä¼šè¯æŒ‰é¡¹ç›®åˆ†ç»„"],
         [
           "assistant",
-          "已按项目路径分组：每组显示项目名与最近活动时间，未关联项目的会话归入“临时会话”。分组逻辑在 `sidebar-session-groups.ts`。",
+          "å·²æŒ‰é¡¹ç›®è·¯å¾„åˆ†ç»„ï¼šæ¯ç»„æ˜¾ç¤ºé¡¹ç›®åä¸Žæœ€è¿‘æ´»åŠ¨æ—¶é—´ï¼Œæœªå…³è”é¡¹ç›®çš„ä¼šè¯å½’å…¥â€œä¸´æ—¶ä¼šè¯â€ã€‚åˆ†ç»„é€»è¾‘åœ¨ `sidebar-session-groups.ts`ã€‚",
         ],
-        ["user", "分组标题的字号再小一点"],
+        ["user", "åˆ†ç»„æ ‡é¢˜çš„å­—å·å†å°ä¸€ç‚¹"],
         [
           "assistant",
-          "已把分组标题从 `--text-sm` 调整为 `--text-2xs`，同时收紧了上下间距，现在与 PI-Desktop 的密度一致。",
+          "å·²æŠŠåˆ†ç»„æ ‡é¢˜ä»Ž `--text-sm` è°ƒæ•´ä¸º `--text-2xs`ï¼ŒåŒæ—¶æ”¶ç´§äº†ä¸Šä¸‹é—´è·ï¼ŒçŽ°åœ¨ä¸Ž PI-Desktop çš„å¯†åº¦ä¸€è‡´ã€‚",
         ],
-        ["user", "最后跑一遍检查"],
+        ["user", "æœ€åŽè·‘ä¸€éæ£€æŸ¥"],
         [
           "assistant",
-          "`pnpm typecheck` 与样式令牌检查均通过，无回归。",
+          "`pnpm typecheck` ä¸Žæ ·å¼ä»¤ç‰Œæ£€æŸ¥å‡é€šè¿‡ï¼Œæ— å›žå½’ã€‚",
         ],
       ];
       const messages = Array.from(
@@ -252,7 +252,7 @@ export function installCaptureRig(): CaptureRig {
             id: `capture-review-user-${i}`,
             role: "user" as const,
             content:
-              i === 0 ? "把审阅面板里每条改动的样式简化一下" : `继续第 ${i + 1} 处`,
+              i === 0 ? "æŠŠå®¡é˜…é¢æ¿é‡Œæ¯æ¡æ”¹åŠ¨çš„æ ·å¼ç®€åŒ–ä¸€ä¸‹" : `ç»§ç»­ç¬¬ ${i + 1} å¤„`,
             createdAt: new Date(base + i * 120_000).toISOString(),
             status: "complete" as const,
           },
@@ -290,7 +290,7 @@ export function installCaptureRig(): CaptureRig {
     seedRunRows: (count = 3) => {
       // Capture-only run-row fixture (D226/D227 head scenes). A Bash tool
       // message per state: a command that exits 1 while its call reports
-      // success — the case the head must not read as done (D227) — a success
+      // success â€” the case the head must not read as done (D227) â€” a success
       // with output, and one still running; count 0 restores the empty
       // transcript.
       if (!window.__PI_CAPTURE__) return;
@@ -336,7 +336,7 @@ export function installCaptureRig(): CaptureRig {
           {
             id: `capture-run-user-${i}`,
             role: "user" as const,
-            content: i === 0 ? "跑一下测试" : `再跑 ${sample.command}`,
+            content: i === 0 ? "è·‘ä¸€ä¸‹æµ‹è¯•" : `å†è·‘ ${sample.command}`,
             createdAt: new Date(base + i * 120_000).toISOString(),
             status: "complete" as const,
           },
@@ -414,7 +414,7 @@ export function installCaptureRig(): CaptureRig {
         {
           id: "capture-task-user-0",
           role: "user" as const,
-          content: "帮我审一下 store 的改动",
+          content: "å¸®æˆ‘å®¡ä¸€ä¸‹ store çš„æ”¹åŠ¨",
           createdAt: new Date(base - 30_000).toISOString(),
           status: "complete" as const,
         },
@@ -423,14 +423,14 @@ export function installCaptureRig(): CaptureRig {
         {
           id: "capture-task-answer-0",
           role: "assistant" as const,
-          content: "审阅完成：队列按 id 丢弃请求，没有发现回归。",
+          content: "å®¡é˜…å®Œæˆï¼šé˜Ÿåˆ—æŒ‰ id ä¸¢å¼ƒè¯·æ±‚ï¼Œæ²¡æœ‰å‘çŽ°å›žå½’ã€‚",
           createdAt: new Date(base + 40_000).toISOString(),
           status: "complete" as const,
         },
         {
           id: "capture-task-user-1",
           role: "user" as const,
-          content: "再并行看下 runtime 和 shared",
+          content: "å†å¹¶è¡Œçœ‹ä¸‹ runtime å’Œ shared",
           createdAt: new Date(base + 55_000).toISOString(),
           status: "complete" as const,
         },
@@ -706,7 +706,7 @@ export function installCaptureRig(): CaptureRig {
           description: "Issues and cycles for the work tracker.",
           transport: "http",
           url: "https://mcp.linear.app/sse",
-          headers: { Authorization: "Bearer •••" },
+          headers: { Authorization: "Bearer â€¢â€¢â€¢" },
           enabled: true,
           scope: { mode: "projects", projects: ["/Users/pi/work/api"] },
         },
@@ -970,16 +970,16 @@ export function installCaptureRig(): CaptureRig {
       }
       const now = Date.now();
       const titles = [
-        "重新设计设置页面插件板块手机端 UI 布局并验证所有断点",
-        "修复 host-core 启动失败并补充错误恢复测试",
-        "同步代码",
+        "é‡æ–°è®¾è®¡è®¾ç½®é¡µé¢æ’ä»¶æ¿å—æ‰‹æœºç«¯ UI å¸ƒå±€å¹¶éªŒè¯æ‰€æœ‰æ–­ç‚¹",
+        "ä¿®å¤ host-core å¯åŠ¨å¤±è´¥å¹¶è¡¥å……é”™è¯¯æ¢å¤æµ‹è¯•",
+        "åŒæ­¥ä»£ç ",
       ];
       // The inbox lists failures only, so every fixture row is a failure.
       const notifications = Array.from({ length: count }, (_, index) => ({
         id: `capture-notification-${index}`,
         kind: "task.failed" as const,
         sessionId: `capture-session-${index}`,
-        sessionTitle: titles[index] ?? `后台任务 ${index + 1}`,
+        sessionTitle: titles[index] ?? `åŽå°ä»»åŠ¡ ${index + 1}`,
         turnId: `capture-turn-${index}`,
         ...(index % 2 === 1 ? { errorCode: "MODEL_REQUEST_TIMEOUT" } : {}),
         createdAt: new Date(now - (index + 1) * 60_000).toISOString(),
@@ -1026,7 +1026,7 @@ export function installCaptureRig(): CaptureRig {
         const base = (ws.name || ws.path.split(/[\/]/).filter(Boolean).pop() || "").trim();
         if (base.length > 0 && base.length < 12) {
           useAppStore.setState({
-            workspace: { ...ws, name: "Iqra-Desktop" },
+            workspace: { ...ws, name: "Super-Desktop" },
           });
         }
       }
@@ -1057,14 +1057,14 @@ export function installCaptureRig(): CaptureRig {
           (useAppStore.getState().sessions || []).map((s) => (s.title || "").trim()),
         );
         const titles = [
-          "同步代码",
-          "你好",
-          "终止进程里面有一个注册机的",
-          "加一下",
-          "帮我彻底卸载比特浏览器",
-          "帮我配置一下这个项目并启动",
-          "重新设计设置页面插件板块手机端ui布局",
-          "制作台的布局重新设计，需要现代化简",
+          "åŒæ­¥ä»£ç ",
+          "ä½ å¥½",
+          "ç»ˆæ­¢è¿›ç¨‹é‡Œé¢æœ‰ä¸€ä¸ªæ³¨å†Œæœºçš„",
+          "åŠ ä¸€ä¸‹",
+          "å¸®æˆ‘å½»åº•å¸è½½æ¯”ç‰¹æµè§ˆå™¨",
+          "å¸®æˆ‘é…ç½®ä¸€ä¸‹è¿™ä¸ªé¡¹ç›®å¹¶å¯åŠ¨",
+          "é‡æ–°è®¾è®¡è®¾ç½®é¡µé¢æ’ä»¶æ¿å—æ‰‹æœºç«¯uiå¸ƒå±€",
+          "åˆ¶ä½œå°çš„å¸ƒå±€é‡æ–°è®¾è®¡ï¼Œéœ€è¦çŽ°ä»£åŒ–ç®€",
         ];
         for (const title of titles) {
           if (existing.has(title)) continue;
@@ -1075,7 +1075,7 @@ export function installCaptureRig(): CaptureRig {
         await useAppStore.getState().refreshSessions();
         const preferred = useAppStore
           .getState()
-          .sessions.find((s) => (s.title || "").trim() === "同步代码");
+          .sessions.find((s) => (s.title || "").trim() === "åŒæ­¥ä»£ç ");
         if (preferred) {
           try {
             const raw = localStorage.getItem("pi.desktop.pinnedSessions");

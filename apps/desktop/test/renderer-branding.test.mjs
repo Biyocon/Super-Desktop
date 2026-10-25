@@ -32,11 +32,11 @@ const [
     read("../src/lib/app-language.ts"),
   ]);
 
-test("renderer surfaces the Iqra-Desktop brand instead of the Codex shell brand", () => {
-  assert.match(english, /shellName:\s*"Iqra-Desktop"/);
-  assert.match(chinese, /shellName:\s*"Iqra-Desktop"/);
-  assert.match(english, /placeholder:\s*"Ask Iqra-Desktop to help with anything"/);
-  assert.match(chinese, /placeholder:\s*"让 Iqra-Desktop 帮你做任何事"/);
+test("renderer surfaces the Super-Desktop brand instead of the Codex shell brand", () => {
+  assert.match(english, /shellName:\s*"Super-Desktop"/);
+  assert.match(chinese, /shellName:\s*"Super-Desktop"/);
+  assert.match(english, /placeholder:\s*"Ask Super-Desktop to help with anything"/);
+  assert.match(chinese, /placeholder:\s*"è®© Super-Desktop å¸®ä½ åšä»»ä½•äº‹"/);
   assert.doesNotMatch(english, /shellName:\s*"Codex"/);
   assert.doesNotMatch(chinese, /shellName:\s*"Codex"/);
   // Codex remains a supported external import source, not the app identity.
@@ -101,7 +101,7 @@ test("app chrome uses the shared brand asset without branding the composer input
   assert.doesNotMatch(composer, /composer-thread-mark/);
   assert.doesNotMatch(styles, /\.composer-thread-mark/);
   assert.doesNotMatch(styles, /\.composer-input-wrap\s*\{[^}]*\bgap:/s);
-  assert.doesNotMatch(composer, /infinity-mark|∞/);
+  assert.doesNotMatch(composer, /infinity-mark|âˆž/);
   assert.match(sidebar, /<BrandLogo\s+size=\{20\}/);
   assert.match(sidebar, /IconNewSession/);
   assert.match(app, /<IconNewSession\s+size=\{15\}/);

@@ -17,8 +17,8 @@ type HeaderPreset = {
 
 const HEADER_PRESETS: HeaderPreset[] = [
   { key: "User-Agent", value: `pi-desktop/${APP_VERSION}` },
-  { key: "X-Client-Name", value: "Iqra-Desktop" },
-  { key: "X-Title", value: "Iqra-Desktop" },
+  { key: "X-Client-Name", value: "Super-Desktop" },
+  { key: "X-Title", value: "Super-Desktop" },
 ];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -69,7 +69,7 @@ export function ProviderHeadersEditor({
   useEffect(() => () => window.clearTimeout(copyTimer.current), []);
 
   // A value the host folds on save, and one it will refuse, are both said next
-  // to the rows — a fullwidth character is an IME slip, not a mystery. Only
+  // to the rows â€” a fullwidth character is an IME slip, not a mystery. Only
   // rows that will actually be persisted count: an unnamed, empty or already
   // refused row has nothing to fold, and saying otherwise would read as if the
   // whole row were fine.

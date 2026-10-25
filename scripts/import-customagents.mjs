@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 /**
- * Import CustomAgents `profile.md` personas into Iqra-Desktop's read-only
+ * Import CustomAgents `profile.md` personas into Super-Desktop's read-only
  * CustomAgents library (`~/.agents/subagent-library/customagents/*.md`).
  *
  * The script is read-only on the CustomAgents repo. It writes to the library
  * (or an explicit `--out` override), never to the active runtime registry by
  * default, and never overwrites a non-identical existing definition.
  *
- * Adapter rules (see docs/10 §3–§4):
+ * Adapter rules (see docs/10 Â§3â€“Â§4):
  *   1. `id` (or `name`) is normalized to `[a-z0-9-]`, max 40 chars. A
  *      `profile.md` without either uses its containing agent directory.
  *   2. Normalized id collisions abort the whole batch before anything is
@@ -174,7 +174,7 @@ function synthesizePrompt(fm, body) {
   const division = fm.division ? ` (${fm.division})` : "";
   const parts = [`Du er en ${role}-agent${division}.`];
 
-  const formaal = sectionText(body, "Formaal") ?? sectionText(body, "Formål");
+  const formaal = sectionText(body, "Formaal") ?? sectionText(body, "FormÃ¥l");
   if (formaal) {
     const items = listItems(formaal);
     parts.push(items.length ? items.join("\n") : formaal);
@@ -230,7 +230,7 @@ function synthesizeDescription(fm) {
   if (own) return own;
   const role = fm.role || fm.name || fm.id || "agent";
   const caps = Array.isArray(fm.capabilities) ? fm.capabilities.slice(0, 4) : [];
-  return caps.length ? `${role} — ${caps.join(", ")}` : role;
+  return caps.length ? `${role} â€” ${caps.join(", ")}` : role;
 }
 
 function yamlQuote(value) {
