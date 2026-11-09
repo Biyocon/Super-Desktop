@@ -39,9 +39,13 @@ const SUBAGENT_LIBRARY_KIND: &str = "subagent-library";
 const SUBAGENT_LIBRARY_SOURCE: &str = "customagents";
 const SUBAGENT_REGISTRY_SOURCE: &str = "registry";
 const SUBAGENT_LIBRARY_PREFIX: &str = "customagents:";
+/// The budget for the user's own active handles.
+///
+/// Shipped builtins sit outside this budget: they are the backbone of `Task`,
+/// so a user registry that outgrows it loses its own overflow instead of
+/// displacing a builtin.
 const MAX_ACTIVE_USER_SUBAGENTS: usize = 16;
 /// Activation state for the subagent builtins, kept in its own file
-const BUILTIN_SUBAGENT_HANDLES: [&str; 4] = ["explorer", "code-reviewer", "test-runner", "fixer"];
 /// (`<data-dir>/agent-capabilities/subagent-builtins.json`).
 ///
 /// The builtins are constant documents inside agent-runtime, not files in
@@ -377,23 +381,10 @@ impl UserSubagentRegistry {
             }
         }
 
-        let disabled: HashSet<String> = self.disabled_builtins().into_iter().collect();
-        for builtin in BUILTIN_SUBAGENT_HANDLES {
-            if disabled.contains(builtin) || handles.contains(builtin) {
-                continue;
-            }
-            if handles.len() < MAX_ACTIVE_USER_SUBAGENTS {
-                handles.insert(builtin.into());
-            } else {
-                self.builtins.set_enabled(
-                    SUBAGENT_BUILTIN_KIND,
-                    CapabilityLevel::Global,
-                    builtin,
-                    None,
-                    false,
-                )?;
-            }
-        }
+        // Builtins are deliberately left alone here. They are the backbone of
+        // `Task` and live outside the user budget, so a registry that outgrows
+        // the budget loses its own overflow instead of quietly switching a
+        // builtin off. Only an explicit switch-off removes one (ADR 0270).
         Ok(())
     }
 
@@ -425,39 +416,23 @@ impl UserSubagentRegistry {
         {
             bail!("SUBAGENT_CONFLICT: another source already activates handle \"{handle}\"");
         }
-        let mut handles: HashSet<String> = records
+        // Only the user's own handles count against the budget. Builtins are
+        // not seeded here, because they never spend a user's place.
+        let handles: HashSet<String> = records
             .into_iter()
             .filter(|record| record.enabled && record.id != id)
             .map(|record| record.name)
             .collect();
-        let disabled: HashSet<String> = self.disabled_builtins().into_iter().collect();
-        for builtin in BUILTIN_SUBAGENT_HANDLES {
-            if !disabled.contains(builtin) {
-                handles.insert(builtin.into());
-            }
-        }
         if !handles.contains(handle) && handles.len() >= MAX_ACTIVE_USER_SUBAGENTS {
             bail!("SUBAGENT_LIMIT: at most {MAX_ACTIVE_USER_SUBAGENTS} subagents can be active");
         }
         Ok(())
     }
 
-    fn validate_builtin_activation(&mut self, handle: &str) -> Result<()> {
-        let mut handles: HashSet<String> = self
-            .list()?
-            .into_iter()
-            .filter(|record| record.enabled)
-            .map(|record| record.name)
-            .collect();
-        let disabled: HashSet<String> = self.disabled_builtins().into_iter().collect();
-        for builtin in BUILTIN_SUBAGENT_HANDLES {
-            if builtin != handle && !disabled.contains(builtin) {
-                handles.insert(builtin.into());
-            }
-        }
-        if !handles.contains(handle) && handles.len() >= MAX_ACTIVE_USER_SUBAGENTS {
-            bail!("SUBAGENT_LIMIT: at most {MAX_ACTIVE_USER_SUBAGENTS} subagents can be active");
-        }
+    /// A builtin never spends a user's place, so turning one on cannot fail on
+    /// the user budget. Handle shadowing is resolved when the catalog is built,
+    /// where a user document with the same handle wins.
+    fn validate_builtin_activation(&mut self, _handle: &str) -> Result<()> {
         Ok(())
     }
 

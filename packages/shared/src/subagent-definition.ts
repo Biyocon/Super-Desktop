@@ -587,9 +587,16 @@ function parseTimeoutSeconds(
  * Merge discovered definitions into the list the runtime offers.
  *
  * Precedence is user registry > builtin, so a global document retunes a
- * builtin without renaming it. The result is capped: past
- * `MAX_SUBAGENT_DEFINITIONS` the catalog stops being a menu the model can
- * reason about, and every extra entry costs prompt tokens on every turn.
+ * builtin without renaming it. `MAX_SUBAGENT_DEFINITIONS` caps the user's own
+ * handles — the same budget host-core enforces when it activates them — because
+ * past that point the catalog stops being a menu the model can reason about and
+ * every extra entry costs prompt tokens on every turn.
+ *
+ * Shipped builtins sit outside that budget on purpose. They are the backbone of
+ * delegation: without `explorer`, `code-reviewer`, `test-runner` and `fixer` the
+ * `Task` tool has no delegate worth calling and the Conductor role view has
+ * nothing to show. A user registry that outgrows the budget therefore loses its
+ * own overflow entries, never a builtin.
  */
 export function mergeSubagentDefinitions(
   definitions: readonly SubagentDefinition[],
@@ -601,11 +608,15 @@ export function mergeSubagentDefinitions(
     ...definitions.filter((d) => d.source === "builtin"),
   ];
   const dropped: string[] = [];
+  let admitted = 0;
   for (const definition of ordered) {
     if (byName.has(definition.name)) continue;
-    if (byName.size >= MAX_SUBAGENT_DEFINITIONS) {
-      dropped.push(definition.name);
-      continue;
+    if (definition.source === "user") {
+      if (admitted >= MAX_SUBAGENT_DEFINITIONS) {
+        dropped.push(definition.name);
+        continue;
+      }
+      admitted += 1;
     }
     byName.set(definition.name, definition);
   }

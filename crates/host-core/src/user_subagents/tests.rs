@@ -425,7 +425,7 @@ fn active_library_handle_blocks_active_registry_creation() {
 }
 
 #[test]
-fn builtin_activation_cannot_become_the_seventeenth_handle() {
+fn a_builtin_never_spends_a_user_place() {
     use crate::agent_capabilities::test_support;
 
     let data = tempdir().unwrap();
@@ -433,12 +433,19 @@ fn builtin_activation_cannot_become_the_seventeenth_handle() {
     test_support::with_global_agents(agents.path(), || {
         let mut registry = UserSubagentRegistry::new(data.path());
         registry.set_builtin_enabled("fixer", false).unwrap();
-        for index in 0..13 {
+        for index in 0..MAX_ACTIVE_USER_SUBAGENTS {
             registry
                 .create(input(&format!("worker-{index}"), true))
                 .unwrap();
         }
-        let error = registry.set_builtin_enabled("fixer", true).unwrap_err();
+        assert_eq!(registry.set_builtin_enabled("fixer", true).unwrap(), "fixer");
+        assert!(registry.disabled_builtins().is_empty());
+        assert_eq!(
+            registry.active_for(None).unwrap().len(),
+            MAX_ACTIVE_USER_SUBAGENTS
+        );
+        // The budget still belongs to the user's own handles.
+        let error = registry.create(input("one-too-many", true)).unwrap_err();
         assert!(error.to_string().contains("SUBAGENT_LIMIT"));
     });
 }
@@ -469,7 +476,7 @@ fn renaming_a_disabled_registry_definition_keeps_it_disabled() {
 }
 
 #[test]
-fn legacy_overflow_is_persisted_as_the_previous_effective_sixteen() {
+fn legacy_overflow_keeps_sixteen_users_and_leaves_builtins_on() {
     use crate::agent_capabilities::test_support;
 
     let data = tempdir().unwrap();
@@ -493,16 +500,11 @@ fn legacy_overflow_is_persisted_as_the_previous_effective_sixteen() {
                 .unwrap()
                 .enabled
         );
-        assert_eq!(
-            registry.disabled_builtins().len(),
-            BUILTIN_SUBAGENT_HANDLES.len()
-        );
+        // The overflow is the user's own, so no builtin is switched off.
+        assert!(registry.disabled_builtins().is_empty());
 
         let mut reopened = UserSubagentRegistry::new(data.path());
         assert_eq!(reopened.active_for(None).unwrap().len(), 16);
-        assert_eq!(
-            reopened.disabled_builtins().len(),
-            BUILTIN_SUBAGENT_HANDLES.len()
-        );
+        assert!(reopened.disabled_builtins().is_empty());
     });
 }

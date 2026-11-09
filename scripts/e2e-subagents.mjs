@@ -266,8 +266,9 @@ try {
     activeWithInherited.result?.subagents?.map((entry) => entry.id).join(", "),
   );
 
-  // The registry allows 64 user documents; the runtime catalog remains capped
-  // separately at 16 definitions when it builds the model-facing menu.
+  // The registry allows 64 user documents. Only 16 of them may be active at
+  // once, and that budget counts user handles only: the builtins sit outside
+  // it, so a full user registry can never push a builtin out of the catalog.
   let capError = null;
   for (let i = 0; i < 63; i += 1) {
     const extra = await call("agents.create", {

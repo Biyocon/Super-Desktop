@@ -599,9 +599,9 @@ describe("mergeSubagentDefinitions", () => {
     expect(merged.dropped).toEqual([]);
   });
 
-  it("caps the catalog and reports what it dropped", () => {
+  it("caps the user's own handles and reports what it dropped", () => {
     const many = Array.from({ length: MAX_SUBAGENT_DEFINITIONS + 2 }, (_, i) =>
-      definition({ name: `agent-${i}`, source: "builtin" }),
+      definition({ name: `agent-${i}`, source: "user" }),
     );
     const merged = mergeSubagentDefinitions(many);
 
@@ -610,6 +610,55 @@ describe("mergeSubagentDefinitions", () => {
       `agent-${MAX_SUBAGENT_DEFINITIONS}`,
       `agent-${MAX_SUBAGENT_DEFINITIONS + 1}`,
     ]);
+  });
+
+  it("never spends a builtin's place on a user document", () => {
+    // Regression: with 16+ user handles admitted first, the catalog cap used to
+    // evict `explorer`, `code-reviewer`, `test-runner`, `fixer` and
+    // `ui-designer`, leaving `Task` with no delegate and the Conductor view
+    // with no roles to render.
+    const builtins = [
+      "explorer",
+      "code-reviewer",
+      "test-runner",
+      "fixer",
+      "ui-designer",
+    ].map((name) => definition({ name, source: "builtin" }));
+    const users = Array.from({ length: MAX_SUBAGENT_DEFINITIONS + 5 }, (_, i) =>
+      definition({ name: `user-${i}`, source: "user" }),
+    );
+    const merged = mergeSubagentDefinitions([...users, ...builtins]);
+    const names = merged.definitions.map((d) => d.name);
+
+    for (const builtin of builtins) {
+      expect(names).toContain(builtin.name);
+    }
+    const admittedUsers = merged.definitions.filter((d) => d.source === "user");
+    expect(admittedUsers).toHaveLength(MAX_SUBAGENT_DEFINITIONS);
+    expect(merged.dropped).toEqual(
+      Array.from(
+        { length: 5 },
+        (_, i) => `user-${MAX_SUBAGENT_DEFINITIONS + i}`,
+      ),
+    );
+  });
+
+  it("lets a user document shadow a builtin without losing the handle", () => {
+    const merged = mergeSubagentDefinitions([
+      definition({ name: "explorer", source: "user", prompt: "tuned" }),
+      ...Array.from({ length: MAX_SUBAGENT_DEFINITIONS - 1 }, (_, i) =>
+        definition({ name: `user-${i}`, source: "user" }),
+      ),
+      definition({ name: "explorer", source: "builtin", prompt: "builtin" }),
+      definition({ name: "fixer", source: "builtin" }),
+    ]);
+
+    const explorer = merged.definitions.find((d) => d.name === "explorer");
+    expect(explorer?.prompt).toBe("tuned");
+    expect(merged.definitions.find((d) => d.name === "fixer")?.source).toBe(
+      "builtin",
+    );
+    expect(merged.dropped).toEqual([]);
   });
 });
 
