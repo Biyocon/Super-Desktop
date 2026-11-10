@@ -438,7 +438,10 @@ fn a_builtin_never_spends_a_user_place() {
                 .create(input(&format!("worker-{index}"), true))
                 .unwrap();
         }
-        assert_eq!(registry.set_builtin_enabled("fixer", true).unwrap(), "fixer");
+        assert_eq!(
+            registry.set_builtin_enabled("fixer", true).unwrap(),
+            "fixer"
+        );
         assert!(registry.disabled_builtins().is_empty());
         assert_eq!(
             registry.active_for(None).unwrap().len(),

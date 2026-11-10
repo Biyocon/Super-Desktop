@@ -19,6 +19,9 @@ const project = join(root, "project");
 const source = join(root, "package");
 const agents = join(root, "agents");
 await Promise.all([dataDir, project, source, agents].map((path) => mkdir(path, { recursive: true })));
+const libraryFixture = join(agents, "subagent-library", "customagents");
+await mkdir(libraryFixture, { recursive: true });
+await writeFile(join(libraryFixture, "project-reviewer.md"), '---\nname: project-reviewer\ndescription: Generic read-only library example for documentation screenshots\ntools: Read, Glob, Grep\n---\nInspect the requested project files and report evidence.\n');
 const originalAgents = process.env.PI_DESKTOP_AGENTS_DIR;
 process.env.PI_DESKTOP_AGENTS_DIR = agents;
 const binary = resolveHostBinary();
@@ -49,18 +52,32 @@ const { provider } = await host.call("providers.create", { name: "Pet fixture", 
 const synthesis = { providerId: provider.id, modelId: "tts-fixture", protocol: "openai_audio", voice: "alloy" };
 await host.call("settings.set", { language: "en", closeBehavior: "quit", keybindings: { toggleMini: null }, defaultProviderId: provider.id, defaultModelId: "pet-fixture", imageGeneration: { providerId: provider.id, modelId: "image-fixture" }, speech: { synthesize: synthesis } });
 const fixture = await host.call("session.create", { title: "Mini fixture", projectPath: project, providerId: provider.id, modelId: "pet-fixture" });
+const conductor = await host.call("session.create", { title: "Conductor topology — fixture", projectPath: project });
+const appendDemo = (message) => host.call("session.appendMessage", { sessionId: conductor.session.id, message: { createdAt: "2026-11-10T00:00:00.000Z", status: "complete", ...message } });
+await appendDemo({ id: "demo-user", role: "user", content: "Documentation fixture: show the full Conductor team. No live model calls are represented by this scene." });
+await appendDemo({ id: "demo-intro", role: "assistant", content: "Conductor topology demonstration using generic, seeded transcript data." });
+for (const [index, agent] of ["explorer", "strategist", "code-reviewer", "fixer", "test-runner", "integrator", "arbiter"].entries()) {
+  await appendDemo({ id: `demo-task-${index}`, role: "tool", content: "Read-only fixture report", toolName: "Task", toolCallId: `demo-call-${index}`, toolStatus: "success", toolArgs: { agent, description: `Review ${agent} evidence`, task: "Read-only documentation fixture" }, toolResult: { details: { delegationId: `demo-delegation-${index}`, status: "completed", durationMs: 1250 } } });
+}
+await appendDemo({ id: "demo-summary", role: "assistant", content: "All seven role cards are shown in this fixture. Production seven-agent acceptance is a separate test." });
 await host.stop();
 await copyFile(join(repo, "crates/host-core/assets/pets/hassan.webp"), join(source, "spritesheet.webp"));
 await writeFile(join(source, "pet.json"), JSON.stringify({ id: "test-hassan", displayName: "Imported Hassan", description: "Owner-owned test copy", spriteVersionNumber: 2, spritesheetPath: "spritesheet.webp" }));
 const { appDir, electronBinary } = resolveElectronBinary();
 const runtime = join(root, "native-state.json");
+const windowCommand = join(root, "window-size.json");
 const wrapper = join(root, "entry.cjs");
 await writeFile(wrapper, `const {app,dialog,BrowserWindow}=require('electron');
 const fs=require('node:fs');
 app.setPath('userData',${JSON.stringify(join(root, "profile"))});
 const nativePicker=dialog.showOpenDialog.bind(dialog);
 dialog.showOpenDialog=async (...args)=>args.at(-1)?.filters?.some(x=>x.name.includes('Pet manifest'))?{canceled:false,filePaths:[${JSON.stringify(join(source, "pet.json"))}]}:nativePicker(...args);
-let tick=setInterval(()=>{try{fs.writeFileSync(${JSON.stringify(runtime)},JSON.stringify(BrowserWindow.getAllWindows().filter(w=>!w.isDestroyed()).map(w=>({id:w.id,title:w.getTitle(),visible:w.isVisible(),bounds:w.getBounds(),top:w.isAlwaysOnTop(),sandbox:w.webContents.getLastWebPreferences().sandbox}))));}catch{}},100);
+let tick=setInterval(()=>{try{
+const windows=BrowserWindow.getAllWindows().filter(w=>!w.isDestroyed());
+const commandPath=${JSON.stringify(windowCommand)};
+if(fs.existsSync(commandPath)){const bounds=JSON.parse(fs.readFileSync(commandPath,'utf8'));const main=windows.find(w=>w.isVisible()&&!w.webContents.getURL().includes('surface='));if(main){main.setSize(bounds.width,bounds.height);fs.unlinkSync(commandPath);}}
+fs.writeFileSync(${JSON.stringify(runtime)},JSON.stringify(windows.map(w=>({id:w.id,title:w.getTitle(),visible:w.isVisible(),bounds:w.getBounds(),top:w.isAlwaysOnTop(),sandbox:w.webContents.getLastWebPreferences().sandbox}))));
+}catch(error){console.error(String(error));}},100);
 app.once('before-quit',()=>clearInterval(tick));
 require(${JSON.stringify(join(appDir, "out/main/index.js"))});
 `);
@@ -114,6 +131,10 @@ async function close(main) {
 const invoke = (page, channel, ...args) => page.evaluate(`window.piDesktop.invoke(${JSON.stringify(channel)},...${JSON.stringify(args)})`);
 const ok = async (page, channel, ...args) => { const result = await invoke(page, channel, ...args); assert.equal(result.ok, true, JSON.stringify(result)); return result.data; };
 const native = async () => JSON.parse(await readFile(runtime, "utf8"));
+const resizeMain = async (width, height) => {
+  await writeFile(windowCommand, JSON.stringify({ width, height }));
+  await waitFor(async () => (await native()).some(window => window.title === "Super-Desktop" && window.visible && Math.abs(window.bounds.width - width) <= 2 && Math.abs(window.bounds.height - height) <= 2), 10_000, "documentation window size");
+};
 const screenshot = async (page, name) => { const image = await page.send("Page.captureScreenshot", { format: "png" }); await writeFile(join(root, name), Buffer.from(image.data, "base64")); };
 const clickText = async (page, text) => {
   await waitFor(() => page.evaluate(`(() => { const element=[...document.querySelectorAll('button')].find(x=>(x.textContent.trim()===${JSON.stringify(text)}||x.querySelector('.pets-choice-name')?.textContent.trim()===${JSON.stringify(text)})&&!x.disabled);if(!element)return false;element.click();return true;})()`), 15_000, `button ${text}`);
@@ -232,6 +253,20 @@ try {
   await waitFor(() => main.evaluate(`document.body.innerText.includes('Local pet task fixture completed')`), 20_000, 'normal task transcript result');
   assert.equal((await ok(main, 'pi-desktop/pets/list')).pets.length, 2, 'task reply must not install a pet');
   check('AI review/cancel is free; explicit confirm launches normal targeted task with complete package prompt and transcript; no auto-install');
+  await main.evaluate(`document.querySelector('[data-sidebar-session-row="${conductor.session.id}"]').click()`);
+  await waitFor(() => main.evaluate(`document.body.innerText.includes('Conductor topology demonstration')`), 10_000, 'Conductor fixture loaded');
+  await resizeMain(1500, 1500);
+  await main.evaluate(`document.querySelector('button[aria-label="Collapse sidebar"]')?.click()`);
+  await main.evaluate(`document.querySelectorAll('button[aria-expanded="false"]').forEach(button=>{if(button.textContent.includes('Subagents completed'))button.click();})`);
+  await waitFor(() => main.evaluate(`document.querySelectorAll('.subagent-topology-node').length===7`), 10_000, 'full seven-role renderer topology');
+  await main.evaluate(`document.querySelector('.subagent-topology').scrollIntoView({block:'center'})`);
+  await screenshot(main, 'conductor-topology.png');
+  await resizeMain(1200, 800);
+  await ok(main, 'pi-desktop/mini/action', 'settings'); await clickText(main, 'Subagents');
+  await waitFor(() => main.evaluate(`document.body.innerText.includes('project-reviewer')`), 10_000, 'read-only library fixture');
+  await fill(main, 'input[placeholder="Search subagents"]', 'project-reviewer');
+  await screenshot(main, 'agent-library.png');
+  check('documentation screenshots render the full Conductor team and generic read-only library fixture');
   await ok(main, "pi-desktop/pets/preferences", { selectedPet: null });
   await close(main); main = await launch();
   const restored = await ok(main, "pi-desktop/pets/list");
@@ -239,7 +274,7 @@ try {
   assert.equal(restored.preferences.scale, 1.25); assert.equal(restored.pets.length, 2);
   await connectTarget((target) => target.type === "page" && target.url.includes("surface=mini"));
   check("restart retains explicit None, imported copy, Mini visibility and scale");
-  await writeFile(join(root, "result.json"), JSON.stringify({ results, root, candidate: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(), base: execFileSync("git", ["rev-parse", "origin/main"], { cwd: repo, encoding: "utf8" }).trim(), uncommittedCandidate: true, paidProviders: "not invoked", microphone: "external media fixture; no physical microphone", speechRequests, chatRequests: chatRequests.length }, null, 2));
+  await writeFile(join(root, "result.json"), JSON.stringify({ results, root, candidate: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(), base: execFileSync("git", ["rev-parse", "origin/main"], { cwd: repo, encoding: "utf8" }).trim(), uncommittedCandidate: execFileSync("git", ["status", "--porcelain"], { cwd: repo, encoding: "utf8" }).trim().length > 0, paidProviders: "not invoked", microphone: "external media fixture; no physical microphone", documentationScenes: "Conductor uses seeded transcript data; library uses a generic fixture", speechRequests, chatRequests: chatRequests.length }, null, 2));
   console.log(`MINI_PETS_E2E_PASS ${root}`);
 } catch (error) {
   if (main) {

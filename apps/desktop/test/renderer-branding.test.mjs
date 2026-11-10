@@ -36,7 +36,7 @@ test("renderer surfaces the Super-Desktop brand instead of the Codex shell brand
   assert.match(english, /shellName:\s*"Super-Desktop"/);
   assert.match(chinese, /shellName:\s*"Super-Desktop"/);
   assert.match(english, /placeholder:\s*"Ask Super-Desktop to help with anything"/);
-  assert.match(chinese, /placeholder:\s*"è®© Super-Desktop å¸®ä½ åšä»»ä½•äº‹"/);
+  assert.match(chinese, /placeholder:\s*"让 Super-Desktop 帮你做任何事"/);
   assert.doesNotMatch(english, /shellName:\s*"Codex"/);
   assert.doesNotMatch(chinese, /shellName:\s*"Codex"/);
   // Codex remains a supported external import source, not the app identity.

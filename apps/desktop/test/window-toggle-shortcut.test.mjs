@@ -93,7 +93,7 @@ test("the catalog ships one window toggle on Alt+Shift+W, with no summon chord",
   assert.equal(isReservedKeybinding("Mod+W", "darwin"), true);
   assert.deepEqual(
     windowGroup.map((shortcut) => shortcut.id),
-    ["toggleWindow", "resetZoom", "zoomIn", "zoomOut", "toggleFullScreen"],
+    ["toggleWindow", "toggleMini", "resetZoom", "zoomIn", "zoomOut", "toggleFullScreen"],
   );
 });
 

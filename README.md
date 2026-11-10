@@ -1,764 +1,184 @@
 <div align="center">
 
-<img src="docs/image/readme/logo.png" alt="PI-Desktop" width="108" />
+<img src="docs/image/readme/super-desktop/logo.png" alt="Super-Desktop — Biyocon" width="108" />
 
-# PI-Desktop
+# Super-Desktop
 
-### A modular desktop workspace for AI agents
+### Biyocon's local-first AI desktop, built on PI-Desktop
 
-**Bring projects, agents, models, plugins, and workflows into one persistent desktop environment.**
+Projects, model providers, tools and delegated agents in one persistent workspace.
 
-Local-first · Model-agnostic · Plugin-powered · macOS / Windows / Linux
+[![CI](https://github.com/Biyocon/Super-Desktop/actions/workflows/ci.yml/badge.svg)](https://github.com/Biyocon/Super-Desktop/actions/workflows/ci.yml)
+[![License](https://img.shields.io/github/license/Biyocon/Super-Desktop)](LICENSE)
 
-<br />
-
-[![Release](https://img.shields.io/github/v/release/vastsa/PI-Desktop?label=release)](https://github.com/vastsa/PI-Desktop/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/vastsa/PI-Desktop/total?label=downloads)](https://github.com/vastsa/PI-Desktop/releases)
-[![Stars](https://img.shields.io/github/stars/vastsa/PI-Desktop?style=flat\&label=stars)](https://github.com/vastsa/PI-Desktop/stargazers)
-[![CI](https://github.com/vastsa/PI-Desktop/actions/workflows/ci.yml/badge.svg)](https://github.com/vastsa/PI-Desktop/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/vastsa/PI-Desktop)](LICENSE)
-[![Reddit](https://img.shields.io/badge/Reddit-r%2FAIUO-FF4500?logo=reddit\&logoColor=white)](https://www.reddit.com/r/AIUO/)
-
-<br />
-
-**[Download](https://github.com/vastsa/PI-Desktop/releases/latest)** ·
-[Documentation](https://pi-docs.aiuo.net/) ·
-[Build a Plugin](docs/plugin-development.md) ·
-[Screenshots](docs/guide/screenshots.md) ·
-[简体中文](README.zh-CN.md)
-
-<br />
-
-<img src="docs/image/readme/home.webp" alt="PI-Desktop" width="94%" />
-
-<br />
-
-**Your projects stay local · Your models stay replaceable · Your workspace stays yours**
+[Our additions](#features-added-in-this-fork) · [Screenshots](#screenshots) · [Run from source](#run-from-source) · [Specification](docs/spec/README.md) · [Upstream PI-Desktop](https://github.com/vastsa/PI-Desktop)
 
 </div>
 
-> **Current release line: 0.15.x (Early Preview).**
+> **Development fork — not an installer release.** The application is named
+> **Super-Desktop** (previously Iqra-Desktop). Upstream PI-Desktop installers do
+> not include the additions below. Windows candidate checks have been run;
+> macOS/Linux support is inherited from upstream, not newly certified here.
 
----
+## Features added in this fork
 
-## Why PI-Desktop?
+| Addition | What is implemented | Where to find it |
+|---|---|---|
+| **Super-Desktop identity** | Product rename, Biyocon branding and fork-specific assets; technical application IDs remain unchanged. | Application shell and build metadata |
+| **Conductor team in chat** | Main coordinator plus seven specialist role portraits. Actual delegated tasks show their status; unused roles remain visible but dimmed. | Expanded delegation group in a conversation |
+| **Safe CustomAgents import** | Validated, idempotent import into a separate read-only library, collision/no-clobber protection and qualified library IDs. Existing active registry files are preserved. | `scripts/import-customagents.mjs` and Settings > Subagents |
+| **Selectable agent library** | Library agents start disabled and can be selected without overwriting local definitions. The runtime budget is **16 user handles**, with builtins outside that budget. Explicit builtin-off is respected. | Settings > Subagents |
+| **Virtual-pet gallery** | Search, bundled owner-supplied Hassan, explicit None, saved choice and animation previews. The welcome figure follows the selected pet. | Settings > Mini and virtual pets |
+| **Reviewed pet import** | Native picker, bounded validation, full image decode, preview, explicit confirmation and source-fingerprint revalidation. Imported bytes are copied into application-owned storage. | Import pet |
+| **Animated native Mini** | One transparent movable companion, v1/v2 sprite animation, sixteen v2 gaze poses, reduced motion, saved size/topmost/position, configurable shortcut and real selected-session activity. | Show Mini; default `Ctrl+Alt+P` (`Cmd+Alt+P` on macOS) |
+| **Draft-only dictation** | Explicit record/stop/cancel, editable transcription and Open draft/discard. Existing composer text is preserved; dictation **never sends automatically**. Reuses existing speech-provider storage. | Mini; provider setup on the Mini/pets Settings page |
+| **Confirmed AI pet creation** | Review and separate cost confirmation start a normal agent task with complete v2 package/preview/QA instructions and existing image tools. The result still requires reviewed import. | Create with AI… |
 
-Terminal agents are great at execution. IDE agents are great at living inside an editor.
+The local source collection used to validate the CustomAgents importer contained
+94 profiles. **Those profiles and any associated personal material are not bundled
+in this repository.** Use only sources you are authorized to import.
 
-PI-Desktop goes one step further:
+### Conductor roles
 
-> **Give AI agents a persistent, independent, and extensible desktop workspace of their own.**
+| Visual role | Task handle / source |
+|---|---|
+| Conductor | Main session, not a delegated agent |
+| Detective | `explorer` builtin |
+| Strategist | `strategist` user definition |
+| Devil's Advocate | `code-reviewer` builtin |
+| Headsman | `fixer` builtin |
+| Auditor | `test-runner` builtin |
+| Integrator | `integrator` user definition |
+| Arbiter | `arbiter` user definition |
 
-<table>
-<tr>
+A portrait does not make a role callable: the matching handle must be available.
+The graph represents a fan-out group, not a cumulative cross-turn execution graph.
+See the [read-only seven-role smoke-test guide](docs/project/conductor-smoke/README.md).
 
-<td width="25%" valign="top">
+## Screenshots
 
-### Independent Workspace
+These are captures of the actual isolated candidate renderer, not generated UI art.
+No user conversations, credentials or private agent profiles are shown. Capture
+provenance and SHA-256 hashes are listed in
+[the screenshot record](docs/image/readme/super-desktop/README.md).
 
-No dependency on a specific IDE or terminal.
+### Pet gallery and persistent preferences
 
-Projects, sessions, reviews, previews, and agents all live in their own workspace.
+![Super-Desktop pet gallery with Hassan and None](docs/image/readme/super-desktop/pets-gallery.png)
 
-</td>
+Bundled Hassan, explicit None, import and creation entry points, with native Mini preferences.
 
-<td width="25%" valign="top">
+### Mini and editable dictation draft
 
-### Plugin-Powered
+<img src="docs/image/readme/super-desktop/mini-draft.png" alt="Hassan Mini with an edited draft, Open draft and Discard controls" width="380" />
 
-Plugins extend more than the agent.
+Transcription shown above came from a **loopback speech fixture and external media
+fixture**, not a physical microphone. Open draft is explicit and never submits a prompt.
 
-Add panels, views, widgets, tools, MCP servers, themes, and background services.
+### Conductor team in the conversation
 
-</td>
+![Conductor coordinator and a visible portion of its scrollable role roster](docs/image/readme/super-desktop/conductor-topology.png)
 
-<td width="25%" valign="top">
+**Seeded transcript fixture, cropped to the chat panel:** the roster contains
+seven role cards; this capture shows its visible portion and coordinator. It is
+not a claim that seven production-provider agents executed successfully.
+The manual/live seven-agent acceptance remains a separate test.
 
-### Agent Orchestration
+### Read-only agent library
 
-One agent is not always enough.
+![Subagents Settings with a generic disabled library profile](docs/image/readme/super-desktop/agent-library.png)
 
-Delegate to Subagents or coordinate full Worker Sessions in parallel.
+**Generic fixture profile:** illustrates the library controls without publishing
+the owner's original CustomAgents content.
 
-</td>
+## Inherited from upstream
 
-<td width="25%" valign="top">
+The existing PI-Desktop foundation supplies Agent / Plan / Goal modes, streaming
+conversations, persistent local history, multiple model providers, permission-gated
+tools, project/file views, plugins, Skills, MCP integrations, Worker Sessions,
+image-generation tools and speech services. These are upstream capabilities,
+not all newly authored features of this fork.
 
-### Model Freedom
+- [Architecture](docs/spec/02-architecture/01-architecture.md)
+- [Plugin development](docs/plugin-development.md)
+- [Upstream documentation](https://pi-docs.aiuo.net/)
+- [Upstream screenshot guide](docs/guide/screenshots.md)
 
-Cloud models, local models, custom gateways, compatible APIs.
+## Verification and limits
 
-Switch models without rebuilding your workflow.
+The Mini/pets candidate has host, shared-contract, component, locale and actual
+isolated Electron tests. The native harness checks import/restart, narrow preload
+permissions, Mini preferences, draft edit/open without automatic submission,
+cleanup, confirmed normal-task creation and documentation fixture views.
 
-</td>
-
-</tr>
-</table>
-
-<div align="center">
-
-**It is not a wrapper around one model. It is not another IDE extension.**
-
-### It is a desktop platform for agent workflows.
-
-</div>
-
----
-
-## Plugins are part of the workspace, not an afterthought
-
-PI-Desktop keeps the Core focused.
-
-**Your actual workflow is assembled through extensions.**
-
-<table>
-<tr>
-
-<td width="33%" valign="top">
-
-### Agent
-
-Extend what the agent can do
-
-**Agent Tools**
-**Skills**
-**Completion**
-**pi Extensions**
-
-</td>
-
-<td width="33%" valign="top">
-
-### Workspace
-
-Extend the desktop itself
-
-**Commands**
-**Panels**
-**Work Panel Views**
-**Floating Widgets**
-**Themes**
-
-</td>
-
-<td width="33%" valign="top">
-
-### Platform
-
-Extend the runtime
-
-**MCP Servers**
-**Resident Services**
-**Plugin Message Bus**
-
-</td>
-
-</tr>
-</table>
-
-A plugin does not have to be “just another tool.”
-
-It can be an entire product:
-
-```text
-Voice Agent
-├── Floating Widget
-├── Speech Service
-├── Agent Tool
-└── Commands
-
-GitHub Workspace
-├── Work Panel
-├── MCP Server
-├── Agent Tools
-└── Background Service
-
-Session Analytics
-├── Dashboard
-├── Commands
-└── Workspace View
+```powershell
+node scripts/e2e-mini-pets.mjs
 ```
 
-### What can a plugin add?
-
-| Capability          | What it enables                                                |
-| ------------------- | -------------------------------------------------------------- |
-| **Command**         | Add actions to the global command system                       |
-| **Panel**           | Open a standalone plugin interface                             |
-| **Floating Widget** | Build voice orbs, status lights, timers, and other floating UI |
-| **Work Panel View** | Add new views to the right-side workspace                      |
-| **Agent Tool**      | Register tools callable by the agent                           |
-| **Completion**      | Use the models already configured by the user                  |
-| **Skill**           | Add reusable agent capabilities and workflows                  |
-| **Theme**           | Customize workspace appearance                                 |
-| **MCP Server**      | Connect local or remote MCP servers                            |
-| **Service**         | Run persistent background work                                 |
-| **Message Bus**     | Let plugins communicate with each other                        |
-
-Plugins can be distributed as `.piplug` packages or installed through the marketplace.
-
-<div align="center">
-
-### [Build your first plugin →](docs/plugin-development.md)
-
-</div>
-
----
-
-## One foundation, many workflows
-
-```text
-                         PI-Desktop
-                             │
-          ┌──────────────────┼──────────────────┐
-          │                  │                  │
-        Agent            Workspace           Platform
-          │                  │                  │
-     Agent Tools           Panels              MCP
-       Skills             Widgets            Services
-     Subagents             Views            Message Bus
-   pi Extensions          Themes
-          │                  │                  │
-          └──────────────────┼──────────────────┘
-                             │
-                       Your Workflow
-```
-
-PI-Desktop can simply be your coding agent.
-
-Or you can turn it into:
-
-**AI Development Workspace · Voice Agent · DevOps Console · GitHub Workspace · Data Assistant · Multi-Agent Control Center · Automation Platform**
-
-> **The Core provides the foundation. Plugins decide what your workspace becomes.**
-
----
-
-## Three ways to work
-
-<table>
-<tr>
-
-<td width="33%" valign="top">
-
-### Agent
-
-**Give it a task. Let it work.**
-
-Read code, edit files, run commands, test, and iterate.
-
-Best for day-to-day development.
-
-</td>
-
-<td width="33%" valign="top">
-
-### Plan
-
-**Review the approach before execution.**
-
-The agent studies the project first and produces an implementation plan.
-
-Best for refactors and high-risk changes.
-
-</td>
-
-<td width="33%" valign="top">
-
-### Goal
-
-**Define the outcome. Let the agent choose the path.**
-
-Lock the objective and acceptance criteria, then let the agent drive execution.
-
-Best for complex and long-running tasks.
-
-</td>
-
-</tr>
-</table>
-
-Privileged operations still pass through PI-Desktop's permission layer.
-
----
-
-## When one agent is not enough
-
-Complex work should not be forced into one context window.
-
-PI-Desktop provides two levels of delegation.
-
-### Subagents
-
-Delegate independent work to background agents:
-
-**Code exploration · Implementation · Test analysis · Research · Review**
-
-Each Subagent gets its own context and reports the result back to the parent agent.
-
-### Session Orchestrator
-
-For longer-lived work, delegate to full Worker Sessions.
-
-```text
-Main Session
-│
-├── Worker A
-│   └── Frontend
-│
-├── Worker B
-│   └── Backend
-│
-├── Worker C
-│   └── Tests
-│
-└── Worker D
-    └── Review
-```
-
-Workers are full PI-Desktop sessions:
-
-**Independent context · Independent execution · Directly inspectable · Reusable · Full transcript**
-
-<table>
-<tr>
-
-<td width="50%">
-
-<img src="docs/image/readme/session-orchestrator-overview.png" alt="Session Orchestrator" />
-
-<p align="center"><sub>Coordinate multiple Worker Sessions from one parent Session</sub></p>
-
-</td>
-
-<td width="50%">
-
-<img src="docs/image/readme/session-orchestrator-worker.png" alt="Worker Session" />
-
-<p align="center"><sub>Each Worker remains a full, inspectable Session</sub></p>
-
-</td>
-
-</tr>
-</table>
-
-<div align="center">
-
-**Move from “one agent helps me code” to “multiple agents divide and complete the work.”**
-
-</div>
-
----
-
-## Built for work that lasts
-
-PI-Desktop is organized around:
-
-<div align="center">
-
-### Project → Session → Agent → Work
-
-</div>
-
-—not around disposable chat threads.
-
-You can:
-
-* Manage multiple projects and sessions
-* Pin, archive, branch, and search sessions
-* Queue prompts while an agent is already running
-* Reference project files with `@`
-* Use slash commands
-* Review diffs
-* Inspect command output
-* Work with the right-side Work Panel
-* Keep streaming checkpoints
-* Recover interrupted work whenever possible
-
-**A Session can continue across multiple app launches.**
-
----
-
-## See what the agent is doing
-
-<table>
-<tr>
-
-<td width="50%">
-
-<img src="docs/image/readme/chat_en.png" alt="PI-Desktop Session" />
-
-<p align="center"><sub>Persistent Sessions instead of disposable chats</sub></p>
-
-</td>
-
-<td width="50%">
-
-<img src="docs/image/readme/model_en.png" alt="PI-Desktop Model" />
-
-<p align="center"><sub>Switch models and reasoning levels inside the Session</sub></p>
-
-</td>
-
-</tr>
-
-<tr>
-
-<td width="50%">
-
-<img src="docs/image/readme/plugins_en.png" alt="PI-Desktop Plugins" />
-
-<p align="center"><sub>A plugin marketplace that extends both the agent and the desktop</sub></p>
-
-</td>
-
-<td width="50%">
-
-<img src="docs/image/readme/addmodel_en.png" alt="PI-Desktop Providers" />
-
-<p align="center"><sub>Connect your own provider, gateway, or local model</sub></p>
-
-</td>
-
-</tr>
-</table>
-
-<div align="center">
-
-**[Explore more screenshots →](docs/guide/screenshots.md)**
-
-</div>
-
----
-
-## Swap the model, keep the workflow
-
-PI-Desktop does not tie your workflow to a single model vendor.
-
-Use:
-
-**OpenAI · Anthropic · OpenAI-Compatible APIs · Custom Gateways · Ollama · LM Studio · Local Models**
-
-Configure each model independently:
-
-**Provider · Model ID · Context Window · Output Limit · Reasoning / Thinking · Temperature · OAuth · API Key · Endpoint**
-
-Different Sessions can use different models.
-
-The same Session can switch models at any time.
-
-```text
-Planning     → Model A
-Coding       → Model B
-Review       → Model C
-Private Task → Local Model
-```
-
-> **The model is a replaceable component of the workflow — not the workflow itself.**
-
----
-
-## Already using another coding agent?
-
-Keep your existing work.
-
-PI-Desktop can import local sessions from:
-
-**Claude Code · Codex · OpenCode · Pi**
-
----
-
-## Local-first
-
-PI-Desktop does not require you to move your development environment into our cloud.
-
-| Data                 | Default behavior                          |
-| -------------------- | ----------------------------------------- |
-| Projects             | Local                                     |
-| Sessions             | Local                                     |
-| Settings             | Local                                     |
-| Logs                 | Local                                     |
-| API credentials      | OS Keychain                               |
-| PI-Desktop telemetry | None                                      |
-| Model requests       | Sent directly to your configured provider |
-
-**No mandatory PI-Desktop account.**
-
-**No mandatory PI-Desktop relay.**
-
-When using a remote model, the context required for the request is sent directly to that provider.
-
----
-
-## You control the permissions
-
-Agents can read files, edit code, run commands, call tools, use extensions, and delegate work.
-
-Privileged operations still pass through the permission layer:
-
-```text
-Agent
-  ↓
-Tool Request
-  ↓
-Permission Layer
-  ↓
-Allow / Ask / Deny
-  ↓
-Execution
-```
-
-**You decide how much autonomy each Session gets.**
-
----
-
-## Get started
-
-<table>
-<tr>
-
-<td width="25%" valign="top">
-
-### 01
-
-**Download**
-
-Install PI-Desktop
-
-</td>
-
-<td width="25%" valign="top">
-
-### 02
-
-**Connect a model**
-
-Configure a Provider
-
-</td>
-
-<td width="25%" valign="top">
-
-### 03
-
-**Open a project**
-
-Choose a local repository
-
-</td>
-
-<td width="25%" valign="top">
-
-### 04
-
-**Start working**
-
-Agent / Plan / Goal
-
-</td>
-
-</tr>
-</table>
-
-<div align="center">
-
-### [Download PI-Desktop →](https://github.com/vastsa/PI-Desktop/releases/latest)
-
-**macOS · Windows · Linux**
-
-</div>
-
-### Packages
-
-| Platform | Architecture  | Package                                 |
-| -------- | ------------- | --------------------------------------- |
-| macOS    | Apple Silicon | `.dmg` / `.zip`                         |
-| macOS    | Intel         | `.dmg` / `.zip`                         |
-| Windows  | x64           | Installer / `.zip`                      |
-| Linux    | x64           | `.AppImage` / `.deb` / `.rpm` / `.asar` |
-
-macOS releases are signed with a Developer ID certificate and notarized by Apple.
-
-<details>
-<summary><strong>Linux Compatibility</strong></summary>
-
-<br />
-
-Linux x64 packages require **glibc 2.35+**.
-
-Common supported distributions include:
-
-* Ubuntu 22.04+
-* Debian 12+
-* Fedora 36+
-
-Check your current version with:
-
-```bash
-ldd --version
-```
-
-</details>
-
----
-
-## Built on Pi
-
-PI-Desktop is built on the [pi](https://github.com/badlogic/pi-mono) ecosystem.
-
-The Agent Runtime uses:
-
-* `pi-ai`
-* `pi-agent-core`
-
-> **Pi provides the Agent Engine. PI-Desktop builds the persistent desktop workspace, sessions, permissions, plugins, and agent orchestration around it.**
-
----
-
-## For Developers
-
-PI-Desktop can also serve as a host platform for building agent products.
-
-You can build:
-
-**Plugins · MCP Servers · Skills · Agent Tools · pi Extensions · Themes · Panels · Floating Widgets · Background Services**
-
-### Plugin quick start
-
-Built-in templates include:
-
-* `panel-basic`
-* `agent-tool-basic`
-* `skill-pack`
-* `full-demo`
-
-Plugins can be created and loaded directly as Development Plugins.
-
-**[Plugin Development Guide →](docs/plugin-development.md)**
-
-### Run from source
-
-<details>
-<summary><strong>Development Setup</strong></summary>
-
-<br />
-
-#### Requirements
-
-* Node.js `>=22.19`
-* pnpm `>=10`
-* Stable Rust Toolchain
-
-#### Start
-
-```bash
-git clone https://github.com/vastsa/PI-Desktop.git
-cd PI-Desktop
-
-pnpm install
-
-cargo build -p host-core
+Build the candidate first. The harness uses separate data/profile/project/agent
+paths, loopback speech/model endpoints and external picker/media fixtures.
+It must not use your running app or active registry as test data.
+
+**Not claimed:** production speech accuracy, physical microphone acceptance,
+paid AI-generated atlas quality, or fresh macOS/Linux native QA. Generated pets
+still need owner review of motion previews/contact sheets/QA before import.
+A successful task reply alone never installs a pet.
+
+Known follow-up: the Subagents Settings client-side active counter/activation guard
+still counts builtins; host/runtime correctly enforce 16 **user** handles. Do not
+work around it by disabling unrelated agents or editing activation files manually.
+
+The earlier GIF-only home-mascot experiment is preserved on
+[`archive/hassan-home-mascot`](https://github.com/Biyocon/Super-Desktop/tree/archive/hassan-home-mascot).
+It is superseded by the selectable atlas-based pet feature and is **not merged over it**.
+
+## Run from source
+
+Use Node.js 24, pnpm 10+ and stable Rust. This is a source-development path, not an
+installer or auto-update release.
+
+```powershell
+git clone https://github.com/Biyocon/Super-Desktop.git
+cd Super-Desktop
+pnpm install --frozen-lockfile
+cargo build -p host-core --locked
 pnpm build:js
 
-pnpm dev
+# Keep this fork separate from any installed PI-Desktop data and Electron profile.
+$data = Join-Path $env:LOCALAPPDATA 'Super-Desktop-dev'
+$env:PI_DESKTOP_DATA_DIR = $data
+cd apps/desktop
+pnpm exec -- electron-vite dev -- "--user-data-dir=$data\electron-profile"
 ```
 
-#### Validate
+The technical application ID is retained for compatibility. Do not point this
+checkout at an installed app's data/profile, and never use installed PI-Desktop
+host processes as disposable test processes.
 
-```bash
-pnpm typecheck
+## Development checks
+
+```powershell
+pnpm --filter @pi-desktop/desktop typecheck
 pnpm lint
-pnpm test
+node scripts/check-architecture.mjs
+pnpm -r --if-present test
+cargo fmt --all -- --check
+cargo clippy --workspace --all-targets --all-features
+cargo test -p host-core --locked
 ```
 
-</details>
+[Contribution rules](AGENTS.md) · [Mini/pets spec](docs/spec/04-ux/mini-and-virtual-pets.md) ·
+[Feature history and delivery notes](docs/project/super-desktop-features.md) ·
+[E2E plan](docs/spec/06-delivery/04-e2e-test-plan.md) ·
+[Issues](https://github.com/Biyocon/Super-Desktop/issues)
 
-### Documentation
+## Upstream credit and license
 
-[Documentation](https://pi-docs.aiuo.net/) ·
-[Architecture](docs/spec/02-architecture/01-architecture.md) ·
-[Specification](docs/spec/README.md) ·
-[Plugin Development](docs/plugin-development.md) ·
-[E2E Test Plan](docs/spec/06-delivery/04-e2e-test-plan.md) ·
-[Release Runbook](docs/spec/06-delivery/06-release-runbook.md) ·
-[AGENTS.md](AGENTS.md)
+Super-Desktop is a fork of [vastsa/PI-Desktop](https://github.com/vastsa/PI-Desktop),
+built on the [pi ecosystem](https://github.com/badlogic/pi-mono). Original authors'
+work and notices remain attributed to them. This README separates Biyocon's fork
+additions from that inherited foundation.
 
----
-
-## Contributing
-
-Contributions are welcome:
-
-**Issues · Pull Requests · Plugins · Skills · MCP Integrations · Documentation · Translations**
-
-For standalone capabilities, consider one question first:
-
-> **Would this be better as a Plugin?**
-
-Keep the Core focused. Let the ecosystem grow.
-
-**[Report an Issue](https://github.com/vastsa/PI-Desktop/issues/new/choose)** ·
-[Open Issues](https://github.com/vastsa/PI-Desktop/issues) ·
-[Build a Plugin](docs/plugin-development.md)
-
----
-
-## Project Trend
-
-<div align="center">
-
-<a href="https://trendshift.io/repositories/178787?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-178787">
-<img src="https://trendshift.io/api/badge/repositories/178787" alt="PI-Desktop on Trendshift" width="230" height="51" />
-</a>
-
-</div>
-
----
-
-## Friends
-
-[Linux.Do](https://linux.do/) — A new ideal community
-
----
-
-## Model Acknowledgements
-
-> **Not by a lone genius, but by a token-powered construction crew.**
-
-PI-Desktop has been built with the help of models from multiple providers.
-
-More than **27 billion tokens** have been used across development, refactoring, review, design, and debugging.
-
-Thanks to every human contributor — and every model that helped us build it.
-
----
-
-## License
-
-PI-Desktop is licensed under the **GNU Lesser General Public License v3.0**.
-
-See [LICENSE](LICENSE) for details.
-
----
-
-<div align="center">
-
-<img src="docs/image/readme/logo.png" alt="PI-Desktop" width="72" />
-
-## PI-Desktop
-
-### Build your own Agent workspace.
-
-**Your models · Your agents · Your plugins · Your workspace**
-
-<br />
-
-**[Download](https://github.com/vastsa/PI-Desktop/releases/latest)** ·
-[Documentation](https://pi-docs.aiuo.net/) ·
-[Build a Plugin](docs/plugin-development.md)
-
-<br /><br />
-
-<sub>Local-first · Model-agnostic · Plugin-powered</sub>
-
-</div>
+The project retains the upstream **LGPL-3.0** license. See [LICENSE](LICENSE).
+Hassan is owner-supplied artwork; see its [provenance](crates/host-core/assets/pets/README.md).
+No ChatGPT builtin pet gallery or private Pets/Library APIs are included.
