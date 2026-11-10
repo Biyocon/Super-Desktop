@@ -2,6 +2,14 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const frEntries: ChangelogEntry[] = [
   {
+    version: "0.15.7",
+    highlights: [
+      "Super-Desktop pour Windows utilise sa propre identité d’installation et de données sans migrer PI-Desktop ni les profils de développement.",
+      "Ajoute Mini avec Hassan ou sans animal, les imports confirmés et la dictée en brouillon uniquement ; conserve les résultats Conductor et le budget de 16 agents utilisateur.",
+      "Le candidat Windows 0.15.7-super.1 non signé est interne et attend l’acceptation ; installation en invité, dictée physique et qualité des animaux générés ne sont pas acceptées.",
+    ],
+  },
+  {
     "version": "0.15.6",
     "date": "2026-09-23",
     "highlights": [

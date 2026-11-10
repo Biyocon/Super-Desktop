@@ -103,7 +103,9 @@ test("the chained write step produces a package.json Node will treat as ESM", as
       'dist-bundle/package.json must declare {"type":"module"} so sidecar.js loads as ESM',
     );
   } finally {
-    await rm(workDir, { recursive: true, force: true });
+    // Windows can briefly retain a shell child's cwd handle after exit.
+    // Retry cleanup only; a persistent lock still fails this test.
+    await rm(workDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 100 });
   }
 });
 

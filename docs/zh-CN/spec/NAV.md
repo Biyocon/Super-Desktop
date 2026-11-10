@@ -79,6 +79,7 @@
 - [05-change-checklist.md](/zh-CN/spec/06-delivery/05-change-checklist)
 - [06-release-runbook.md](/zh-CN/spec/06-delivery/06-release-runbook)
 - [07-remote-control-rollout.md](/zh-CN/spec/06-delivery/07-remote-control-rollout)
+- [windows-internal-release.md](/zh-CN/spec/06-delivery/windows-internal-release)
 
 ## 7. 插件
 - [README.md](/zh-CN/spec/07-plugins/README)

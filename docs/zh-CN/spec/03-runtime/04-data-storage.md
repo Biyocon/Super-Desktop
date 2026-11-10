@@ -38,10 +38,10 @@
 
 ## 2. 文件布局
 
-正式打包版把上述目录树放在 `~/.pi-desktop`；开发构建放在 `~/.pi-desktop-dev`，
-因为正式版与 `pnpm dev` 是两个需要同时运行的安装（D599、ADR 0094）。
-`PI_DESKTOP_DATA_DIR` 会整体替换任一默认根目录，并在作为子进程环境变量传给
-host-core 之前被解析为绝对路径。
+Windows Super-Desktop 的正式打包版使用 `~/.super-desktop`，开发版使用
+`~/.super-desktop-dev`，不自动迁移。macOS/Linux 保留 `~/.pi-desktop` 与
+`~/.pi-desktop-dev`。下方示例使用非 Windows 根目录，Windows 内部结构相同。
+`PI_DESKTOP_DATA_DIR` 仍整体替换根目录并在传给 host-core 前解析为绝对路径。
 
 ```text
 ~/.pi-desktop/

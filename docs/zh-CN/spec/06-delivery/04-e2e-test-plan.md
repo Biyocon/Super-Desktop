@@ -1,5 +1,16 @@
 # 04. E2E 测试 Plan
 
+## Super-Desktop Windows 内部候选验收
+
+`WIN-SUPER-001`：对最终 NSIS 解包内容运行 `node scripts/e2e-windows-package.mjs`，
+验证 host/runtime/preload 字节匹配、版本、沙箱、隔离默认数据、禁用更新、单实例、
+设置/会话/宠物选择的重启保留及原始 Hassan 字节；不调用 provider。
+`WIN-SUPER-002`：只在任务新建且使用已有合法 Windows 镜像的 Hyper-V 客体中，
+安装、从明确较低的同身份基线升级并卸载；检查 UI/文件/注册/进程、fixture ID/哈希及截图。
+缺少镜像即阻塞，绝不改为主机安装。见 [Windows 规范](windows-internal-release.md)。
+真实听写与生成宠物质量仍未验收；实体多显示器/断开测试推迟。
+
+
 > **翻译说明：** 本页是与 [英文源规格](/spec/06-delivery/04-e2e-test-plan) 一一对应的机器辅助翻译。代码、协议字段和标识符保持原文；如翻译与英文源事实有歧义，以英文版本为准。
 
 

@@ -30,9 +30,9 @@ Default runtime level:
 | plugin | per-plugin logs | `~/.pi-desktop/plugins/logs/<id>.log` |
 
 
-The `~/.pi-desktop` paths above are the packaged installation's. A development
-build writes the same tree under `~/.pi-desktop-dev`, and `PI_DESKTOP_DATA_DIR`
-replaces either root (D599).
+The example `.pi-desktop`/`.pi-desktop-dev` roots above apply to macOS/Linux.
+Windows Super-Desktop writes the identical log tree under `.super-desktop` or
+`.super-desktop-dev`; `PI_DESKTOP_DATA_DIR` replaces either root (D599).
 `app`, `host`, and `agent` are NDJSON files written by the Electron main
 `Logger` (`apps/desktop/electron/main/logger.ts`). Host and agent stderr lines
 are wrapped into records on their channel. The audit channel is stored in

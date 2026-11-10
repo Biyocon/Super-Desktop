@@ -1,5 +1,19 @@
 # 04. E2E Test Plan
 
+## Super-Desktop internal Windows candidate qualification
+
+`WIN-SUPER-001`: run `node scripts/e2e-windows-package.mjs` against the final
+unpacked NSIS payload. Verify byte-matched packaged host/runtime/preloads,
+version, sandbox, isolated default data root, disabled updater, single-instance,
+settings/session/pet restart and exact bundled Hassan bytes without providers.
+`WIN-SUPER-002`: install, upgrade from an identified lower same-identity baseline,
+and uninstall only inside a new task-owned Hyper-V guest using an existing
+lawful Windows image; inspect UI/files/registration/processes, fixture IDs/hashes
+and screenshots. Missing image means blocked, never substitute host installation.
+See [Windows contract](windows-internal-release.md). Physical dictation and
+generated-pet quality remain unaccepted; physical multi-monitor/disconnect is deferred.
+
+
 > Scope: MVP acceptance scenarios plus current shipped product increments for PI-Desktop
 > Status: Accepted (protocol/Electron automation is active; full desktop Playwright remains planned)
 > Cross-references: [acceptance-criteria](02-acceptance-criteria.md) · [milestones](01-mvp-milestones.md) · [ai-development-workflow](03-ai-development-workflow.md) · [change-checklist](05-change-checklist.md)

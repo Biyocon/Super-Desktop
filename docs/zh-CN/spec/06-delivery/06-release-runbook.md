@@ -26,13 +26,12 @@
 应用程序菜单中的 PI-Desktop 并使用本机中的规范图标
 关于面板。运行时还将 `build/icon_1024.png` 应用于 Dock。库存
 `node_modules` 下的文件永远不会被修改。 Windows/Linux 不断发展
-正常的 electro-vite 可执行文件。尽管如此，Windows Main 还是注册了
-之前 NSIS 包使用的相同 `net.aiuo.pi-desktop` AppUserModelID
-Electron 准备就绪，防止库存主机身份拥有本机
-通知或任务栏组。 Windows 封装另外引脚
-`PI-Desktop` 可执行文件和“开始”菜单快捷方式名称。启动器设置
-`PI_DESKTOP_DEV=1` 因此运行时打包检查会禁用更新传送
-并保留开发人员工作区默认值，尽管有品牌可执行文件名称。
+正常的 electron-vite 可执行文件。Windows Main 在就绪前注册永久的分支
+AppUserModelID `io.github.biyocon.super-desktop`。显式选择的
+`electron-builder.windows.cjs` 为 NSIS、`Super-Desktop.exe` 与快捷方式设置独立身份；
+macOS/Linux 保留原有标识符。启动器设置 `PI_DESKTOP_DEV=1`，禁用更新并使用开发数据。
+独立目录、未签名警告及必须在虚拟机中完成的验收见
+[Windows 内部候选规范](windows-internal-release.md)。
 Electron 43+ 上的首次 `pnpm dev` 会按需下载 Electron 二进制文件
 （该包不再在 `pnpm install` 期间安装它）。
 打包通道在 macOS 上通过 electron-builder 使用 `build/icon.icns`，并在

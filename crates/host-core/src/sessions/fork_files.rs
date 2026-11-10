@@ -46,14 +46,27 @@ fn reference_start(prefix: &str) -> bool {
 }
 
 fn replace_reference(text: &mut String, source: &str, target: &str) -> bool {
+    // Windows accepts mixed separators, including paths assembled by Path::join.
+    // ASCII separator substitution preserves byte offsets into the original text.
+    #[cfg(windows)]
+    let (matching_text, matching_source) = (text.replace('\\', "/"), source.replace('\\', "/"));
+    #[cfg(windows)]
+    let matches = matching_text.match_indices(matching_source.as_str());
+    #[cfg(not(windows))]
+    let matches = text.match_indices(source);
     let mut result = String::new();
     let mut start = 0;
     let mut changed = false;
-    for (offset, _) in text.match_indices(source) {
+    for (offset, _) in matches {
         let end = offset + source.len();
         if reference_start(&text[..offset]) && reference_end(&text[end..]) {
             result.push_str(&text[start..offset]);
-            result.push_str(target);
+            if cfg!(windows) && !text[offset..end].contains('\\') {
+                // Keep renderer references in their existing forward-slash style.
+                result.push_str(&target.replace('\\', "/"));
+            } else {
+                result.push_str(target);
+            }
             start = end;
             changed = true;
         }
@@ -154,16 +167,6 @@ pub(super) fn preserve(
                 referenced |= rewrite(records, compactions, &canonical_path, &target_path);
             }
         }
-        // Renderer path references may use forward slashes on Windows.
-        #[cfg(windows)]
-        {
-            referenced |= rewrite(
-                records,
-                compactions,
-                &source_path.replace('\\', "/"),
-                &target_path.replace('\\', "/"),
-            );
-        }
         if !referenced {
             continue;
         }
@@ -241,7 +244,12 @@ mod tests {
             &mut compactions,
         )
         .unwrap();
-        let target = dir.path().join("scratch/child/pasted/input.txt");
+        let target = dir
+            .path()
+            .join("scratch")
+            .join("child")
+            .join("pasted")
+            .join("input.txt");
         assert_eq!(fs::read_to_string(&target).unwrap(), "bytes");
         assert_eq!(
             records[0].blocks[0]["ref"],
@@ -262,6 +270,82 @@ mod tests {
         drop(guard);
         assert!(!dir.path().join("scratch/child").exists());
         assert_eq!(fs::read_to_string(file).unwrap(), "bytes");
+    }
+
+    #[cfg(windows)]
+    #[test]
+    fn copies_windows_references_with_native_forward_and_mixed_separators() {
+        let dir = tempfile::tempdir().unwrap();
+        let pasted = scratch::session_dir(dir.path(), "source")
+            .unwrap()
+            .join("pasted");
+        fs::create_dir_all(&pasted).unwrap();
+        let file = pasted.join("first note.txt");
+        fs::write(&file, "owned bytes").unwrap();
+        let target = scratch::session_dir(dir.path(), "child")
+            .unwrap()
+            .join("pasted")
+            .join("first note.txt");
+        let native = file.to_string_lossy().into_owned();
+        let canonical = file.canonicalize().unwrap().to_string_lossy().into_owned();
+        let target_native = target.to_string_lossy().into_owned();
+        let target_forward = target_native.replace('\\', "/");
+        let variants = [
+            (native.clone(), target_native.clone()),
+            (native.replace('\\', "/"), target_forward.clone()),
+            (
+                format!(
+                    "{}/scratch/source\\pasted/first note.txt",
+                    dir.path().display()
+                ),
+                target_native.clone(),
+            ),
+            (canonical.clone(), target_native),
+            (canonical.replace('\\', "/"), target_forward),
+        ];
+        let mut records: Vec<_> = variants
+            .iter()
+            .map(|(reference, _)| {
+                let mut record = message(json!({
+                    "ref": reference,
+                    "text": format!("π Read @\"{reference}\" twice @{reference}"),
+                    "suffix": format!("{reference}.bak"),
+                    "prefix": format!("x{reference}"),
+                    "unrelated": "C:\\keep\\this"
+                }));
+                record.meta = Some(json!({"path": reference}));
+                record
+            })
+            .collect();
+        preserve(dir.path(), "source", "child", &mut records, &mut [])
+            .unwrap()
+            .commit();
+        assert_eq!(fs::read_to_string(&target).unwrap(), "owned bytes");
+        for (record, (reference, expected)) in records.iter().zip(&variants) {
+            assert_eq!(record.blocks["ref"], expected.as_str());
+            assert_eq!(
+                record.blocks["text"],
+                format!("π Read @\"{expected}\" twice @{expected}")
+            );
+            assert_eq!(record.meta.as_ref().unwrap()["path"], expected.as_str());
+            assert_eq!(record.blocks["suffix"], format!("{reference}.bak"));
+            assert_eq!(record.blocks["prefix"], format!("x{reference}"));
+            assert_eq!(record.blocks["unrelated"], "C:\\keep\\this");
+        }
+        assert_eq!(fs::read_to_string(file).unwrap(), "owned bytes");
+    }
+
+    #[cfg(not(windows))]
+    #[test]
+    fn backslashes_are_not_path_separators_on_unix() {
+        let mut text = "Read /scratch/source/pasted/note\\name.txt".to_string();
+        let original = text.clone();
+        assert!(!replace_reference(
+            &mut text,
+            "/scratch/source/pasted/note/name.txt",
+            "/scratch/child/pasted/note/name.txt"
+        ));
+        assert_eq!(text, original);
     }
 
     #[test]

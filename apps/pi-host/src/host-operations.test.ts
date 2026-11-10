@@ -1,6 +1,6 @@
 import { mkdtemp, realpath, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { RacpError } from "@pi-desktop/agent-host";
@@ -60,7 +60,7 @@ describe("pi-host operations over host-core", () => {
       browseRoot: root,
     });
     const listed = await operations.sessions.list();
-    expect(listed[0]).toMatchObject({ id: "s1", workspaceLabel: root.split("/").pop() });
+    expect(listed[0]).toMatchObject({ id: "s1", workspaceLabel: basename(root) });
     const created = await operations.sessions.create({ title: "T", projectId: "7", permissionMode: "auto" }, { subject: "d", roles: ["owner"] });
     expect(created.permissionMode).toBe("auto");
     expect(calls.find((call) => call.method === "session.create")?.params).toMatchObject({ projectPath: root });
@@ -88,6 +88,11 @@ describe("pi-host operations over host-core", () => {
     const nested = await operations.projects.browse(join(root, "work"));
     expect(nested.entries.map((entry) => entry.name)).toEqual(["app"]);
     expect(nested.parent).toBeDefined();
+    const sibling = `${root}-sibling`;
+    await mkdir(sibling);
+    dirs.push(sibling);
+    await expect(operations.projects.browse(sibling)).rejects.toMatchObject({ code: "REMOTE_PATH_FORBIDDEN" });
+    await expect(operations.projects.browse(join(root, "work", "..", ".."))).rejects.toMatchObject({ code: "REMOTE_PATH_FORBIDDEN" });
     await expect(operations.projects.browse("/")).rejects.toMatchObject({ code: "REMOTE_PATH_FORBIDDEN" });
   });
 

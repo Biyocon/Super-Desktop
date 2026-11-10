@@ -1,5 +1,18 @@
 # Unreleased changes
 
+## Internal Windows candidate 0.15.7-super.1 — awaiting user acceptance
+
+- Permanent separate Windows identity, executable, NSIS/shortcut names and
+  default profiles; no PI-Desktop or development-profile migration. macOS/Linux
+  identifiers and data roots are unchanged.
+- Fix mixed-separator fork attachment rewrites and native Windows browse-root
+  containment; make test fixtures path-portable without weakening trust guards.
+- Local unsigned NSIS preparation only: no public release, tags or updaterfeed.
+  Guest install/upgrade/uninstall is blocked without an existing lawful image.
+  Physical dictation/generated-pet quality remain unaccepted; mixed-monitor and
+  disconnect acceptance is deferred. See [candidate record](windows-internal-release/README.md).
+
+
 - Mini regression coverage now includes permission denial, a missing microphone,
   provider failure/retry, recording cancellation, Discard and Open draft over
   existing text plus a real imported attachment. The isolated native harness

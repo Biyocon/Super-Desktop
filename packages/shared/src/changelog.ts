@@ -30,6 +30,14 @@ export type ChangelogEntry = {
 
 const enEntries: ChangelogEntry[] = [
   {
+    version: "0.15.7",
+    highlights: [
+      "Super-Desktop for Windows uses its own installation and data identity without migrating PI-Desktop or development profiles.",
+      "Add Mini with Hassan or None, reviewed pet imports and draft-only dictation; preserve Conductor task outcomes and the 16-user agent budget.",
+      "The unsigned 0.15.7-super.1 Windows candidate is internal and awaits user acceptance; guest installation, physical dictation and generated-pet quality are not accepted.",
+    ],
+  },
+  {
     version: "0.15.6",
     date: "2026-09-23",
     highlights: [
@@ -843,6 +851,14 @@ const enEntries: ChangelogEntry[] = [
 
 const zhCNEntries: ChangelogEntry[] = [
   {
+    version: "0.15.7",
+    highlights: [
+      "Windows 版 Super-Desktop 使用独立的安装与数据身份，不迁移 PI-Desktop 或开发配置。",
+      "新增支持 Hassan 或不选宠物的 Mini、经确认的宠物导入和仅生成草稿的听写；保留 Conductor 任务结果及 16 个用户代理预算。",
+      "未签名的 0.15.7-super.1 Windows 候选仅供内部测试，等待用户验收；虚拟机安装、真实听写及生成宠物质量尚未验收。",
+    ],
+  },
+  {
     version: "0.15.6",
     date: "2026-09-23",
     highlights: [
@@ -1655,6 +1671,14 @@ const zhCNEntries: ChangelogEntry[] = [
 ];
 
 const zhTWEntries: ChangelogEntry[] = [
+  {
+    version: "0.15.7",
+    highlights: [
+      "Windows 版 Super-Desktop 使用獨立的安裝與資料識別，不遷移 PI-Desktop 或開發設定。",
+      "新增支援 Hassan 或不選寵物的 Mini、經確認的寵物匯入和僅產生草稿的聽寫；保留 Conductor 工作結果及 16 個使用者代理預算。",
+      "未簽署的 0.15.7-super.1 Windows 候選僅供內部測試，等待使用者驗收；虛擬機安裝、實體聽寫及產生寵物品質尚未驗收。",
+    ],
+  },
   {
     version: "0.15.6",
     date: "2026-09-23",
