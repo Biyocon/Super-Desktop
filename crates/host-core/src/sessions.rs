@@ -12,6 +12,7 @@ use std::sync::{Mutex, OnceLock};
 use crate::transcripts::{self, CompactionRecord, MessageRecord, RevisionRecord};
 
 mod fork_files;
+mod task_settlement;
 
 pub const MODES: [&str; 3] = ["plan", "goal", "agent"];
 
@@ -1869,21 +1870,7 @@ pub fn append_message(
     // A steering input reserves its preceding streaming assistant's position;
     // only a terminal assistant snapshot may replace that provisional row.
     if message_indexed(db, session_id, &record.id)? {
-        if message.role == "assistant"
-            && message.status.as_deref() != Some("streaming")
-            && streaming_assistant_indexed(db, session_id, &record.id)?
-        {
-            invalidate_transcript_layout(session_id);
-            if !transcripts::update_message(db.data_dir(), session_id, &record)? {
-                return Err(anyhow!(
-                    "streaming assistant is missing from its transcript"
-                ));
-            }
-            db.conn().execute(
-                "UPDATE messages SET text = ?3, is_error = ?4 WHERE session_id = ?1 AND id = ?2",
-                params![session_id, record.id, text, record.is_error],
-            )?;
-        } else {
+        if !task_settlement::update_existing_snapshot(db, session_id, &message)? {
             return Ok(());
         }
     } else {

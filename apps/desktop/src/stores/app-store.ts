@@ -1,3 +1,4 @@
+import { bootstrapRunningSessions } from "../lib/bootstrap-running-sessions";
 import { create } from "zustand";
 import type {
   AppSettings,
@@ -383,6 +384,7 @@ export const useAppStore = create<AppState>((set, get) => {
         healthOk: health.ok,
         settings,
         sessions: hydratedSessions,
+        runningSessions: bootstrapRunningSessions(get().runningSessions, sessions.activeTurnIds),
         providers: providers.providers,
         providerModels: cachedProviderModels,
         workspace: currentWorkspace,
@@ -419,10 +421,8 @@ export const useAppStore = create<AppState>((set, get) => {
           branch: currentWorkspace.branch,
         });
       }
-      // Codex opens an empty draft home ("What can I help you build?") rather than
-      // restoring a prior transcript as the first paint. A live host plan is
-      // the exception: its owning session must be visible so approval can be
-      // restored after a renderer reload.
+      // Open draft home on boot; a pending plan restores its owning session.
+      // Runtime liveness above remains available when the user selects history.
       const livePlanSessionId = activePendingPlans[0]?.sessionId;
       if (livePlanSessionId) {
         await get().selectSession(livePlanSessionId);

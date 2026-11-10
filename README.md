@@ -124,9 +124,13 @@ paid AI-generated atlas quality, or fresh macOS/Linux native QA. Generated pets
 still need owner review of motion previews/contact sheets/QA before import.
 A successful task reply alone never installs a pet.
 
-Known follow-up: the Subagents Settings client-side active counter/activation guard
-still counts builtins; host/runtime correctly enforce 16 **user** handles. Do not
-work around it by disabling unrelated agents or editing activation files manually.
+Subagents Settings counts unique active **user handles** across owned and library
+definitions; builtins do not consume the 16-user budget. Independent same-role
+Conductor Tasks keep separate cards and transcripts; resume chains keep one
+current card. `node scripts/e2e-conductor-regressions.mjs` exercises the real
+Windows Electron/runtime chain with an external loopback provider fixture:
+mouse/Enter/Space, failure/cancellation, in-flight reload and full app restart.
+This is not an additional live-model test.
 
 The earlier GIF-only home-mascot experiment is preserved on
 [`archive/hassan-home-mascot`](https://github.com/Biyocon/Super-Desktop/tree/archive/hassan-home-mascot).

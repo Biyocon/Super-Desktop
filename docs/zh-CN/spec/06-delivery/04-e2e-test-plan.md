@@ -9,6 +9,22 @@
 
 ---
 
+### E2E-CONDUCTOR-budget-and-lifecycle
+
+- **前提：** 候选 Desktop/runtime/host 构建，隔离 Windows Electron 配置、数据、
+  agents 与工作区；只替换外部 provider 边界为 loopback fixture。
+- **步骤：** 四个同角色 Task 执行真实 Read；两项成功，一项永久 provider 失败，
+  一项保持活动。reload renderer，鼠标及焦点加 Enter/Space 打开卡片，
+  通过真实 TaskStop/TaskWait 收敛。再启动保持活动的 Task，完整关闭并重启应用。
+- **预期：** 每个独立 Task 的头像、卡片、id、子转录独立；协调者/占位符保留。
+  失败、停止不算成功；组显示问题，成功同伴保持成功，无重复派发。reload 恢复活动
+  与行；完整重启保留历史并将未完成工作标记中断；无子消息时详情也显示状态。
+- **覆盖：** `node scripts/e2e-conductor-regressions.mjs`，结果/截图记录精确候选、
+  base 与 dirty 状态。组件测试覆盖 resume 链去重和未知角色；Settings 交互测试
+  覆盖五个内置加用户 16、拒绝 17、释放/复用名额、内置独立、重复来源与乐观回滚。
+  宿主回归覆盖 Task 终态替换以及拒绝旧状态和其他委派的重放。
+
+
 ### E2E-POWER-keep-awake-setting
 
 - **前提：** 设置值缺失的隔离桌面配置；无需真实模型服务。

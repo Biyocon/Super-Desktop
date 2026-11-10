@@ -17,6 +17,7 @@ export type SubagentTranscriptTurn = { task: string; rows: SubagentRunItem[] };
  */
 export type SubagentTranscript = {
   agentName?: string;
+  latestTask?: UiMessage;
   turns: SubagentTranscriptTurn[];
 };
 
@@ -165,6 +166,7 @@ export function buildSubagentTranscript(
 
   return {
     ...(agentName ? { agentName } : {}),
+    latestTask: calls.filter(call => chain.has(call.toolCallId as string)).at(-1),
     turns,
   };
 }

@@ -7,6 +7,7 @@ import {
   resolveRoleId,
 } from "../../../components/AgentAvatar";
 import {
+  latestDelegationItems,
   summarizeSubagentActivity,
   type DelegationActivityItem,
   type SubagentOutcome,
@@ -36,18 +37,29 @@ export function SubagentTopology({
   const labelId = useId();
   const summary = summarizeSubagentActivity(items, delegationStatuses);
 
-  // Always show the complete Conductor team. A role with a matching Task
-  // renders its live ToolRow; roles not used in this run remain visible but
-  // dimmed, so the user can see both the team and the active participants.
+  // Role order is stable, but each independent Task keeps its own identity.
+  // Earlier calls in a resumed chain remain history, not extra active cards.
   const itemsByRole = useMemo(() => {
-    const map = new Map<string, DelegationActivityItem>();
-    for (const item of items) {
-      const name = delegateAgentName(item.message, item.delegate);
-      const role = resolveRoleId(name);
-      if (role && !map.has(role)) map.set(role, item);
+    const map = new Map<string | undefined, DelegationActivityItem[]>();
+    for (const item of latestDelegationItems(items)) {
+      const role = resolveRoleId(delegateAgentName(item.message, item.delegate));
+      const group = map.get(role) ?? [];
+      group.push(item);
+      map.set(role, group);
     }
     return map;
   }, [items]);
+  const renderTask = (item: DelegationActivityItem) => (
+    <ToolRow
+      key={item.message.id}
+      message={item.message}
+      {...(item.delegate ? { delegate: item.delegate } : {})}
+      variant="topology"
+      onUserInteraction={onUserInteraction}
+      {...(delegationStatuses ? { delegationStatuses } : {})}
+      {...(delegationTimings ? { delegationTimings } : {})}
+    />
+  );
 
   return (
     <section className="subagent-topology" aria-labelledby={labelId}>
@@ -69,20 +81,8 @@ export function SubagentTopology({
         aria-label={t("chat.subagentTopology")}
       >
         {CONDUCTOR_ROLES.filter((role) => role !== "conductor").map((role) => {
-          const item = itemsByRole.get(role);
-          if (item) {
-            return (
-              <ToolRow
-                key={item.message.id}
-                message={item.message}
-                {...(item.delegate ? { delegate: item.delegate } : {})}
-                variant="topology"
-                onUserInteraction={onUserInteraction}
-                {...(delegationStatuses ? { delegationStatuses } : {})}
-                {...(delegationTimings ? { delegationTimings } : {})}
-              />
-            );
-          }
+          const roleItems = itemsByRole.get(role);
+          if (roleItems) return roleItems.map(renderTask);
           return (
             <div
               key={role}
@@ -99,6 +99,8 @@ export function SubagentTopology({
             </div>
           );
         })}
+        {itemsByRole.get(undefined)?.map(renderTask)}
+        {itemsByRole.get("conductor")?.map(renderTask)}
       </div>
     </section>
   );

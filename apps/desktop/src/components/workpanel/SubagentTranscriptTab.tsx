@@ -9,6 +9,7 @@ import { Textarea, TooltipButton } from "../ui";
 import { DisclosureAnchorContext } from "../../lib/disclosure-anchor-context";
 import { TranscriptDisclosureProvider } from "../../features/chat/transcript/disclosure";
 import { buildSubagentTranscript } from "../../lib/subagent-transcript";
+import { collectDelegationStatuses, subagentOutcome } from "../../lib/subagent-topology";
 import {
   AssistantErrorMessage,
   ThinkingRow,
@@ -55,6 +56,13 @@ function SubagentTranscriptSurface({ delegationId }: { delegationId: string }) {
     () => buildSubagentTranscript(messages, delegationId),
     [messages, delegationId],
   );
+  const latestTask = transcriptResult?.latestTask;
+  const outcome = useMemo(() => {
+    if (!latestTask) return undefined;
+    const turnLive = isRunning && messages.indexOf(latestTask) > messages.findLastIndex(m => m.role === "user" && !m.parentToolCallId);
+    const statuses = collectDelegationStatuses(messages.filter(m => m.role === "tool").map(message => ({ kind: "tool" as const, message })), { turnLive });
+    return subagentOutcome(latestTask, statuses);
+  }, [latestTask, messages, isRunning]);
   const {
     scrollRef,
     contentRef,
@@ -99,6 +107,7 @@ function SubagentTranscriptSurface({ delegationId }: { delegationId: string }) {
   return (
     <DisclosureAnchorContext.Provider value={disclosureAnchorNotifier}>
       <div className="subagent-transcript-tab" data-testid="subagent-transcript-tab">
+        {outcome ? <div className="subagent-transcript-outcome" role="status">{t(`chat.subagentStatus.${outcome}`)}</div> : null}
         <div
           ref={scrollRef}
           data-scroll-owner="follow"

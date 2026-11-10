@@ -53,7 +53,10 @@ event: pi-desktop/<domain>/event/<name>
 - `pi-desktop/agent/abort`
 - `pi-desktop/agent/event/message`
 - `pi-desktop/agent/askTool/resolve`
-- `pi-desktop/session/list`
+- `pi-desktop/session/list` — 除 `sessions` 外返回可选的
+  `activeTurnIds: Record<string, string>`，在列表完成后读取 main 活动回合注册表。
+  Bootstrap 只填补缺失的 renderer 活动状态，期间收到的新事件优先。
+  此字段仅为观察快照，不授权恢复或重复派发工作。
 - `pi-desktop/project/open`
 - `pi-desktop/project/clone`
 - `pi-desktop/project/cloneCheckout`

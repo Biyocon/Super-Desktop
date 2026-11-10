@@ -376,6 +376,12 @@
   flex-direction: column;
 }
 
+.subagent-transcript-outcome {
+  padding: 8px 16px;
+  color: var(--ds-text-muted);
+  font-size: var(--text-sm-plus);
+}
+
 .subagent-transcript-scroll {
   min-width: 0;
   min-height: 0;

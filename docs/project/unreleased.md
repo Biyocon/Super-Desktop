@@ -1,5 +1,17 @@
 # Unreleased changes
 
+- Subagents Settings now counts unique active user handles across owned/library
+  definitions without charging builtins against the 16-user budget. Builtins
+  remain independently toggleable; rejected activation updates roll back.
+- Conductor preserves every independent Task, including repeated roles and
+  unknown user agents, while resumed chains retain one current card. Detail
+  transcripts show truthful outcomes even when a child fails before output.
+  Terminal Task snapshots now survive host deduplication without rewriting
+  original metadata, and renderer reload restores main-owned live turns without
+  redispatch. Isolated Windows Electron/provider-fixture regressions cover
+  native mouse/Enter/Space, failure, cancellation, reload and full app restart.
+
+
 - Super-Desktop now has a native Mini and virtual pets settings page with
   bundled Hassan, explicit None, v1/v2 animation and gaze, safe previewed
   imports, and persisted selection. A single sandboxed transparent Mini uses

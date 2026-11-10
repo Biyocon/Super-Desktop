@@ -8,6 +8,27 @@
 
 ## 1. Goals
 
+### E2E-CONDUCTOR-budget-and-lifecycle
+
+- **Preconditions:** Candidate Desktop/runtime/host builds, isolated Windows
+  Electron profile/data/agents/workspace; external loopback provider only.
+- **Steps:** Dispatch four same-role Tasks; run actual child Reads; return two
+  successes and a nonretryable provider error while holding one child. Reload
+  renderer in flight, open cards by mouse and focus + Enter/Space, then use real
+  TaskStop/TaskWait. Start a second held Task, close and restart the whole app.
+- **Expected:** Every independent Task has its own portrait/card/id/transcript;
+  coordinator/placeholders persist; failed/stopped are not successes. Group
+  reports issues, completed siblings stay completed, no dispatch is repeated.
+  Reload preserves activity and rows; full restart preserves history and marks
+  unfinished work interrupted. Detail status works even without child messages.
+- **Coverage:** `node scripts/e2e-conductor-regressions.mjs`; result/screenshot
+  artifacts identify exact candidate/base and dirty state. Component tests cover
+  resume-chain de-duplication and unknown roles. Settings interaction tests cover
+  user 16 with five builtins, reject 17, free/reuse slot, builtin independence,
+  duplicate sources and optimistic rollback. Host regression covers terminal
+  Task replacement and stale/different-delegation replay rejection.
+
+
 ### E2E-PETS-native-mini-draft-dictation
 
 - **Preconditions:** Candidate shared/desktop and host builds; isolated profile,

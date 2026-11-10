@@ -2284,6 +2284,17 @@ the call's own `agent` argument, and carries the call's short `description`. The
 resolved model id is shown immediately after the delegate name, from the
 structured `Task` result details.
 
+Every independent Task has its own selectable card, even when multiple Tasks
+map to the same Conductor role. Cards retain their own delegation id, portrait,
+outcome and child transcript; unknown user roles are not dropped. The coordinator
+and unused-role placeholders remain. Within one fan-out, a resumed chain has one
+current card (the latest call), not multiple independent runs. Counts use the
+same chain rule. The detail tab includes an accessible translated outcome line,
+including failures before any child row and interruption after process restart.
+Mouse press/release and focused Enter/Space must open the matching delegation
+tab and only its child rows. See the isolated provider-fixture regression in
+`scripts/e2e-conductor-regressions.mjs`; it is not a live-model test.
+
 The topology node is width-aware at every panel size. Its title may occupy up
 to two lines, its description is clamped to two readable lines, and its step
 summary can wrap rather than forcing the user to resize the divider. Complete
