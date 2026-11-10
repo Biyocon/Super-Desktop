@@ -391,7 +391,10 @@ test("CustomAgents library is selectable, capped, and read-only in Settings", ()
   assert.match(subagents, /visibleLibrary\.map\(renderRow\)/);
   assert.match(subagents, /CUSTOMAGENTS_LIBRARY_PATH/);
   assert.match(subagents, /extensions\.subagents\.sourceLibrary/);
-  assert.match(subagents, /activeCount >= MAX_SUBAGENT_DEFINITIONS/);
+  assert.match(subagents, /userSubagentAtLimit\(userRecords, subagent\)/);
+  assert.match(subagents, /activeUserSubagentHandles\(userRecords\)\.size/);
+  const builtinToggle = subagents.slice(subagents.indexOf("const toggleBuiltin"), subagents.indexOf("const openEdit"));
+  assert.doesNotMatch(builtinToggle, /MAX_SUBAGENT_DEFINITIONS|activeCount|userSubagentAtLimit/);
   assert.match(subagents, /extensions\.subagents\.activeCount/);
 
   const row = subagents.slice(

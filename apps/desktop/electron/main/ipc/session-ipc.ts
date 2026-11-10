@@ -145,6 +145,7 @@ export function registerSessionIpc({
     ]);
     return {
       ...result,
+      activeTurnIds: Object.fromEntries(activeTurns),
       sessions: [
         ...result.sessions.map((session) => ({
           ...enrichSession(session, providers, defaults),

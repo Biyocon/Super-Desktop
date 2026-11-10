@@ -543,7 +543,7 @@ export const api = {
       sessionId,
     }),
   listSessions: () =>
-    invoke<{ sessions: SessionSummary[] }>(IPC.invoke.sessionList).then((result) => ({
+    invoke<{ sessions: SessionSummary[]; activeTurnIds?: Record<string, string> }>(IPC.invoke.sessionList).then((result) => ({
       ...result,
       sessions: result.sessions.map(normalizeSession),
     })),

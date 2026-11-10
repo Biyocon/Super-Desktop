@@ -13,6 +13,7 @@ activation backups, original agent profiles and runtime data remain outside it.
 | Builtins outside the user budget | `0d87930b6` | TS runtime catalog and Rust reconciliation count only user handles; explicit builtin-off respected |
 | Native Mini, gallery, safe pet import, draft dictation and confirmed AI task | `2de387294` plus this delivery | Host-owned preferences/catalog, restricted Mini, original Hassan atlas, real selected-session status and draft-only speech |
 | Fork README and reproducible screenshots | This delivery | Fork additions separated from inherited upstream features; generic fixtures clearly labeled |
+| User budget and Conductor lifecycle regressions | Unreleased; [test procedure](conductor-smoke/README.md#automated-lifecycle-regression-external-provider-fixture) | Settings excludes builtins; independent same-role Tasks remain visible; terminal Task snapshots persist; reload restores activity; isolated Windows native input/failure/cancellation/restart coverage |
 
 ## Preserved experiment
 

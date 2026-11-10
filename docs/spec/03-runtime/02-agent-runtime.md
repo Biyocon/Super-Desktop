@@ -798,9 +798,20 @@ the app-local enabled state before they reach the loader, and the shipped
 builtins are filtered by that same app-local state inside it (ADR 0270).
 Electron main loads
 `subagentProviders` in the sidecar params, so editing a definition takes effect
-on the next prompt. The catalog is capped at `MAX_SUBAGENT_DEFINITIONS` (16);
-a malformed or unreadable document becomes a launch diagnostic and never fails
-the launch.
+on the next prompt. `MAX_SUBAGENT_DEFINITIONS` (16) caps unique enabled **user
+handles** across owned and library definitions; builtins never consume user
+slots. Settings uses the same count and leaves duplicate-source conflicts to
+host validation. Disabled handles free slots and builtin toggles remain independent.
+A malformed or unreadable document becomes a launch diagnostic, not a launch failure.
+
+Terminal delegation snapshots update the existing active Task row for the same
+delegation id, preserving its position, original metadata and tool usage. A stale
+running replay or a different delegation cannot replace a terminal result. This
+keeps naturally completed, failed and stopped children truthful after reload.
+Renderer bootstrap restores live turns from main's session/list `activeTurnIds`
+snapshot; events received during bootstrap take precedence. A renderer reload
+does not dispatch the Task again. Full process restart retains available history
+but does not replay model requests: unfinished work is shown as interrupted.
 
 Frontmatter adds `permission: inherit | ask | accept-edits | auto` (default
 `inherit`), which controls the scope the delegate's tool calls resolve under

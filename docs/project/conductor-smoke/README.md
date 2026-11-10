@@ -37,13 +37,35 @@ The README Conductor screenshot uses the actual renderer with a **seeded
 transcript fixture**. It validates the displayed topology, not successful
 execution of seven production-provider delegates. The live test remains separate.
 
-## Cleanup and known limitation
+## Cleanup and user budget
 
 Disable/remove only definitions introduced for your attempt, then restore only
 user choices you recorded. Never restore a whole registry backup over newer work.
-The existing Settings active-count guard still counts builtins; do not disable
-extra unrelated agents or edit activation JSON to bypass it. Stop and report the
-error instead. Host/runtime enforce the 16-user-handle budget correctly.
+Settings and host/runtime count unique enabled owned/library user handles, not
+builtins. User 16 fits alongside five builtins; a new user 17 is rejected.
+Builtin toggles remain independent. Duplicate-source conflicts and failed writes
+roll back without spending another user slot.
 
 No machine-specific activation files, personal agent profiles, credentials or
 local setup journals are published with this package.
+
+## Automated lifecycle regression (external provider fixture)
+
+Build shared/i18n/runtime and Desktop from the candidate, then run
+`node scripts/e2e-conductor-regressions.mjs`. Set `PI_DESKTOP_HOST_BIN` to a host
+built from the same candidate. No credentials, active registry or running user
+app are used. Only the external OpenAI-compatible provider is substituted;
+Task, Read, TaskStop, TaskWait, persistence, preload and UI are real.
+
+The isolated Windows scenario checks four independent explorer cards, correct
+portraits, mouse press/release and keyboard focus + Enter/Space, delegation-id
+and child-row routing, completed/failed/stopped outcomes and issue group status.
+It reloads during a held delegate without another dispatch, then restarts the
+whole owned app during a second held delegate: history survives, completed
+siblings stay completed and the interrupted delegate is stopped, not successful
+or permanently running. Resume-chain cardinality is covered by component tests.
+
+Scratch `result.json` records candidate/base commits, dirty-candidate flag,
+provider request counters and interaction identities; adjacent screenshots and
+histories are test artifacts, not a live-model run. Only a clean exact-commit
+rerun is acceptance evidence. Do not publish raw application/profile/log folders.

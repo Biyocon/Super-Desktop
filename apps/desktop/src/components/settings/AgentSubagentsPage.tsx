@@ -36,6 +36,7 @@ import {
   fetchSubagentPageData,
   type BuiltinSubagentRow,
 } from "./subagent-settings";
+import { activeUserSubagentHandles, userSubagentAtLimit } from "./subagent-user-budget";
 import {
   IconBot,
   IconCopy,
@@ -82,17 +83,8 @@ export function AgentSubagentsPage() {
   const [saving, setSaving] = useState(false);
   const { armed, setArmed } = useArmedDelete();
   const ownedHandles = useMemo(() => new Set(owned.map((row) => row.id)), [owned]);
-  const activeCount = useMemo(() => {
-    const handles = new Set(
-      [...owned, ...library]
-        .filter((row) => row.enabled)
-        .map((row) => row.name || row.id),
-    );
-    for (const builtin of builtins) {
-      if (builtin.enabled) handles.add(builtin.name);
-    }
-    return handles.size;
-  }, [builtins, library, owned]);
+  const userRecords = useMemo(() => [...owned, ...library], [owned, library]);
+  const activeCount = useMemo(() => activeUserSubagentHandles(userRecords).size, [userRecords]);
 
   /**
    * The switch flips locally first and only reverts if the host refuses, so one
@@ -101,7 +93,7 @@ export function AgentSubagentsPage() {
   const toggle = async (subagent: UserSubagentRecord) => {
     if (busyId === subagent.id) return;
     const next = !subagent.enabled;
-    if (next && activeCount >= MAX_SUBAGENT_DEFINITIONS) {
+    if (next && userSubagentAtLimit(userRecords, subagent)) {
       showToast(
         t("extensions.subagents.activeLimit", { max: MAX_SUBAGENT_DEFINITIONS }),
         { variant: "error" },
@@ -151,13 +143,6 @@ export function AgentSubagentsPage() {
     const handle = builtin.name;
     if (busyId === `builtin:${handle}`) return;
     const next = !builtin.enabled;
-    if (next && activeCount >= MAX_SUBAGENT_DEFINITIONS) {
-      showToast(
-        t("extensions.subagents.activeLimit", { max: MAX_SUBAGENT_DEFINITIONS }),
-        { variant: "error" },
-      );
-      return;
-    }
     setBusyId(`builtin:${handle}`);
     setSubagents((current) => ({
       ...current,

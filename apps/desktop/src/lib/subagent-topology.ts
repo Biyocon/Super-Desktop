@@ -1,5 +1,5 @@
 import type { UiMessage } from "@pi-desktop/shared";
-import type { AssistantActivityItem } from "./assistant-turns";
+import { delegationChainMaps, type AssistantActivityItem } from "./assistant-turns";
 import {
   delegationLifecycleKind,
   getToolAction,
@@ -38,6 +38,12 @@ export function isDelegationActivityItem(
     isDelegationStartTool(item.message.toolName) &&
     getToolAction(item.message.toolName) === "delegate"
   );
+}
+
+/** Keep one current card per resume chain within this group, not per agent name. */
+export function latestDelegationItems(items: readonly DelegationActivityItem[]): DelegationActivityItem[] {
+  const { childOf } = delegationChainMaps(items.map((item) => item.message));
+  return items.filter((item) => !childOf.has(item.message.toolCallId || item.message.id));
 }
 
 const DELEGATION_STATUSES = new Set<SubagentOutcome>([
@@ -426,7 +432,7 @@ export function summarizeSubagentActivity(
   items: readonly DelegationActivityItem[],
   statuses?: ReadonlyMap<string, SubagentOutcome>,
 ) {
-  const outcomes = items.map((item) => subagentOutcome(item.message, statuses));
+  const outcomes = latestDelegationItems(items).map((item) => subagentOutcome(item.message, statuses));
   return {
     total: outcomes.length,
     finished: outcomes.filter((outcome) => outcome !== "running").length,

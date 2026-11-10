@@ -51,7 +51,10 @@ Examples:
 - `pi-desktop/agent/abort`
 - `pi-desktop/agent/event/message`
 - `pi-desktop/agent/askTool/resolve`
-- `pi-desktop/session/list`
+- `pi-desktop/session/list` — response adds optional `activeTurnIds: Record<string, string>`
+  alongside `sessions`, sampled from main's active-turn registry after listing.
+  Bootstrap fills missing renderer liveness from it; newer received events win.
+  It is an observational snapshot, not permission to resume or redispatch work.
 - `pi-desktop/session/summarizeTitle`
 - `pi-desktop/project/open`
 - `pi-desktop/project/pickFolders`

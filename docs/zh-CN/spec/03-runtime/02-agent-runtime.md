@@ -611,9 +611,16 @@ Goal 批准所承诺的内容与 Plan 批准所承诺的内容完全相同：`mo
 不会作为能力来源被扫描。用户文档在进入加载器前会根据应用本地启用状态过滤，
 内置定义则由加载器按同一份应用本地状态过滤（ADR 0270）。
 Electron main 每次启动加载全局目录，并在 sidecar 参数中传递
-`subagents` / `subagentProviders`，因此编辑定义会在下一次提示时生效。目录上限
-为 `MAX_SUBAGENT_DEFINITIONS`（16）；格式错误或不可读文档只产生启动诊断，
-不会让启动失败。
+`subagents` / `subagentProviders`，因此编辑定义会在下一次提示时生效。
+`MAX_SUBAGENT_DEFINITIONS`（16）只限制自有注册表和库中启用的唯一用户句柄，
+不计内置定义。Settings 使用相同计数；重复来源冲突由宿主验证，失败更新回滚。
+停用用户句柄释放名额；内置开关不受用户预算限制。格式错误或不可读文档只产生诊断。
+
+终态快照更新同一 delegation id 的活动 Task 行，保留位置、原始元数据与工具用量。
+旧 running 重放或其他委派不能覆盖终态。自然完成、失败、停止在 reload 后仍真实。
+Renderer bootstrap 从 main 的 session/list `activeTurnIds` 快照恢复活动回合，
+bootstrap 期间收到的事件优先。reload 不会重复派发 Task。完整进程重启保留可用历史，
+不重放模型请求，未完成工作显示为中断。
 
 Frontmatter 新增 `permission: inherit | ask | accept-edits | auto`（默认
 `inherit`）。使用默认的 `inherit`（包括所有内置定义）时，sidecar 不附加覆盖，
