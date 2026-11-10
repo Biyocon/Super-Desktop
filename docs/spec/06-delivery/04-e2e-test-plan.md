@@ -35,21 +35,51 @@
   data, workspace and agent directories. No live user app or registry as fixture.
 - **Steps:** Open the searchable pet gallery, save None, preview/import an owned
   v2 atlas, show/hide Mini, change scale/topmost/theme and restart. Configure
-  dictation with an existing provider. Record, stop, edit and explicitly Open
-  draft over an existing unsent composer draft. Review/cancel AI creation, then
-  separately confirm a normal task and inspect its real transcript.
+  dictation with the loopback fixture provider. Exercise denied permission and
+  missing microphone at the external media boundary, cancel recording, return a
+  provider error, then retry. Attach a harmless file through the composer picker;
+  record, stop, edit and Open draft over existing unsent text plus that attachment.
+  Record another draft and Discard. Review/cancel AI creation, then separately
+  confirm a fixture normal task and inspect its real transcript.
 - **Expected:** One restricted sandboxed Mini; clamped bounds and persisted
   preferences; full decode before reviewed install; no generic Mini IPC access.
   Dictation never sends, preserves unsent text/attachments and cleans tracks and
   temporary audio. Speech settings preserve synthesis and compatible custom
   fields. AI review/cancel invokes no provider; confirmation uses the existing
   task engine and full-package prompt, never auto-installs a task reply.
+  Media failures make no transcription request; provider failure returns to a
+  retryable UI. Open draft preserves attachment token, path and accessible
+  identity; neither Open draft nor Discard creates a durable user turn or chat
+  request. Provider failure, completion and discard clean temporary audio.
 - **Coverage:** `node scripts/e2e-mini-pets.mjs` uses the real app/host with a
   picker fixture, external media fixture and loopback speech/model HTTP server.
   Host/shared/component tests cover invalid inputs, stale/cancelled results,
-  animation/reduced motion and cleanup. Paid image quality, physical microphone
-  and cross-platform window behavior require separately authorized acceptance;
+  animation/reduced motion and cleanup. `mini-window-geometry.test.mjs` covers
+  the real clamp against external screen fixtures: zoom, changed DIP metrics,
+  negative origins, removal and tiny work areas. Paid image quality, physical
+  microphone and cross-platform behavior require separate authorized acceptance;
   local fixture success does not claim those checks.
+
+### E2E-PETS-physical-provider-and-display-acceptance
+
+- **Preconditions:** Isolated candidate profile and user participation. Identify
+  existing speech/image/agent bindings without exporting credentials. Before any
+  live request, establish a reliable combined upper cost bound inside the
+  explicitly approved budget. Missing bindings or unknown prices block live use.
+- **Steps:** With informed explicit recording start, dictate a short agreed Danish
+  sentence through a physical microphone and the real configured speech provider.
+  Compare expected/actual text and obtain the user's usability verdict. Test Mini
+  movement, visible controls and restart on the physical display at two supported
+  Windows scales, then restore the original scale. Test physical multi-display
+  and disconnect only when that hardware is available. Separately confirm at most
+  the approved AI creation task; inspect its actual v2 package, nine animations,
+  sixteen gaze directions, atlas transparency/clipping and normal reviewed import.
+- **Expected:** No automatic send, no hidden recording, no out-of-budget requests,
+  no claim of provider or pet-quality acceptance based on fixture success. Retain
+  exact candidate identity, screenshots, cost ledger and user judgments locally.
+  Report each blocked or deferred hardware/provider/quality check explicitly;
+  neither a static pet nor task success text proves generated animation quality.
+
 
 ### E2E-CHAT-fork-completed-reply-while-running
 

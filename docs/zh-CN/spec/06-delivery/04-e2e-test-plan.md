@@ -25,6 +25,40 @@
   宿主回归覆盖 Task 终态替换以及拒绝旧状态和其他委派的重放。
 
 
+### E2E-PETS-native-mini-draft-dictation
+
+- **前提：** 候选 shared/desktop/host 构建，隔离配置、数据、工作区和 agents，
+  不使用用户运行中的应用或个人注册表作为 fixture。
+- **步骤：** 通过图库选择 None、预览并明确导入已有 v2 atlas，显示/隐藏 Mini，
+  调整大小、置顶、主题并重启。用 loopback provider 配置听写，在外部媒体边界
+  模拟权限拒绝、缺少麦克风、录制取消；返回 provider 错误后重试。通过真实
+  composer 文件选择/导入路径添加无敏感内容的文件，在已有草稿文字和附件上
+  录制、编辑并 Open draft，再录制一份并 Discard。确认 fixture 普通 AI 任务。
+- **预期：** 单个受限 sandbox Mini、边界钳制和持久化选择。听写不自动发送；
+  Open draft 保留附件 token、path、身份及已有文字，Discard 不改变原草稿。
+  媒体失败不发转录请求；provider 失败显示错误且可重试；失败、完成和丢弃后
+  清理音轨/临时音频。任务成功文字不自动安装宠物。
+- **覆盖：** `node scripts/e2e-mini-pets.mjs` 使用真实内部链路，只替换外部
+  picker/media/provider 边界。结果记录精确 revision、dirty 状态及截图 hash。
+  无真实麦克风、真实付费 provider 或生成动画质量验收声明。
+  `mini-window-geometry.test.mjs` 通过外部 screen fixture 执行真实 clamp，
+  覆盖缩放、DIP 指标变化、负坐标、显示器移除和极小工作区；不等于物理多屏验收。
+
+### E2E-PETS-physical-provider-and-display-acceptance
+
+- **前提：** 隔离候选配置及用户参与；仅识别已有 speech/image/agent 绑定，
+  不导出 credentials。每个 live 请求前，按价格和调用限制证明总费用上界不超过
+  用户明确预算；缺少绑定或未知价格阻止请求。
+- **步骤：** 明确告知后由用户开始物理麦克风录制，使用真实已配置 provider
+  转录约定的短丹麦语句子，比较预期/实际文字并取得用户可用性评价。物理显示器
+  在两个支持的 Windows 缩放下测试移动、可见控件、重启并恢复原缩放。
+  有额外硬件才测试多屏及断开。单独确认已授权 AI 任务，检查实际 v2 包、
+  九个动画、十六个视线方向、透明度/裁切及正常 preview/confirm 导入。
+- **预期：** 不自动发送、隐藏录音或超预算；fixture 成功不等于真实 provider
+  或生成宠物质量验收。revision、截图、费用日志及用户判断保留本地；
+  硬件、绑定或价格阻塞明确记为未验证/延期，不能以静态图或文字成功替代。
+
+
 ### E2E-POWER-keep-awake-setting
 
 - **前提：** 设置值缺失的隔离桌面配置；无需真实模型服务。

@@ -95,10 +95,25 @@ Paid-provider acceptance not run locally must be explicitly reported.
 Run `node scripts/e2e-mini-pets.mjs` after the candidate shared/desktop and host
 builds. It uses isolated data/profile/agent paths and the actual product app;
 the native picker and external media capture are fixtures; speech and agent calls
-reach a loopback HTTP provider. It verifies configuration, edited draft append,
-no automatic send, audio cleanup, paid-task confirmation and normal transcript
-delivery without making paid calls or using a physical microphone. Component
-and service tests cover stale results, animation and cancellation.
+reach a loopback HTTP provider. It also exercises denied permission and missing
+microphone at the external media boundary, cancellation, a real transport error
+and successful retry. The composer picker/import path attaches a harmless file;
+edited Open draft preserves existing text plus attachment token/path/identity,
+while Discard leaves them unchanged. Neither action starts a chat or user turn.
+Tracks and temporary audio are cleaned after failure and success. These are
+boundary-fixture checks, not physical microphone or real-provider acceptance.
+Result artifacts identify the candidate/base, dirty state and screenshot hashes.
+Component and service tests cover stale results, animation and cancellation.
+
+Physical/provider acceptance is separate: record only with explicit informed
+user start, verify transcription with the user and document a reliable combined
+cost bound before any live request. Missing bindings or unknown prices block the
+request rather than authorizing a substitute provider. Record physical Windows
+scaling/movement/restart checks separately from simulated display geometry and
+restore changed settings. Missing extra displays leave multi-monitor/disconnect
+acceptance deferred. Generated pet acceptance requires an actual full v2 output,
+motion/contact-sheet QA and explicit reviewed import; a fixture task reply or
+reimport of bundled Hassan cannot substitute for newly generated pet quality.
 
 On Windows, Electron nativeImage cannot decode WebP directly. An ephemeral
 sandboxed Chromium renderer decodes imported WebP with no preload, network or

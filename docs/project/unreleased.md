@@ -1,5 +1,12 @@
 # Unreleased changes
 
+- Mini regression coverage now includes permission denial, a missing microphone,
+  provider failure/retry, recording cancellation, Discard and Open draft over
+  existing text plus a real imported attachment. The isolated native harness
+  records screenshot hashes and attachment identity, waits for complete window
+  snapshots and scrolls the provider picker into view before opening its menu.
+  These boundary fixtures do not certify physical speech or generated pet quality.
+
 - Subagents Settings now counts unique active user handles across owned/library
   definitions without charging builtins against the 16-user budget. Builtins
   remain independently toggleable; rejected activation updates roll back.
