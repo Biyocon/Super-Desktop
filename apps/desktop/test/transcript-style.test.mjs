@@ -187,7 +187,8 @@ test("delegation topology shows the full Conductor team and distinguishes active
     transcriptSource,
     /CONDUCTOR_ROLES\.filter\(\(role\) => role !== "conductor"\)\.map/,
   );
-  assert.match(transcriptSource, /const item = itemsByRole\.get\(role\);/);
+  assert.match(transcriptSource, /const roleItems = itemsByRole\.get\(role\);/);
+  assert.match(transcriptSource, /if \(roleItems\) return roleItems\.map\(renderTask\);/);
   assert.match(transcriptSource, /className="subagent-topology-node subagent-topology-idle"/);
   assert.match(transcriptSource, /<AgentAvatar agentName=\{role\} size=\{28\} \/>/);
   assert.match(transcriptSource, /<ConductorAvatar size=\{28\} \/>/);
