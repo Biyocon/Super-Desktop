@@ -1,6 +1,6 @@
-# Mini and virtual pets in the Super-Desktop fork
+# ADR: Mini and virtual pets in the Super-Desktop fork
 
-Status: Accepted for implementation by the owner (2026-11-09).
+- Status: Accepted for implementation by the owner (2026-11-09).
 
 ## Context
 
@@ -56,7 +56,7 @@ A plugin: viable for an optional extension but does not meet native Settings.
 Private ChatGPT service reuse: unavailable and the wrong ownership boundary.
 A second native agent runtime: unnecessary, unsafe and out of scope.
 
-## Compatibility and consequences
+## Consequences
 
 This adds local `pets.*` RPC and allowlisted IPC plus a dedicated renderer
 surface. New files are independent of pre-existing SQLite data; an unknown
