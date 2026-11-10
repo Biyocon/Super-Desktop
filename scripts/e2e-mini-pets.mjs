@@ -2,6 +2,7 @@
 // Actual renderer/preload/main/host. Loopback providers and external media fixture only.
 import assert from "node:assert/strict";
 import { spawn, execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { once } from "node:events";
 import { createServer } from "node:http";
 import { copyFile, mkdir, mkdtemp, readFile, readdir, writeFile } from "node:fs/promises";
@@ -26,12 +27,17 @@ const originalAgents = process.env.PI_DESKTOP_AGENTS_DIR;
 process.env.PI_DESKTOP_AGENTS_DIR = agents;
 const binary = resolveHostBinary();
 const chatRequests = [];
+const screenshots = {};
+const handoffEvidence = {};
+const walk = async (path) => (await Promise.all((await readdir(path, { withFileTypes: true })).map(async (entry) => entry.isDirectory() ? walk(join(path, entry.name)) : [entry.name]))).flat();
 let speechRequests = 0;
+let failSpeech = false;
 const server = createServer(async (request, response) => {
   const chunks = [];
   for await (const chunk of request) chunks.push(chunk);
   if (request.url === "/v1/audio/transcriptions") {
     speechRequests++;
+    if (failSpeech) { response.writeHead(400, { "content-type": "application/json" }); response.end(JSON.stringify({ error: { message: "External transcription failure fixture" } })); return; }
     response.writeHead(200, { "content-type": "application/json" });
     response.end(JSON.stringify({ text: "Dictated fixture draft" }));
   } else if (request.url === "/v1/chat/completions") {
@@ -63,6 +69,8 @@ await appendDemo({ id: "demo-summary", role: "assistant", content: "All seven ro
 await host.stop();
 await copyFile(join(repo, "crates/host-core/assets/pets/hassan.webp"), join(source, "spritesheet.webp"));
 await writeFile(join(source, "pet.json"), JSON.stringify({ id: "test-hassan", displayName: "Imported Hassan", description: "Owner-owned test copy", spriteVersionNumber: 2, spritesheetPath: "spritesheet.webp" }));
+const attachment = join(source, "acceptance-note.txt");
+await writeFile(attachment, "Harmless attachment retained during Mini draft handoff.\n");
 const { appDir, electronBinary } = resolveElectronBinary();
 const runtime = join(root, "native-state.json");
 const windowCommand = join(root, "window-size.json");
@@ -71,7 +79,7 @@ await writeFile(wrapper, `const {app,dialog,BrowserWindow}=require('electron');
 const fs=require('node:fs');
 app.setPath('userData',${JSON.stringify(join(root, "profile"))});
 const nativePicker=dialog.showOpenDialog.bind(dialog);
-dialog.showOpenDialog=async (...args)=>args.at(-1)?.filters?.some(x=>x.name.includes('Pet manifest'))?{canceled:false,filePaths:[${JSON.stringify(join(source, "pet.json"))}]}:nativePicker(...args);
+dialog.showOpenDialog=async (...args)=>{const options=args.at(-1);if(options?.filters?.some(x=>x.name.includes('Pet manifest')))return {canceled:false,filePaths:[${JSON.stringify(join(source, "pet.json"))}]};if(options?.properties?.includes('multiSelections'))return {canceled:false,filePaths:[${JSON.stringify(join(source,"acceptance-note.txt"))}]};return nativePicker(...args);};
 let tick=setInterval(()=>{try{
 const windows=BrowserWindow.getAllWindows().filter(w=>!w.isDestroyed());
 const commandPath=${JSON.stringify(windowCommand)};
@@ -130,12 +138,19 @@ async function close(main) {
 }
 const invoke = (page, channel, ...args) => page.evaluate(`window.piDesktop.invoke(${JSON.stringify(channel)},...${JSON.stringify(args)})`);
 const ok = async (page, channel, ...args) => { const result = await invoke(page, channel, ...args); assert.equal(result.ok, true, JSON.stringify(result)); return result.data; };
-const native = async () => JSON.parse(await readFile(runtime, "utf8"));
+const native = async () => {
+  let snapshot;
+  await waitFor(async () => {
+    try { snapshot = JSON.parse(await readFile(runtime, "utf8")); return true; }
+    catch (error) { if (error instanceof SyntaxError || error.code === 'ENOENT') return false; throw error; }
+  }, 10_000, 'complete owned-window snapshot');
+  return snapshot;
+};
 const resizeMain = async (width, height) => {
   await writeFile(windowCommand, JSON.stringify({ width, height }));
   await waitFor(async () => (await native()).some(window => window.title === "Super-Desktop" && window.visible && Math.abs(window.bounds.width - width) <= 2 && Math.abs(window.bounds.height - height) <= 2), 10_000, "documentation window size");
 };
-const screenshot = async (page, name) => { const image = await page.send("Page.captureScreenshot", { format: "png" }); await writeFile(join(root, name), Buffer.from(image.data, "base64")); };
+const screenshot = async (page, name) => { const image = await page.send("Page.captureScreenshot", { format: "png" }); const bytes = Buffer.from(image.data, "base64"); await writeFile(join(root, name), bytes); screenshots[name] = createHash('sha256').update(bytes).digest('hex'); };
 const clickText = async (page, text) => {
   await waitFor(() => page.evaluate(`(() => { const element=[...document.querySelectorAll('button')].find(x=>(x.textContent.trim()===${JSON.stringify(text)}||x.querySelector('.pets-choice-name')?.textContent.trim()===${JSON.stringify(text)})&&!x.disabled);if(!element)return false;element.click();return true;})()`), 15_000, `button ${text}`);
 };
@@ -143,6 +158,7 @@ const fill = (page, selector, value) => page.evaluate(`(() => { const element=do
 async function configureDictation(page) {
   await page.evaluate(`document.querySelector('[data-nav="settings"]').click()`);
   await clickText(page, "Mini and virtual pets");
+  await waitFor(() => page.evaluate(`(() => { const e=document.querySelector('.settings-card-block button[aria-label="AI providers"]');if(!e)return false;e.scrollIntoView({block:'center'});const r=e.getBoundingClientRect();return r.width>0&&r.top>=0&&r.bottom<=innerHeight; })()`), 10_000, 'visible dictation provider trigger');
   await page.evaluate(`document.querySelector('.settings-card-block button[aria-label="AI providers"]').click()`);
   await clickText(page, "Pet fixture");
   await fill(page, 'input[aria-label="Models"]', "speech-fixture");
@@ -215,28 +231,70 @@ try {
   await waitFor(async () => (await ok(main, "pi-desktop/mini/getState")).activity.sessionId === fixture.session.id, 10_000, "real selected fixture session");
   await waitFor(() => main.evaluate(`!!document.querySelector('.composer-input[contenteditable="true"]')`), 10_000, "composer ready");
   await main.evaluate(`(() => { const editor=document.querySelector('.composer-input');editor.focus();editor.textContent='Existing unsent draft';editor.dispatchEvent(new InputEvent('input',{bubbles:true,inputType:'insertText',data:'Existing unsent draft'})); })()`);
+  await main.evaluate(`document.querySelector('button[aria-label="Add files"]').click()`);
+  await waitFor(() => main.evaluate(`document.querySelector('.composer-chip-name')?.textContent==='acceptance-note.txt'`), 15_000, 'real composer picker/import attachment');
+  const attachmentSnapshot = () => main.evaluate(`[...document.querySelectorAll('.composer-chip')].map(e=>({token:e.dataset.token,path:e.title,label:e.getAttribute('aria-label')}))`);
+  const originalAttachments = await attachmentSnapshot();
+  assert.equal(originalAttachments.length, 1);
   await mini.evaluate(`(() => {
     window.fixtureTracksStopped=0;
-    Object.defineProperty(navigator.mediaDevices,'getUserMedia',{configurable:true,value:async()=>({getTracks:()=>[{stop:()=>window.fixtureTracksStopped++}]})});
+    window.fixtureMediaMode='ok';
+    Object.defineProperty(navigator.mediaDevices,'getUserMedia',{configurable:true,value:async()=>{if(window.fixtureMediaMode==='denied')throw new DOMException('Permission denied fixture','NotAllowedError');if(window.fixtureMediaMode==='missing')throw new DOMException('No microphone fixture','NotFoundError');return {getTracks:()=>[{stop:()=>window.fixtureTracksStopped++}]};}});
     window.MediaRecorder=class extends EventTarget {
       static isTypeSupported(){return true;} state='inactive';mimeType='audio/webm';
       start(){this.state='recording';} stop(){this.state='inactive';this.ondataavailable?.({data:new Blob(['fixture audio'],{type:'audio/webm'})});this.onstop?.();}
     };
   })()`);
+  for (const mode of ['denied', 'missing']) {
+    await mini.evaluate(`window.fixtureMediaMode=${JSON.stringify(mode)}`);
+    await clickText(mini, 'Record dictation');
+    await waitFor(() => mini.evaluate(`!!document.querySelector('[role="alert"]') && [...document.querySelectorAll('button')].some(e=>e.textContent==='Record dictation'&&!e.disabled)`), 10_000, `${mode} capture recovers visibly`);
+    assert.equal(speechRequests, 0); assert.equal(chatRequests.length, 0);
+    await screenshot(mini, `microphone-${mode}-fixture.png`);
+    check(`${mode} microphone boundary fixture recovers through actual capture/IPC/UI without provider calls`);
+  }
+  await mini.evaluate(`window.fixtureMediaMode='ok'`);
+  await clickText(mini, 'Record dictation'); await clickText(mini, 'Cancel');
+  assert.equal(speechRequests, 0); assert.equal(chatRequests.length, 0);
+  assert.ok(await mini.evaluate(`window.fixtureTracksStopped>0`));
+  check('cancel during recording stops fixture tracks without transcription or chat');
+  failSpeech = true;
+  await clickText(mini, 'Record dictation'); await clickText(mini, 'Stop recording');
+  await waitFor(() => mini.evaluate(`!!document.querySelector('[role="alert"]') && [...document.querySelectorAll('button')].some(e=>e.textContent==='Record dictation'&&!e.disabled)`), 15_000, 'provider failure recovers visibly');
+  assert.equal(speechRequests, 1); assert.equal(chatRequests.length, 0);
+  assert.ok(await mini.evaluate(`window.fixtureTracksStopped>0`));
+  await screenshot(mini, 'provider-failure-fixture.png');
+  failSpeech = false;
+  check('external provider failure returns to retryable capture UI without sending a chat');
+  assert.equal((await walk(join(dataDir, 'scratch'))).some(name => name.startsWith('mini-dictation-')), false, 'provider failure cleans temporary audio');
   await clickText(mini, "Record dictation"); await clickText(mini, "Stop recording");
   await waitFor(() => mini.evaluate(`document.querySelector('textarea')?.value==='Dictated fixture draft'`), 15_000, "editable transcribed draft");
   assert.equal(await mini.evaluate(`(() => {const button=[...document.querySelectorAll('button')].find(x=>x.textContent==='Open draft');const bounds=button.getBoundingClientRect(),card=document.querySelector('.mini-card').getBoundingClientRect();return bounds.top>=card.top && bounds.bottom<=card.bottom && bounds.bottom<=innerHeight;})()`), true, 'Open draft must be in the visible Mini scrollport');
-  assert.equal(speechRequests, 1); assert.equal(chatRequests.length, 0);
+  assert.equal(speechRequests, 2); assert.equal(chatRequests.length, 0);
   assert.ok(await mini.evaluate(`window.fixtureTracksStopped>0`));
   await fill(mini, 'textarea', 'Edited dictated draft');
   await screenshot(mini, 'mini-draft.png');
   await clickText(mini, 'Open draft');
   await waitFor(() => main.evaluate(`document.querySelector('.composer-input')?.textContent.includes('Edited dictated draft')`), 10_000, 'draft explicitly opened');
   assert.match(await main.evaluate(`document.querySelector('.composer-input').textContent`), /Existing unsent draft[\s\S]*Edited dictated draft/);
+  assert.deepEqual(await attachmentSnapshot(), originalAttachments, 'Open draft preserves attachment token, path and accessible identity');
+  assert.equal((await ok(main, 'pi-desktop/session/get', { id: fixture.session.id })).session.messages.length, 0, 'Open draft must not create a user turn');
+  await screenshot(main, 'draft-with-existing-text-and-attachment.png');
   assert.equal(chatRequests.length, 0, 'dictation must never send a model request');
-  const walk = async (path) => (await Promise.all((await readdir(path, {withFileTypes:true})).map(async (entry) => entry.isDirectory() ? walk(join(path,entry.name)) : [entry.name]))).flat();
   assert.equal((await walk(join(dataDir, 'scratch'))).some((name) => name.startsWith('mini-dictation-')), false);
-  check('record -> local speech -> edit -> Open draft preserves existing unsent text; no automatic send; tracks/audio cleaned');
+  check('record -> local speech retry -> edit -> Open draft preserves existing text and attachment identity; no auto-send; tracks/audio cleaned');
+  handoffEvidence.before = originalAttachments;
+  handoffEvidence.after = await attachmentSnapshot();
+  const retainedText = await main.evaluate(`document.querySelector('.composer-input').textContent`);
+  await clickText(mini, 'Record dictation'); await clickText(mini, 'Stop recording');
+  await waitFor(() => mini.evaluate(`document.querySelector('textarea')?.value==='Dictated fixture draft'`), 15_000, 'second draft for discard');
+  await clickText(mini, 'Discard');
+  await waitFor(() => mini.evaluate(`!document.querySelector('textarea')`), 10_000, 'discard removes pending draft');
+  assert.equal(await main.evaluate(`document.querySelector('.composer-input').textContent`), retainedText);
+  assert.deepEqual(await attachmentSnapshot(), originalAttachments);
+  assert.equal(chatRequests.length, 0);
+  assert.equal((await walk(join(dataDir, 'scratch'))).some(name => name.startsWith('mini-dictation-')), false);
+  check('Discard leaves existing composer text/attachment unchanged and cleans temporary audio');
   await configureDictation(main);
   await clickText(main, 'Create with AI…');
   await fill(main, '.pets-creation-form input', 'Fixture pet');
@@ -274,7 +332,7 @@ try {
   assert.equal(restored.preferences.scale, 1.25); assert.equal(restored.pets.length, 2);
   await connectTarget((target) => target.type === "page" && target.url.includes("surface=mini"));
   check("restart retains explicit None, imported copy, Mini visibility and scale");
-  await writeFile(join(root, "result.json"), JSON.stringify({ results, root, candidate: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(), base: execFileSync("git", ["rev-parse", "origin/main"], { cwd: repo, encoding: "utf8" }).trim(), uncommittedCandidate: execFileSync("git", ["status", "--porcelain"], { cwd: repo, encoding: "utf8" }).trim().length > 0, paidProviders: "not invoked", microphone: "external media fixture; no physical microphone", documentationScenes: "Conductor uses seeded transcript data; library uses a generic fixture", speechRequests, chatRequests: chatRequests.length }, null, 2));
+  await writeFile(join(root, "result.json"), JSON.stringify({ results, root, candidate: execFileSync("git", ["rev-parse", "HEAD"], { cwd: repo, encoding: "utf8" }).trim(), base: execFileSync("git", ["rev-parse", "origin/main"], { cwd: repo, encoding: "utf8" }).trim(), uncommittedCandidate: execFileSync("git", ["status", "--porcelain"], { cwd: repo, encoding: "utf8" }).trim().length > 0, paidProviders: "not invoked", microphone: "external media fixture; no physical microphone", documentationScenes: "Conductor uses seeded transcript data; library uses a generic fixture", speechRequests, chatRequests: chatRequests.length, screenshots, handoffEvidence }, null, 2));
   console.log(`MINI_PETS_E2E_PASS ${root}`);
 } catch (error) {
   if (main) {

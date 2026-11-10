@@ -108,8 +108,12 @@ not all newly authored features of this fork.
 
 The Mini/pets candidate has host, shared-contract, component, locale and actual
 isolated Electron tests. The native harness checks import/restart, narrow preload
-permissions, Mini preferences, draft edit/open without automatic submission,
-cleanup, confirmed normal-task creation and documentation fixture views.
+permissions, Mini preferences, denied/missing microphone boundary errors,
+provider failure/retry, record/cancel/discard and Open draft over existing text
+plus an imported attachment without automatic submission. It verifies temporary
+audio cleanup, confirmed fixture-task entry and documentation fixture views.
+Results identify the candidate/base, screenshot hashes and retained attachment
+identity. Physical microphone/provider and generated-pet acceptance stay separate.
 
 ```powershell
 node scripts/e2e-mini-pets.mjs
