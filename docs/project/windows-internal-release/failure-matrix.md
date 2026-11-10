@@ -388,3 +388,16 @@ and native results are recorded separately in the private candidate manifest.
 acceptance remains blocked pending an existing lawful Windows image; a host
 installation is not a fallback. This matrix neither accepts installer behavior
 nor certifies macOS signing or a public release.
+
+## Packaged/native harness investigation after candidate preparation
+
+The first fully HOME-isolated Conductor rerun failed waiting for four cards
+while its local child Reads had completed. It inherited `PI_DESKTOP_CAPTURE=1`:
+`bootstrap/window.ts` starts a separate UI capture/navigation flow with that
+flag. The owned log recorded `COMPOSER_PROBE` and a failed capture-output write.
+Removing that startup flag made the same isolated Conductor and Mini fixtures
+pass without changing assertions. The packaged harness now sets it **only at
+quit**, using the existing application-confirmation test mode, never during
+startup. This is a corrected test-orchestration defect, not an unexplained
+product waiver. The initial PowerShell HOME-variable assignment error and
+superseded attempts remain in private logs; they are not final acceptance.

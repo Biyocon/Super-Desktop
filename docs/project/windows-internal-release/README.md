@@ -34,8 +34,8 @@ Electron wrapper. It verifies ASAR main/preloads/renderer, x64 host and runtime
 byte matches, bundled Hassan, real version/host handshake, sandbox, fork update
 resources with disabled internal updater, isolated default data, single-instance,
 settings/session/pet persistence across restart and screenshot hashes. Existing
-capture mode only suppresses application quit confirmation. The smoke performs
-no chat dispatch, microphone recording, speech or image generation.
+capture mode is enabled only at quit, never startup; it suppresses application
+quit confirmation. No chat dispatch, microphone recording, speech or image generation occurs.
 
 The private final candidate manifest records exact source/base/tree, check
 commands and exit codes, PR integration tree, installer filename/size/SHA-256,

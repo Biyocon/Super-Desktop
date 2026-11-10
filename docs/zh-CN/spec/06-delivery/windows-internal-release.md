@@ -38,8 +38,8 @@ pnpm.cmd exec electron-builder --config electron-builder.windows.cjs --win nsis 
 
 绝不在工作主机运行安装或卸载程序。`node scripts/e2e-windows-package.mjs` 仅启动解包可执行文件，
 隔离 HOME/USERPROFILE、userData、代理注册及 runtime 代理数据；检查真实包字节、版本、沙箱 preload、
-host 握手、设置/会话/宠物选择的重启保留、单实例及禁用更新。现有 capture 模式只抑制应用自身退出确认，
-不代表安装程序或 Windows 警告验收。不会调用模型、语音、图像或麦克风。
+host 握手、设置/会话/宠物选择的重启保留、单实例及禁用更新。现有 capture 模式仅在退出前启用，
+不在启动时启用，只抑制应用自身退出确认；不代表安装程序或 Windows 警告验收。不会调用模型、语音、图像或麦克风。
 
 记录源 commit/tree、工具链、安装文件名/大小/SHA-256、Authenticode 与 PE 版本、资源哈希、截图及清理。
 私有证据和二进制不进入源 Git。不发布 Release、标签、安装资产或更新源，也不启动发布工作流。

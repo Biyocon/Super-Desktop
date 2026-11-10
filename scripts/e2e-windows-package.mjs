@@ -53,7 +53,7 @@ assert.match(feed, /updaterCacheDirName: super-desktop-updater/);
 assert.doesNotMatch(feed, /vastsa|PI-Desktop/);
 pass("ASAR, Electron executable, host, runtime, preloads and fork feed resources match candidate");
 
-const env = { ...process.env, HOME: home, USERPROFILE: home, APPDATA: join(root,"roaming"), LOCALAPPDATA: join(root,"local"), PI_DESKTOP_AGENTS_DIR: agents, PI_CODING_AGENT_DIR: join(root,"coding-agent"), PI_OFFLINE: "1", PI_DESKTOP_CAPTURE: "1" };
+const env = { ...process.env, HOME: home, USERPROFILE: home, APPDATA: join(root,"roaming"), LOCALAPPDATA: join(root,"local"), PI_DESKTOP_AGENTS_DIR: agents, PI_CODING_AGENT_DIR: join(root,"coding-agent"), PI_OFFLINE: "1", PI_DESKTOP_CAPTURE: "" };
 for (const key of Object.keys(env)) if (/^(ELECTRON_RUN_AS_NODE|ELECTRON_RENDERER_URL|PI_DESKTOP_(DATA_DIR|DEV|HOST_BIN|RUNTIME_ENTRY)|.*API_KEY|.*ACCESS_TOKEN|.*AUTH_TOKEN)$/i.test(key)) delete env[key];
 async function freePort() { const server=createServer(); await new Promise(resolve => server.listen(0,"127.0.0.1",resolve)); const port=server.address().port; await new Promise(resolve=>server.close(resolve)); return port; }
 const sockets = [];
@@ -84,7 +84,7 @@ const invoke=async(channel,...args)=>{const response=await page.evaluate(`window
 const mainEval=expression=>main.evaluate(`(()=>{const {app,BrowserWindow}=process.getBuiltinModule('module').createRequire(process.resourcesPath+'/app.asar/package.json')('electron');return (${expression});})()`);
 async function shutdown() {
   if(!child||child.exitCode!==null)return;
-  try {await mainEval("app.quit()");} catch {}
+  try {await mainEval("(process.env.PI_DESKTOP_CAPTURE='1', app.quit())");} catch {}
   for(const socket of sockets.splice(0))socket.close();
   await waitFor(()=>child.exitCode!==null,15_000,"owned packaged app orderly shutdown");
 }

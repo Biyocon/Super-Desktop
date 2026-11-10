@@ -42,9 +42,10 @@ Never execute the installer on the working host. `node scripts/e2e-windows-packa
 starts only the unpacked executable, with isolated HOME/USERPROFILE, userData,
 agent registry and runtime agent state. It checks actual packaged bytes,
 version, sandboxed preload, host handshake, settings/session/pet restart,
-single-instance and disabled updater. Existing capture mode suppresses the
-application's own quit confirmation only; this is not installer or OS-warning
-acceptance. No model, speech, image or microphone action is performed.
+single-instance and disabled updater. Existing capture mode is enabled only
+immediately at quit, never at startup, to suppress the application's own quit
+confirmation. This is not installer or OS-warning acceptance.
+No model, speech, image or microphone action is performed.
 
 Record source commit/tree, toolchain, installer filename/size/SHA-256,
 Authenticode and PE version metadata, resource hashes, screenshots and cleanup.
