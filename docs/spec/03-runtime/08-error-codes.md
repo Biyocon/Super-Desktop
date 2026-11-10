@@ -108,6 +108,7 @@ does not turn temporary thread pressure into a host process exit.
 | `SPEECH_NOT_CONFIGURED` | no | host speech ASR or TTS is not bound in settings |
 | `SPEECH_PROTOCOL_UNSUPPORTED` | no | the speech protocol is unknown or does not support this role |
 | `SPEECH_INPUT_TOO_LARGE` | no | speech input exceeds 25 MB |
+| `PET_INVALID_REQUEST` | no | pet preferences or library request failed validation |
 | `SUBAGENT_IDLE_TIMEOUT` | no | withdrawn (D328): idle watchdogs are not armed; the code remains for stored results |
 | `SUBAGENT_DURATION_TIMEOUT` | no | withdrawn (D328): duration watchdogs are not armed; the code remains for stored results |
 | `SUBAGENT_CONTEXT_OVERFLOW` | no | a delegate's own model context exceeded its safe budget and neither automatic turn-boundary compaction nor the degraded retry that keeps only the task brief and the most recent messages brought it back below the limit; the failure names the actionable recovery instead of the provider's overflow text |

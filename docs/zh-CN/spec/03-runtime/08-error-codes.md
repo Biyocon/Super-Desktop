@@ -109,6 +109,7 @@ stdio 与 Tokio 的动态阻塞池隔离，因此后一种情况
 | `SPEECH_NOT_CONFIGURED` | 不 | 设置里没有绑定转写或朗读 |
 | `SPEECH_PROTOCOL_UNSUPPORTED` | 不 | 语音协议未知或不支持该角色 |
 | `SPEECH_INPUT_TOO_LARGE` | 不 | 语音输入超过 25 MB |
+| `PET_INVALID_REQUEST` | 不 | 宠物偏好设置或库请求未通过验证 |
 | `SUBAGENT_IDLE_TIMEOUT` | 不 | 已撤回（D328）：空闲看门狗不再武装；代码仅为已存储结果保留 |
 | `SUBAGENT_DURATION_TIMEOUT` | 不 | 已撤回（D328）：时长看门狗不再武装；代码仅为已存储结果保留 |
 | `SUBAGENT_CONTEXT_OVERFLOW` | 不 | 委派自身的模型上下文超出其安全预算，自动的回合边界压缩与仅保留任务简报和最近消息的降级重试都没能把它带回限制以内；该失败给出可执行的恢复方式，而不是提供商的溢出文本 |

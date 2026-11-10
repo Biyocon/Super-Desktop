@@ -10,10 +10,12 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { en } from "../../../packages/i18n/src/locales/en/index.ts";
-import { zhCN } from "../../../packages/i18n/src/locales/zh-CN/index.ts";
-import { tr } from "../../../packages/i18n/src/locales/tr/index.ts";
-import { ko } from "../../../packages/i18n/src/locales/ko/index.ts";
+import { register } from "node:module";
+register(new URL("./helpers/ts-import-hooks.mjs", import.meta.url));
+const { en } = await import("../../../packages/i18n/src/locales/en/index.ts");
+const { zhCN } = await import("../../../packages/i18n/src/locales/zh-CN/index.ts");
+const { tr } = await import("../../../packages/i18n/src/locales/tr/index.ts");
+const { ko } = await import("../../../packages/i18n/src/locales/ko/index.ts");
 
 const catalogs = { en, "zh-CN": zhCN, tr, ko };
 

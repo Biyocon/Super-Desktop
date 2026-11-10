@@ -14,15 +14,17 @@ import {
   nextInstallSample,
   withInstallProgress,
 } from "../src/features/plugins/install-progress.ts";
-import { de } from "../../../packages/i18n/src/locales/de/index.ts";
-import { en } from "../../../packages/i18n/src/locales/en/index.ts";
-import { es } from "../../../packages/i18n/src/locales/es/index.ts";
-import { fr } from "../../../packages/i18n/src/locales/fr/index.ts";
-import { ko } from "../../../packages/i18n/src/locales/ko/index.ts";
-import { ptBR } from "../../../packages/i18n/src/locales/pt-BR/index.ts";
-import { tr } from "../../../packages/i18n/src/locales/tr/index.ts";
-import { zhCN } from "../../../packages/i18n/src/locales/zh-CN/index.ts";
-import { zhTW } from "../../../packages/i18n/src/locales/zh-TW/index.ts";
+import { register } from "node:module";
+register(new URL("./helpers/ts-import-hooks.mjs", import.meta.url));
+const { de } = await import("../../../packages/i18n/src/locales/de/index.ts");
+const { en } = await import("../../../packages/i18n/src/locales/en/index.ts");
+const { es } = await import("../../../packages/i18n/src/locales/es/index.ts");
+const { fr } = await import("../../../packages/i18n/src/locales/fr/index.ts");
+const { ko } = await import("../../../packages/i18n/src/locales/ko/index.ts");
+const { ptBR } = await import("../../../packages/i18n/src/locales/pt-BR/index.ts");
+const { tr } = await import("../../../packages/i18n/src/locales/tr/index.ts");
+const { zhCN } = await import("../../../packages/i18n/src/locales/zh-CN/index.ts");
+const { zhTW } = await import("../../../packages/i18n/src/locales/zh-TW/index.ts");
 
 const catalogs = { en, "zh-CN": zhCN, "zh-TW": zhTW, de, es, fr, ko, "pt-BR": ptBR, tr };
 
