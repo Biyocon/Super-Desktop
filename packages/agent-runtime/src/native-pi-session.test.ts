@@ -1,8 +1,9 @@
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import fs, { existsSync, mkdtempSync, mkdirSync, readFileSync, readdirSync, realpathSync, rmSync, writeFileSync } from "node:fs";
+import { syncBuiltinESMExports } from "node:module";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { basename, dirname, join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AgentSession, ModelRuntime, SessionManager } from "@earendil-works/pi-coding-agent";
+import { AgentSession, hasTrustRequiringProjectResources, ModelRuntime, SessionManager } from "@earendil-works/pi-coding-agent";
 import { createAssistantMessageEventStream, type AssistantMessage } from "@earendil-works/pi-ai";
 import { NativePiSessionService } from "./native-pi-session.js";
 import {
@@ -11,18 +12,49 @@ import {
 } from "./native-pi-session-lease.js";
 
 const roots: string[] = [];
+const originalExistsSync = fs.existsSync;
+let sandboxRoot: string;
+
+function pathKey(value: string): string {
+  const path = resolve(value);
+  return process.platform === "win32" ? path.toLowerCase() : path;
+}
 
 beforeEach(() => {
+  const container = realpathSync(mkdtempSync(join(tmpdir(), "pi-desktop-native-sandbox-")));
+  roots.push(container);
+  sandboxRoot = join(container, "sandbox");
+  const home = join(sandboxRoot, "home");
+  mkdirSync(home, { recursive: true });
+  vi.stubEnv("HOME", home);
+  vi.stubEnv("USERPROFILE", home);
+  vi.stubEnv("PI_OFFLINE", "1");
+
+  // A Windows Temp fixture still has the real profile among its ancestors.
+  // Hide only external discovery sentinels, not trust decisions or fixture I/O.
+  const externalResources = new Set<string>();
+  for (let ancestor = dirname(sandboxRoot); ; ancestor = dirname(ancestor)) {
+    for (const resource of [
+      join(".agents", "skills"), ".git", "AGENTS.override.md", "AGENTS.md", "AGENTS.MD", "CLAUDE.md", "CLAUDE.MD",
+    ]) externalResources.add(pathKey(join(ancestor, resource)));
+    if (dirname(ancestor) === ancestor) break;
+  }
+  vi.spyOn(fs, "existsSync").mockImplementation((path) =>
+    typeof path === "string" && externalResources.has(pathKey(path)) ? false : originalExistsSync(path));
+  // Installed SDK modules use native ESM imports, outside Vitest's module mocks.
+  syncBuiltinESMExports();
   vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("Network forbidden in native fixtures"));
 });
 
 afterEach(() => {
   vi.restoreAllMocks();
+  syncBuiltinESMExports();
+  vi.unstubAllEnvs();
   for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true });
 });
 
 function fixture(options: { newline?: boolean } = {}) {
-  const root = mkdtempSync(join(tmpdir(), "pi-desktop-native-"));
+  const root = mkdtempSync(join(sandboxRoot, "pi-desktop-native-"));
   roots.push(root);
   const agentDir = join(root, "agent");
   const sessionRoot = join(agentDir, "sessions");
@@ -49,6 +81,54 @@ function fixture(options: { newline?: boolean } = {}) {
 }
 
 describe("NativePiSessionService", () => {
+  it("excludes non-fixture ancestor skills and context from native startup", async () => {
+    const outside = dirname(sandboxRoot);
+    const skills = join(outside, ".agents", "skills");
+    const skill = join(skills, "outside-fixture", "SKILL.md");
+    mkdirSync(dirname(skill), { recursive: true });
+    writeFileSync(skill, "---\nname: outside-fixture\ndescription: OUTSIDE_FIXTURE_CANARY\n---\nOUTSIDE_FIXTURE_CANARY\n");
+    writeFileSync(join(outside, "AGENTS.md"), "OUTSIDE_FIXTURE_CANARY\n");
+    const f = await configuredFixture();
+    expect(originalExistsSync(skills)).toBe(true);
+    expect(existsSync(skills)).toBe(false);
+    expect(hasTrustRequiringProjectResources(f.project)).toBe(false);
+    const prompts: string[] = [];
+    vi.spyOn(ModelRuntime.prototype, "streamSimple").mockImplementation((_model, context) => {
+      prompts.push(JSON.stringify(context.messages));
+      return fauxStream();
+    });
+    const service = new NativePiSessionService(f);
+    try {
+      const [summary] = await service.list();
+      expect(summary.capabilities?.canPrompt).toBe(true);
+      await service.prompt(summary.id, "hermetic prompt", () => {});
+      await expect.poll(() => service.status(summary.id).status.isRunning).toBe(false);
+      expect(prompts).toHaveLength(1);
+      expect(prompts[0]).not.toContain("OUTSIDE_FIXTURE_CANARY");
+    } finally { service.disposeAll(); }
+  });
+
+  it.each(["project", "ancestor"] as const)("still rejects untrusted fixture %s resources before appending", async (scope) => {
+    const f = await configuredFixture();
+    const resources = scope === "project" ? join(f.project, ".pi", "extensions") : join(f.root, ".agents", "skills");
+    mkdirSync(resources, { recursive: true });
+    expect(hasTrustRequiringProjectResources(f.project)).toBe(true);
+    const stream = vi.spyOn(ModelRuntime.prototype, "streamSimple").mockImplementation(() => fauxStream());
+    const service = new NativePiSessionService(f);
+    const before = readFileSync(f.file);
+    try {
+      const [summary] = await service.list();
+      expect(summary.readOnlyReason).toBe("project-untrusted");
+      expect(summary.capabilities?.canPrompt).toBe(false);
+      await expect(service.prompt(summary.id, "must not append", () => {})).rejects.toMatchObject({
+        errorCode: "NATIVE_PI_PROJECT_UNTRUSTED",
+      });
+      expect(stream).not.toHaveBeenCalled();
+      expect(readFileSync(f.file)).toEqual(before);
+      expect(existsSync(`${f.file}.pi-desktop.lock`)).toBe(false);
+    } finally { service.disposeAll(); }
+  });
+
   it("lists and projects a native v3 tree without changing its bytes", async () => {
     const f = fixture();
     const service = new NativePiSessionService({ agentDir: f.agentDir, sessionRoot: f.sessionRoot });
@@ -406,7 +486,7 @@ describe("native continuation review regressions", () => {
 
 describe("native fork children", () => {
   function forkFixture() {
-    const root = mkdtempSync(join(tmpdir(), "pi-desktop-native-fork-"));
+    const root = mkdtempSync(join(sandboxRoot, "pi-desktop-native-fork-"));
     roots.push(root);
     const agentDir = join(root, "agent");
     const sessionRoot = join(agentDir, "sessions");
@@ -622,7 +702,7 @@ describe("native fork children", () => {
   });
 
   it("returns the whole child transcript and leaves general detail paging alone", async () => {
-    const root = mkdtempSync(join(tmpdir(), "pi-desktop-native-longfork-"));
+    const root = mkdtempSync(join(sandboxRoot, "pi-desktop-native-longfork-"));
     roots.push(root);
     const agentDir = join(root, "agent");
     const sessionRoot = join(agentDir, "sessions");
@@ -664,7 +744,7 @@ describe("native fork children", () => {
   });
 
   it("normalizes the child cwd from the SDK header instead of the raw parent string", async () => {
-    const root = mkdtempSync(join(tmpdir(), "pi-desktop-native-cwdfork-"));
+    const root = mkdtempSync(join(sandboxRoot, "pi-desktop-native-cwdfork-"));
     roots.push(root);
     const agentDir = join(root, "agent");
     const sessionRoot = join(agentDir, "sessions");
@@ -777,7 +857,7 @@ describe("native fork children", () => {
         expect(failure?.message).not.toContain(f.group);
         expect(existsSync(foreignPath)).toBe(true);
         expect(readFileSync(foreignPath, "utf8")).toContain("collision");
-        expect(groupEntries(f.group).sort()).toEqual(before.concat([foreignPath.split("/").at(-1)!]).sort());
+        expect(groupEntries(f.group).sort()).toEqual(before.concat([basename(foreignPath)]).sort());
         expect(readFileSync(f.file, "utf8")).toBe(parentBytes);
       } finally { service.disposeAll(); }
     } finally {

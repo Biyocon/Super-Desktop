@@ -11,7 +11,7 @@ import {
 } from "./network-proxy";
 import { installInsecureEndpointNotice } from "./network-notice";
 import {
-  APP_ID,
+  WINDOWS_APP_ID,
   APP_NAME,
   APP_VERSION,
   IPC,
@@ -85,7 +85,7 @@ const isDevelopmentBuild =
 app.setName(APP_NAME);
 applyDevelopmentUserData(app, isDevelopmentBuild);
 if (process.platform === "win32") {
-  app.setAppUserModelId(APP_ID);
+  app.setAppUserModelId(WINDOWS_APP_ID);
 }
 
 // Chromium's accessibility tree serializer has a known CHECK failure in

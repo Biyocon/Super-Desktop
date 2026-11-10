@@ -873,11 +873,10 @@ and a shown notification restores/shows and focuses the window before emitting
 `activated`. No permission, scheduled-reminder, or plugin source enters the
 task notification contract. Native delivery is best-effort; the durable
 inbox remains authoritative when the OS suppresses a banner. On Windows,
-Electron Main registers `net.aiuo.pi-desktop` as the process AppUserModelID
-before readiness and before any window is created. The ID matches the NSIS
-package identity so notification attribution, notification settings, taskbar
-grouping, and installed shortcuts resolve to `PI-Desktop`, never the stock
-Electron host.
+Electron Main registers `io.github.biyocon.super-desktop` as the process
+AppUserModelID before readiness and before any window is created. It matches
+the separate Windows NSIS identity, executable and shortcuts for Super-Desktop,
+not PI-Desktop or the stock Electron host. Other platform identifiers are unchanged.
 
 Task native objects are retained by durable notification id, with at most one
 live object per id. Replayed `showNative` requests do not create a second

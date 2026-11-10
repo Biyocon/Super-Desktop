@@ -33,7 +33,7 @@ import {
 
 const { autoUpdater } = electronUpdaterPkg;
 
-export const RELEASES_URL = "https://github.com/vastsa/PI-Desktop/releases/latest";
+export const RELEASES_URL = process.platform === "win32" ? "https://github.com/Biyocon/Super-Desktop/releases" : "https://github.com/vastsa/PI-Desktop/releases/latest";
 
 const AUTO_CHECK_INITIAL_DELAY_MS = 15_000;
 const AUTO_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1000;
@@ -64,7 +64,9 @@ export function resolveUpdateMode(
   isPackaged: boolean,
   env: NodeJS.ProcessEnv = process.env,
   distribution?: WindowsDistribution,
+  currentVersion = "",
 ): UpdateMode {
+  if (platform === "win32" && currentVersion.includes("-super.")) return "disabled";
   if (!isPackaged) return "disabled";
   if (platform === "win32") {
     return env.PORTABLE_EXECUTABLE_FILE || distribution === "zip"
@@ -138,6 +140,7 @@ export class AppUpdaterController {
       isPackaged,
       process.env,
       distribution,
+      options.currentVersion,
     );
     this.state = {
       mode,

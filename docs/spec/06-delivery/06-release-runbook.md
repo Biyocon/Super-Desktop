@@ -26,13 +26,13 @@ and ICNS resource are development-only PI-Desktop values, so AppKit shows
 PI-Desktop in the application menu and uses the canonical icon in the native
 About panel. The runtime also applies `build/icon_1024.png` to the Dock. Stock
 files under `node_modules` are never modified. Windows/Linux development keeps
-the normal electron-vite executable. Windows Main nevertheless registers the
-same `net.aiuo.pi-desktop` AppUserModelID used by the NSIS package before
-Electron readiness, preventing the stock host identity from owning native
-notifications or taskbar groups. The Windows package additionally pins the
-`PI-Desktop` executable and Start menu shortcut names. The launcher sets
-`PI_DESKTOP_DEV=1` so runtime packaging checks keep update delivery disabled
-and preserve developer workspace defaults despite the branded executable name.
+the normal electron-vite executable. Windows Main registers the permanent fork
+AppUserModelID `io.github.biyocon.super-desktop` before readiness. The explicitly
+selected `electron-builder.windows.cjs` overlay gives NSIS, `Super-Desktop.exe`
+and shortcuts the same separate identity; macOS/Linux retain legacy identifiers.
+The launcher sets `PI_DESKTOP_DEV=1`, disabling updates and selecting development
+workspace defaults. See [Windows internal candidate contract](windows-internal-release.md)
+for the separate roots, unsigned warnings and mandatory guest acceptance gate.
 The first `pnpm dev` on Electron 43+ downloads the Electron binary on demand
 (the package no longer installs it during `pnpm install`).
 Packaged lanes use `build/icon.icns` through electron-builder on macOS and

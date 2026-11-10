@@ -1,6 +1,6 @@
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { parseArgs, resolveConfig } from "./config.js";
@@ -21,7 +21,7 @@ describe("config", () => {
   it("parses flags with and without values and validates the port", () => {
     expect(parseArgs(["--pair", "--port", "4123", "--data-dir=/x", "--host-core", "/bin/hc"])).toEqual({ pair: true, port: "4123", "data-dir": "/x", "host-core": "/bin/hc" });
     const config = resolveConfig({ "data-dir": "/data", port: "4123", "host-core": "/bin/hc", sidecar: "/s.js", pair: true }, {});
-    expect(config).toMatchObject({ dataDir: "/data", port: 4123, host: "127.0.0.1", hostCoreBinary: "/bin/hc", sidecarEntry: "/s.js", pair: true, logLevel: "info" });
+    expect(config).toMatchObject({ dataDir: resolve("/data"), port: 4123, host: "127.0.0.1", hostCoreBinary: resolve("/bin/hc"), sidecarEntry: resolve("/s.js"), pair: true, logLevel: "info" });
     expect(() => resolveConfig({ port: "70000", "host-core": "/bin/hc", sidecar: "/s.js" }, {})).toThrow(/invalid port/);
     expect(() => resolveConfig({ "host-core": "/bin/hc", sidecar: "/s.js", port: "abc" }, {})).toThrow(/invalid port/);
     expect(resolveConfig({ "host-core": "/bin/hc", sidecar: "/s.js", "log-level": "warn" }, {}).logLevel).toBe("warn");

@@ -32,8 +32,8 @@
 | plugin | 每个插件的日志 | `~/.pi-desktop/plugins/logs/<id>.log` |
 
 
-表中的 `~/.pi-desktop` 路径属于正式打包版。开发构建把同一棵目录树写在
-`~/.pi-desktop-dev` 下，`PI_DESKTOP_DATA_DIR` 会整体替换任一默认根目录（D599）。
+示例 `.pi-desktop`/`.pi-desktop-dev` 根目录适用于 macOS/Linux。Windows Super-Desktop
+使用 `.super-desktop`/`.super-desktop-dev` 下相同日志结构；`PI_DESKTOP_DATA_DIR` 仍替换根目录。
 `app`、`host` 和 `agent` 是由 Electron 主进程 `Logger`
 （`apps/desktop/electron/main/logger.ts`）写入的 NDJSON 文件。host 和
 agent 的 stderr 行会被包装成对应通道的记录。audit 通道由 host-core

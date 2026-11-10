@@ -736,11 +736,10 @@ Electron 拥有本机表面，而渲染器则派生本地化表面
 `activated` 之前恢复/显示并聚焦窗口。交互询问不会创建持久任务收件箱行；
 计划提醒和插件本机通知仍是独立合约。本机交付是尽力而为；耐用的
 收件箱仍是操作系统抑制横幅时的权威来源。在 Windows 上，
-Electron 主将 `net.aiuo.pi-desktop` 注册为进程 AppUserModelID
-在准备就绪之前和创建任何窗口之前。 ID 与 NSIS 匹配
-包标识所以通知属性、通知设置、任务栏
-分组，安装的快捷方式解析为 `PI-Desktop`，而不是库存
-Electron 主机。
+Electron 主在就绪和创建窗口前，将 `io.github.biyocon.super-desktop`
+注册为进程 AppUserModelID。该值与独立 Windows NSIS 身份、可执行文件及
+Super-Desktop 快捷方式一致，不归属 PI-Desktop 或默认 Electron 主机。
+其他平台标识符不变。
 
 任务本机对象按持久 notification id 保留，每个 id 最多一个活动对象。
 重放的 `showNative` 请求不得创建第二个对象。`notification.markRead`、

@@ -10,13 +10,14 @@
  */
 import assert from "node:assert/strict";
 import { register } from "node:module";
+import { fileURLToPath } from "node:url";
 import test from "node:test";
 
 register(new URL("./helpers/ts-import-hooks.mjs", import.meta.url));
 
 const { ModelsDevCatalog } = await import("../electron/main/models-dev-catalog.ts");
 
-const catalogPath = new URL("../resources/models.dev/api.json", import.meta.url).pathname;
+const catalogPath = fileURLToPath(new URL("../resources/models.dev/api.json", import.meta.url));
 
 async function loadedCatalog() {
   const catalog = new ModelsDevCatalog({ catalogPath });

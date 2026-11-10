@@ -236,7 +236,12 @@ fn a_global_skill_moves_into_a_project() {
 
         assert_eq!(moved.id, "review");
         assert_eq!(moved.level.as_deref(), Some("project"));
-        assert_eq!(moved.project_path.as_deref(), Some(project_path.as_str()));
+        // Capability records store project paths with forward slashes.
+        let expected_project_path = project_path.replace('\\', "/");
+        assert_eq!(
+            moved.project_path.as_deref(),
+            Some(expected_project_path.as_str())
+        );
         assert!(!home.path().join("skills/review.md").exists());
         let target = project.path().join(".agents/skills/review.md");
         assert_eq!(

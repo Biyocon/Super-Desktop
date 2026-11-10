@@ -164,7 +164,12 @@ fn a_global_server_moves_into_a_project_with_its_state() {
             .unwrap();
 
         assert_eq!(moved.level.as_deref(), Some("project"));
-        assert_eq!(moved.project_path.as_deref(), Some(project_path.as_str()));
+        // Capability records store project paths with forward slashes.
+        let expected_project_path = project_path.replace('\\', "/");
+        assert_eq!(
+            moved.project_path.as_deref(),
+            Some(expected_project_path.as_str())
+        );
         assert!(!moved.enabled);
         assert!(!home.path().join("servers/files.json").exists());
         assert!(project.path().join(".agents/servers/files.json").is_file());

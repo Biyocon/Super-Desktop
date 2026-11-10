@@ -105,6 +105,10 @@ Subagent 与 Worker Session 可以承担独立任务并行工作。
 > **PI-Desktop 目前仍处于 Early Preview。** 已可用于真实开发工作流，部分 API、插件接口与桌面能力仍在持续演进。
 
 > **当前发布线：0.15.x（Early Preview）。**
+>
+> Super-Desktop 的 `0.15.7-super.1` 为未签名 Windows 内部候选，等待用户验收，不是公开安装发布。
+> 安装、升级及卸载缺少合法 Windows 镜像，仍未验证。真实听写和生成宠物质量未验收，实体多显示器/断开测试推迟。
+> Windows 使用独立身份且不自动迁移；见[候选记录](docs/project/windows-internal-release/README.md)。
 
 ---
 

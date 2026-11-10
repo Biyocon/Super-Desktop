@@ -366,19 +366,39 @@ test("a remote mcp server negotiates over http and keeps its session", async (t)
 });
 
 test("a remote MCP tool can run longer than the connection timeout", async (t) => {
-  const { url } = await startHttpServer(t, { slowToolDelayMs: 80 });
+  let releaseTool;
+  let markStarted;
+  const started = new Promise((resolve) => { markStarted = resolve; });
+  const toolResponse = new Promise((resolve) => { releaseTool = resolve; });
+  const fetchImpl = async (_url, options) => {
+    const message = JSON.parse(options.body);
+    if (message.method === "notifications/initialized") return new Response(null, { status: 202 });
+    if (message.method === "tools/call") {
+      markStarted();
+      await toolResponse;
+    }
+    const result = message.method === "initialize"
+      ? { protocolVersion: message.params.protocolVersion, capabilities: {} }
+      : message.method === "tools/list"
+        ? { tools: [{ name: "slow" }] }
+        : { content: [{ type: "text", text: "finished" }] };
+    return new Response(JSON.stringify({ jsonrpc: "2.0", id: message.id, result }), {
+      status: 200, headers: { "content-type": "application/json" },
+    });
+  };
   const client = new McpServerClient({
     rootPath: mkdtempSync(join(tmpdir(), "pi-mcp-http-")),
-    server: { id: "remote", transport: "http", url },
-    values: {},
-    connectTimeoutMs: 20,
-    callTimeoutMs: 500,
+    server: { id: "remote", transport: "http", url: "https://mcp.example.com/mcp" },
+    values: {}, fetchImpl, connectTimeoutMs: 20, callTimeoutMs: 500,
   });
   t.after(() => client.close());
-
-  assert.deepEqual((await client.connect()).map((tool) => tool.name), ["headers", "slow"]);
-  const result = await client.callTool("slow", {});
-  assert.equal(describeMcpContent(result.content), "finished");
+  assert.deepEqual((await client.connect()).map((tool) => tool.name), ["slow"]);
+  t.mock.timers.enable({ apis: ["setTimeout"] });
+  const result = client.callTool("slow", {});
+  await started;
+  t.mock.timers.tick(21);
+  releaseTool();
+  assert.equal(describeMcpContent((await result).content), "finished");
 });
 test("aborting one HTTP MCP call cancels its request", async (t) => {
   let callStarted;

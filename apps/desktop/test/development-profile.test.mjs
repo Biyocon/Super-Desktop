@@ -31,10 +31,9 @@ test("a development build owns a different data directory than the shipped app",
     join(home, DEVELOPMENT_DATA_DIR_NAME),
   );
 
-  // A shipped installation must keep the directory its users already have, so
-  // the split can only have moved the development side.
-  assert.equal(INSTALLATION_DATA_DIR_NAME, ".pi-desktop");
-  assert.equal(DEVELOPMENT_DATA_DIR_NAME, ".pi-desktop-dev");
+  // Windows fork profiles intentionally leave PI-Desktop's roots untouched.
+  assert.equal(INSTALLATION_DATA_DIR_NAME, process.platform === "win32" ? ".super-desktop" : ".pi-desktop");
+  assert.equal(DEVELOPMENT_DATA_DIR_NAME, process.platform === "win32" ? ".super-desktop-dev" : ".pi-desktop-dev");
   assert.equal(DEVELOPMENT_INSTALLATION_NAME, "Super-Desktop Dev");
 });
 
@@ -84,7 +83,7 @@ test("applyDevelopmentUserData sets userData unless --user-data-dir is set", () 
     ["userData", join("/tmp/appData", DEVELOPMENT_INSTALLATION_NAME)],
   ]);
   calls.length = 0;
-  applyDevelopmentUserData(app, false);
+  applyDevelopmentUserData(app, false, "darwin");
   assert.equal(calls.length, 0);
   applyDevelopmentUserData(
     { ...app, commandLine: { hasSwitch: (name) => name === "user-data-dir" } },
@@ -110,14 +109,15 @@ test("a development build takes its own userData before the single-instance lock
   // An explicit `--user-data-dir` wins. The E2E harnesses point a build at a
   // throwaway profile with that switch, so overriding it would run their
   // assertions against the developer's own state instead.
-  assert.match(
-    pathsSource,
-    /if \(development && !app\.commandLine\.hasSwitch\("user-data-dir"\)\) \{/,
-  );
-  assert.match(
-    pathsSource,
-    /app\.setPath\(\s*"userData",\s*join\(app\.getPath\("appData"\), DEVELOPMENT_INSTALLATION_NAME\)/,
-  );
+  assert.match(pathsSource, /!app\.commandLine\.hasSwitch\("user-data-dir"\)/);
+  const calls = [];
+  const app = { commandLine: { hasSwitch: () => false }, getPath: () => '/profiles', setPath: (...args) => calls.push(args) };
+  applyDevelopmentUserData(app, false, 'win32');
+  assert.deepEqual(calls, [['userData', join('/profiles', 'Super-Desktop')]]);
+  for (const platform of ['darwin', 'linux']) { calls.length = 0; applyDevelopmentUserData(app, false, platform); assert.deepEqual(calls, []); }
+  calls.length = 0;
+  applyDevelopmentUserData({ ...app, commandLine: { hasSwitch: () => true } }, false, 'win32');
+  assert.deepEqual(calls, []);
 
   // The two profiles are told apart by the same verdict everywhere, and it is
   // reached before the name the lock path derives from.

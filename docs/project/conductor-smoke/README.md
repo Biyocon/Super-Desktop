@@ -4,6 +4,10 @@ This package preserves the reusable, non-private part of the local test setup.
 It contains a prompt and three generic user-role definitions, not an installer,
 registry backup or proof of a completed production run.
 
+The [sanitized historical live report](live-seven-agent-report.md) records a real
+seven-agent run, including its prompt deviations and DOM-only panel activation.
+It is separate from the later native-input fixture regressions below.
+
 ## Before running
 
 1. Select this repository root as the project, not its `apps` directory.

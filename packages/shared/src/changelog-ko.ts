@@ -2,6 +2,14 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const koEntries: ChangelogEntry[] = [
   {
+    version: "0.15.7",
+    highlights: [
+      "Windows용 Super-Desktop은 PI-Desktop이나 개발 프로필을 이전하지 않고 독립적인 설치 및 데이터 식별자를 사용합니다.",
+      "Hassan 또는 펫 없음 선택, 확인 후 펫 가져오기와 초안 전용 받아쓰기를 지원하는 Mini를 추가하고 Conductor 결과와 사용자 에이전트 16개 한도를 유지합니다.",
+      "서명되지 않은 Windows 후보 0.15.7-super.1은 내부용이며 사용자 승인을 기다립니다. 게스트 설치, 실제 받아쓰기 및 생성된 펫 품질은 승인되지 않았습니다.",
+    ],
+  },
+  {
     version: "0.15.6",
     date: "2026-09-23",
     highlights: [

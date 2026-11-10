@@ -47,11 +47,12 @@ read time; their path-scoped memory and filesystem instructions remain readable.
 
 ## 2. File layout
 
-A packaged installation keeps this tree in `~/.pi-desktop`. A development build
-keeps the same tree in `~/.pi-desktop-dev`, because a shipped app and a
-`pnpm dev` host are two installations that have to run at the same time (D599,
-ADR 0094). `PI_DESKTOP_DATA_DIR` replaces either root outright and is resolved
-to an absolute path before it reaches host-core as a child-process variable.
+Windows Super-Desktop uses `~/.super-desktop` when packaged and
+`~/.super-desktop-dev` in development, with no automatic migration. macOS/Linux
+retain `~/.pi-desktop` and `~/.pi-desktop-dev` (D599, ADR 0094). The example tree
+below uses the legacy non-Windows root; contents are identical on Windows.
+`PI_DESKTOP_DATA_DIR` replaces either root outright and is resolved to an absolute
+path before it reaches host-core. See [Windows identity](../06-delivery/windows-internal-release.md).
 
 ```text
 ~/.pi-desktop/

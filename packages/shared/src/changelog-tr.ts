@@ -2,6 +2,14 @@ import type { ChangelogEntry } from "./changelog.js";
 
 export const trEntries: ChangelogEntry[] = [
   {
+    version: "0.15.7",
+    highlights: [
+      "Windows için Super-Desktop, PI-Desktop veya geliştirme profillerini taşımadan kendi kurulum ve veri kimliğini kullanır.",
+      "Hassan veya evcil hayvan olmadan Mini, onaylı içe aktarma ve yalnızca taslak diktesi eklenir; Conductor sonuçları ve 16 kullanıcı aracısı bütçesi korunur.",
+      "İmzasız Windows adayı 0.15.7-super.1 dahili kullanım içindir ve kullanıcı kabulünü bekler; konuk kurulumu, fiziksel dikte ve üretilen evcil hayvan kalitesi kabul edilmemiştir.",
+    ],
+  },
+  {
     "version": "0.15.6",
     "date": "2026-09-23",
     "highlights": [

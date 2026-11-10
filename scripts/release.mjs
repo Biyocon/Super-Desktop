@@ -40,6 +40,10 @@ const version = process.argv[2];
 const doTag = process.argv.includes("--tag");
 const skipDocsCheck = process.argv.includes("--skip-docs-check");
 const isPrerelease = version?.includes("-") ?? false;
+const offline = process.argv.includes("--offline");
+if (offline && (!isPrerelease || doTag)) {
+  throw new Error("--offline is only for local prerelease preparation without --tag");
+}
 
 if (!version || !/^\d+\.\d+\.\d+(-[0-9A-Za-z.]+)?$/.test(version)) {
   console.error(
@@ -99,7 +103,7 @@ async function refreshBundledModelsDevCatalog() {
 // unlike user settings, this path is never written at runtime. A deliberate
 // --skip-docs-check bump may run offline: the failure is reported, not fatal.
 try {
-  await refreshBundledModelsDevCatalog();
+  if (!offline) await refreshBundledModelsDevCatalog();
 } catch (error) {
   if (skipDocsCheck) {
     console.warn(
@@ -137,6 +141,7 @@ for (const group of ["apps", "packages"]) {
 for (const [relPath, pattern] of [
   ["Cargo.toml", /(\[workspace\.package\][\s\S]*?\bversion = ")[^"]+(")/],
   ["Cargo.lock", /(name = "host-core"\nversion = ")[^"]+(")/],
+  ["Cargo.lock", /(name = "pi-host"\nversion = ")[^"]+(")/],
   ["packages/shared/src/protocol.ts", /(export const APP_VERSION = ")[^"]+(")/],
 ]) {
   const file = path.join(root, relPath);
@@ -230,6 +235,8 @@ if (doTag) {
   }
   git("tag", tag);
   console.log(`\nTagged ${tag}. Publish with:\n  git push origin ${branch} ${tag}`);
+} else if (offline) {
+  console.log("\nInternal prerelease preparation only. No tag or publication; user acceptance is pending.");
 } else if (changed.length > 0) {
   console.log(`\nNext steps:\n  git commit -m "chore(release): ${tag}" -- ${changed.join(" ")}\n  git tag ${tag}\n  git push origin ${branch} ${tag}`);
 }

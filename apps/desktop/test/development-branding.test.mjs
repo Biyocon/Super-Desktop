@@ -10,6 +10,8 @@ import {
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { createRequire } from "node:module";
+const windowsConfig = createRequire(import.meta.url)("../electron-builder.windows.cjs");
 
 const devScriptUrl = new URL(
   "../../../scripts/dev-electron.mjs",
@@ -41,19 +43,20 @@ const windowsIcon = await readFile(
 );
 
 test("Windows runtime registers the canonical native application identity", () => {
-  const appId = protocolSource.match(/APP_ID = "([^"]+)"/)?.[1];
-  assert.equal(appId, packageJson.build.appId);
+  const appId = protocolSource.match(/WINDOWS_APP_ID = "([^"]+)"/)?.[1];
+  assert.equal(appId, windowsConfig.appId);
+  assert.notEqual(appId, packageJson.build.appId);
   assert.ok(startupSource.includes("app.whenReady()"), "main process readiness hook");
   assert.match(mainIndexSource, /app\.setName\(APP_NAME\)/);
   assert.match(
     mainIndexSource,
-    /process\.platform === "win32"[\s\S]*app\.setAppUserModelId\(APP_ID\)/,
+    /process\.platform === "win32"[\s\S]*app\.setAppUserModelId\(WINDOWS_APP_ID\)/,
   );
 });
 
-test("Windows packages pin PI-Desktop executable and shortcut names", () => {
-  assert.equal(packageJson.build.win.executableName, "PI-Desktop");
-  assert.equal(packageJson.build.nsis.shortcutName, "PI-Desktop");
+test("Windows packages pin separate Super-Desktop executable and shortcut names", () => {
+  assert.equal(windowsConfig.win.executableName, "Super-Desktop");
+  assert.equal(windowsConfig.nsis.shortcutName, "Super-Desktop");
 });
 
 test("Windows packages and windows use the canonical PI-Desktop icon", () => {

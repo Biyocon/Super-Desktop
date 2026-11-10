@@ -6,8 +6,9 @@ import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { register } from "node:module";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { delimiter, dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { posixFixtureArgs } from "./helpers/posix-fixture.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
 register(pathToFileURL(join(here, "helpers/ts-import-hooks.mjs")));
@@ -136,14 +137,15 @@ async function prepareSandbox(root, { readyVersion = VERSION } = {}) {
     env: {
       ...process.env,
       HOME: home,
-      PATH: `${bin}:${process.env.PATH ?? ""}`,
+      PATH: `${bin}${delimiter}${process.env.PATH ?? ""}`,
       PI_HOST_TEST_TARBALL: tarball,
+      PI_HOST_TEST_BIN: bin,
     },
   };
 }
 
 function runScript(scriptPath, env) {
-  return execFileSync("sh", [scriptPath], {
+  return execFileSync("sh", posixFixtureArgs(scriptPath, env.PI_HOST_TEST_BIN, [], ["curl", "sha256sum"]), {
     encoding: "utf8",
     timeout: 120_000,
     stdio: ["ignore", "pipe", "pipe"],

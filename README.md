@@ -15,16 +15,18 @@ Projects, model providers, tools and delegated agents in one persistent workspac
 
 </div>
 
-> **Development fork — not an installer release.** The application is named
-> **Super-Desktop** (previously Iqra-Desktop). Upstream PI-Desktop installers do
-> not include the additions below. Windows candidate checks have been run;
-> macOS/Linux support is inherited from upstream, not newly certified here.
+> **Internal Windows candidate `0.15.7-super.1` — 0.15.x preview, awaiting user acceptance.**
+> Super-Desktop is not publicly installer-released. The unsigned candidate has a
+> separate Windows identity; guest install/upgrade/uninstall remain blocked without
+> a lawful Windows image. Physical dictation and generated-pet quality are not accepted;
+> mixed-monitor/disconnect testing is deferred. macOS/Linux are not newly certified.
+> See [candidate status and qualification matrix](docs/project/windows-internal-release/README.md).
 
 ## Features added in this fork
 
 | Addition | What is implemented | Where to find it |
 |---|---|---|
-| **Super-Desktop identity** | Product rename, Biyocon branding and fork-specific assets; technical application IDs remain unchanged. | Application shell and build metadata |
+| **Super-Desktop identity** | Windows owns `io.github.biyocon.super-desktop`, `Super-Desktop.exe`, shortcuts and separate default profiles; no automatic migration. Other platforms retain legacy IDs. | Application shell and Windows build overlay |
 | **Conductor team in chat** | Main coordinator plus seven specialist role portraits. Actual delegated tasks show their status; unused roles remain visible but dimmed. | Expanded delegation group in a conversation |
 | **Safe CustomAgents import** | Validated, idempotent import into a separate read-only library, collision/no-clobber protection and qualified library IDs. Existing active registry files are preserved. | `scripts/import-customagents.mjs` and Settings > Subagents |
 | **Selectable agent library** | Library agents start disabled and can be selected without overwriting local definitions. The runtime budget is **16 user handles**, with builtins outside that budget. Explicit builtin-off is respected. | Settings > Subagents |

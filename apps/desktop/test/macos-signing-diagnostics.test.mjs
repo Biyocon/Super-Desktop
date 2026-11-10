@@ -2,9 +2,10 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { chmod, mkdir, mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { dirname, join } from "node:path";
+import { delimiter, dirname, join } from "node:path";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
+import { posixFixtureArgs } from "./helpers/posix-fixture.mjs";
 
 // Both scripts are plain bash / node CLI tools with no dependencies, so these
 // tests drive them through a fake PATH and a temporary bundle fixture instead of
@@ -131,9 +132,9 @@ exit 0`,
 }
 
 function runDiagnostics(bin, { args = [], env = {} } = {}) {
-  return spawnSync("bash", [diagnosticsScript, ...args], {
+  return spawnSync("bash", posixFixtureArgs(diagnosticsScript, bin, args, ["uname"]), {
     encoding: "utf8",
-    env: { ...BASE_ENV, PATH: `${bin}:${process.env.PATH}`, ...env },
+    env: { ...BASE_ENV, PATH: `${bin}${delimiter}${process.env.PATH}`, ...env },
   });
 }
 

@@ -37,12 +37,13 @@ run pointed at its own `PI_DESKTOP_DATA_DIR` (E2E harnesses, the capture rig, a
 side-by-side profile) shares no database, outbox, or logs with the default
 installation and stays launchable while one is running (D236, ADR 0094).
 
-A development build is its own installation rather than a second process of
-the same one: it runs under `PI-Desktop Dev` in the OS application-data root
-and reads `~/.pi-desktop-dev`. `pnpm dev` therefore starts while a packaged app
-holds its lock, and the two never share a database, an outbox, or a log tree
-(D599, ADR 0094). An explicit `--user-data-dir` is honored instead, because the
-E2E harnesses point a build at a throwaway profile with it.
+A development build is its own installation: `Super-Desktop Dev` in the OS
+application-data root. On Windows, packaged `userData` is explicitly
+`<appData>/Super-Desktop`, data is `~/.super-desktop`, and development data is
+`~/.super-desktop-dev`; there is no automatic migration. Non-Windows installed
+profile derivation and `.pi-desktop`/`.pi-desktop-dev` roots remain unchanged.
+An explicit `--user-data-dir` wins. An explicit `PI_DESKTOP_DATA_DIR` retains the
+existing single-instance opt-out. See [Windows contract](../06-delivery/windows-internal-release.md).
 
 1. Electron main starts
 2. Load English locale defaults

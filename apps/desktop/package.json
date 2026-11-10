@@ -1,6 +1,6 @@
 {
   "name": "@pi-desktop/desktop",
-  "version": "0.15.7-beta.1",
+  "version": "0.15.7-super.1",
   "desktopName": "pi-desktop.desktop",
   "private": true,
   "description": "Super-Desktop Electron application",
@@ -24,7 +24,7 @@
     "clean": "node -e \"fs.rmSync('out',{recursive:true,force:true});fs.rmSync('dist',{recursive:true,force:true})\"",
     "build:host-release": "cargo build --release --manifest-path ../../Cargo.toml -p host-core",
     "bundle:runtime": "pnpm -C ../../packages/agent-runtime bundle",
-    "pack": "pnpm run build:deps && pnpm run build:host-release && pnpm run bundle:runtime && electron-vite build && electron-builder --dir",
+    "pack": "pnpm run build:deps && pnpm run build:host-release && pnpm run bundle:runtime && electron-vite build && node ../../scripts/build-desktop-release.mjs pack",
     "dist": "pnpm run build:deps && pnpm run build:host-release && pnpm run bundle:runtime && electron-vite build && node ../../scripts/build-desktop-release.mjs",
     "dist:mac": "pnpm run build:deps && pnpm run build:host-release && pnpm run bundle:runtime && electron-vite build && electron-builder --mac --publish never",
     "dist:win": "pnpm run build:deps && pnpm run build:host-release && pnpm run bundle:runtime && electron-vite build && node ../../scripts/build-desktop-release.mjs win",
