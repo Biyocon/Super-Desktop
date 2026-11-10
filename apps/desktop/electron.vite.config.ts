@@ -2,8 +2,28 @@ import { resolve } from "node:path";
 import { defineConfig } from "electron-vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import type { Plugin } from "vite";
+import { build as viteBuild, type Plugin } from "vite";
 
+// Each sandboxed preload must be self-contained: Electron's sandbox cannot
+// require Rollup's relative shared chunks. Build the narrow Mini entry separately.
+function independentMiniPreload(): Plugin {
+  const entry = resolve(__dirname, "electron/preload/mini.ts");
+  return {
+    name: "mini-standalone-preload",
+    buildStart() { this.addWatchFile(entry); },
+    async writeBundle(output) {
+      await viteBuild({
+        configFile: false, logLevel: "warn",
+        build: {
+          outDir: output.dir ?? resolve(__dirname, "out/preload"),
+          emptyOutDir: false, minify: false,
+          lib: { entry, formats: ["cjs"], fileName: () => "mini.cjs" },
+          rollupOptions: { external: ["electron"], output: { inlineDynamicImports: true } },
+        },
+      });
+    },
+  };
+}
 // Dev needs 'unsafe-eval' for vite HMR tooling; production must not ship it.
 function tightenCsp(): Plugin {
   return {
@@ -79,12 +99,14 @@ export default defineConfig({
     },
   },
   preload: {
+    plugins: [independentMiniPreload()],
     // The preload must be a fully bundled CJS file so it can run in a
     // sandboxed renderer without Node module resolution.
     build: {
       rollupOptions: {
         input: {
           index: resolve(__dirname, "electron/preload/index.ts"),
+
           "plugin-panel": resolve(__dirname, "electron/preload/plugin-panel.ts"),
         },
         output: {

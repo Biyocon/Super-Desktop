@@ -1,0 +1,320 @@
+{
+  "head": "0d87930b6d1c5dfb9310886b77c7db0e99832b15",
+  "base": "0d87930b6d1c5dfb9310886b77c7db0e99832b15",
+  "uncommitted": true,
+  "digest": "0892aee9ce5fe276cf8738fb1f0340e1e112c35f3a5a5478346af215b7963951",
+  "files": [
+    {
+      "path": "apps/desktop/electron.vite.config.ts",
+      "sha256": "8b353089d923f154f82bc7bb707a0913c55f8cc700ba16107e1071c15d8c07af"
+    },
+    {
+      "path": "apps/desktop/electron/main/bootstrap/launcher.ts",
+      "sha256": "2cab5d5f901285b225b6b9aa0e09710b92cf8f2fb156ee813fe9410b086af173"
+    },
+    {
+      "path": "apps/desktop/electron/main/ipc/pets-ipc.ts",
+      "sha256": "93dbfff34cc8a2cd3950f3a52dfa0c68bda5ed8e48271de90019b7ba608c08bb"
+    },
+    {
+      "path": "apps/desktop/electron/main/ipc/register.ts",
+      "sha256": "e2a07c4794d19dd1474bd6b1d0e41cb030eba75e7588d5622b2066d53bbf0adc"
+    },
+    {
+      "path": "apps/desktop/electron/main/ipc/settings-ipc.ts",
+      "sha256": "221420f5ccde8635df41695cd6e47b0bdb0b4d1fd21bdba850fae4cb66374c7f"
+    },
+    {
+      "path": "apps/desktop/electron/main/pets/dictation.ts",
+      "sha256": "ed039f04ce23b52e91f88e9be5a491da207ba72d7b4caed9b95ea30ecd2e7779"
+    },
+    {
+      "path": "apps/desktop/electron/main/pets/image-decoder.ts",
+      "sha256": "9c50e914517c9c835be2c18e81849a2637b154a400583b7c2e9355fbf3fc1870"
+    },
+    {
+      "path": "apps/desktop/electron/main/pets/import-service.ts",
+      "sha256": "6353a431fab597e0fe122507e4b92421e35e152fdfc9848b0c563283de7d432d"
+    },
+    {
+      "path": "apps/desktop/electron/main/pets/mini-window.ts",
+      "sha256": "4909b94271ea6c00eefcab9907437199f2700bb22e5e4a2fdb38491e5de08850"
+    },
+    {
+      "path": "apps/desktop/electron/main/pets/sender-guard.ts",
+      "sha256": "f55d9915b03d047ae28f2faf72997f474de468e98c2f271b509d78a18c6cf414"
+    },
+    {
+      "path": "apps/desktop/electron/main/pets/service.ts",
+      "sha256": "f52ccdede760e107259dab090bfc5b9183cee902a030e66f6d4859e4c2a70e17"
+    },
+    {
+      "path": "apps/desktop/electron/preload/mini.ts",
+      "sha256": "57be5055ef158de0ea2d608e8c64af91a901d14d4984d33c40dfad8d7126a60d"
+    },
+    {
+      "path": "apps/desktop/src/App.tsx",
+      "sha256": "e0dd5861298b5120db80d4c70a55a4c3dc54913669e04d0aed2484cb85ded8fa"
+    },
+    {
+      "path": "apps/desktop/src/components/HomeMascotLogo.tsx",
+      "sha256": "7b54d48297ac7326d1866ba0d81d1b03b9c00dc1c52431c059cca69f29c132eb"
+    },
+    {
+      "path": "apps/desktop/src/features/chat/composer/hooks/useComposerDraft.ts",
+      "sha256": "011f676f0c8cc3781e56ec9eac785f2f87a11341e4047adddd996205c392490e"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/DictationSettings.tsx",
+      "sha256": "2568eb87f74120852a14b4ca9fce9d29482c248c90251503a7c2ad746531dedf"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/Mini.tsx",
+      "sha256": "5ce69a95b60ff5e0a74e3eb97ca93a6bdce057982a0b887460f627028ce5d708"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/PetBridge.tsx",
+      "sha256": "5d85b19a64045904d31d572575dc6e7ec39d1fa23e828f73b1738f77d0b0051b"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/PetSettings.tsx",
+      "sha256": "f76fea03f44d3917dd415ea17338cbb714c03432a7a8ae55fc0986319556e888"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/PetSprite.tsx",
+      "sha256": "eb186665e22a9107e2ba79e70bcb9a899b9b39ef665fbdc55161fd42862d80ee"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/PetsPage.tsx",
+      "sha256": "6a07aef8db35ed7f5ea0064f188cdf15c5e7dcf67850341f86b13500afe1526a"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/capture-controller.ts",
+      "sha256": "e5aeb1abed1ccefe1bd9c63d9a8817a2c7433791c2b47af263717cac9f596bbe"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/client.ts",
+      "sha256": "3a72178f477a1782e4f0ae937a3dd0aa39fe920b869bf48df398ee21dd6a3288"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/creation-flow.ts",
+      "sha256": "f535fab652595cc4ae29edca2b3c4ae8b9360d9234806a4ea5f27443ae1edd17"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/creation-task.ts",
+      "sha256": "e93725324d3d7afeb22720dbeca902adca5ddebd6a6ff9e6c50ecff522c71259"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/mini-activity.ts",
+      "sha256": "12b5f5ced15283f5ee32f873f0b87240ffdf92add29707f1f7a49154729505d8"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/mini.css",
+      "sha256": "25622204fac85c60353e6acf09960183432adcb1dfd0d40ba0854e521e984dc3"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/pet-store.ts",
+      "sha256": "2a929c10fc1aa7546b130df694416f6831099df741e6eeda67b7722f340cfc5e"
+    },
+    {
+      "path": "apps/desktop/src/features/pets/pets.css",
+      "sha256": "4037897a444502c3b70658bd79200aec89a47801756c55f2fb494bdff734cbdf"
+    },
+    {
+      "path": "apps/desktop/src/features/settings/SettingsPage.tsx",
+      "sha256": "43d090b87e46805bdd3c6c5f80d1f4114766faa92a6932ef1f5fcb1b2d859d1f"
+    },
+    {
+      "path": "apps/desktop/src/lib/composer-smart-stop.ts",
+      "sha256": "4eb4e766d0ebbbaaeaebae503eedf2fbd0d16dd0b0bca6783f2cf5eb2c43ffa0"
+    },
+    {
+      "path": "apps/desktop/src/lib/settings-search.ts",
+      "sha256": "a7556c5c2ef75eff0b17800ebf22625cafcc8a760bdfc47beab1de1cac8e07e2"
+    },
+    {
+      "path": "apps/desktop/src/main.tsx",
+      "sha256": "436e98b2eae6e7114f15e8f87635829bcd973c1d99bd4f3e7d848fad9bf58dc7"
+    },
+    {
+      "path": "apps/desktop/src/styles/chat-shell.css",
+      "sha256": "2b84a314db62d4f9b4fc7159399838ddc28723621eeff8b7bd455a3440d29535"
+    },
+    {
+      "path": "apps/desktop/test/mini-pets.test.mjs",
+      "sha256": "708a66fd9d9b013e7828f0ce06ef7d41e69876422ba22642b0465649ce5e50c1"
+    },
+    {
+      "path": "apps/desktop/test/pet-locales.test.mjs",
+      "sha256": "2c671a818dd3d38789fff169583dff7c0eb07c90e44d37b6549e3e28c775dd74"
+    },
+    {
+      "path": "apps/desktop/test/pet-ui.test.mjs",
+      "sha256": "9fb9e3e65f60e5793355650846de01a89f6e033ecb2bbd7a083d442df0dedad9"
+    },
+    {
+      "path": "apps/desktop/test/renderer-branding.test.mjs",
+      "sha256": "b4e534287fc12c653fa0b57b7426b0dab4cdf454cecbd47bd5f1d44928fe31ab"
+    },
+    {
+      "path": "crates/host-core/assets/pets/README.md",
+      "sha256": "59e98504fce3300d37b0733fe52555ec734eea904891150f99cba796f59db8a1"
+    },
+    {
+      "path": "crates/host-core/assets/pets/hassan.webp",
+      "sha256": "926ef43dd53f4232d20feb5ddcb4e011442df2ed278358b2a8cee3534a3e8c72"
+    },
+    {
+      "path": "crates/host-core/src/main.rs",
+      "sha256": "cfd8be780bf6f44909bb60218fce4f032e35f710163f2ed9feeb078193928b68"
+    },
+    {
+      "path": "crates/host-core/src/pets.rs",
+      "sha256": "1e5d2f12db6a79cdfbdd1a75837f3f5b676f069b62aa8c909483b2c649fa2c3f"
+    },
+    {
+      "path": "crates/host-core/src/pets/image.rs",
+      "sha256": "55146658a3d959821d5a707eaade223eae112f8801326aae5db2e9dc21ccb696"
+    },
+    {
+      "path": "crates/host-core/src/pets/tests.rs",
+      "sha256": "5dd71593538f03cdfb61d9a60ee1b03fe2ff01106301ed20f4ef7a4c89d8f8d0"
+    },
+    {
+      "path": "crates/host-core/src/rpc/mod.rs",
+      "sha256": "cf9974d055d0eed445bee43f07dec98e1ea2131cfeeec10e1c3bcafff6d02364"
+    },
+    {
+      "path": "crates/host-core/src/rpc/pets_rpc.rs",
+      "sha256": "042bb1588bdca57d3aa9d900a43d3c65fb81a76f7a93ebc7d278fdaa16d53abd"
+    },
+    {
+      "path": "docs/adr/0152-eight-frame-empty-home-mascot-gif.md",
+      "sha256": "d4f41ba4868723903201068938516642280d62a6e6102988d08189664f84bac9"
+    },
+    {
+      "path": "docs/adr/mini-and-virtual-pets.md",
+      "sha256": "460f8b3ca8201f0ed90f3a4f15622e99910fc195cbe01bd7c2ca4b481a2d47dc"
+    },
+    {
+      "path": "docs/project/unreleased.md",
+      "sha256": "3efddd8ff27effe0a7521fbf875ae49b8c08ed724b7cfff33d7c338854e21521"
+    },
+    {
+      "path": "docs/spec/04-ux/07-ui-design-system.md",
+      "sha256": "2ca0d47a5aaabd1bda8bc0be2a4d17e30224055f3530b9f61efd66922de7478b"
+    },
+    {
+      "path": "docs/spec/04-ux/08-component-spec.md",
+      "sha256": "ba296de9cb36e49e7ad332e1e96d11b0847c9a1688e87e85e0047d010674d89c"
+    },
+    {
+      "path": "docs/spec/04-ux/mini-and-virtual-pets.md",
+      "sha256": "fe0e09530ac26e204ebe96c4879eaf6a5dc5ed2f474766cb9237a44ef3e89a4e"
+    },
+    {
+      "path": "docs/spec/06-delivery/04-e2e-test-plan.md",
+      "sha256": "9059d3a020e3f2a41679c49648dbbbbc31f5a460fec48e7c9f00232b1ee40bbc"
+    },
+    {
+      "path": "docs/spec/README.md",
+      "sha256": "0112109ca05197a1726da73ef0c6aaa0560f8471a80c49899fcc08118f79078a"
+    },
+    {
+      "path": "packages/i18n/src/locales/de/index.ts",
+      "sha256": "346246511f6bf35abf1bb6768b49fba8874d1985920c3520076155cc928706ca"
+    },
+    {
+      "path": "packages/i18n/src/locales/en/index.ts",
+      "sha256": "d0aac2a3630f12d4ee1195ead991c4ce53ce1ea9c38cd05e43debb72b884d0da"
+    },
+    {
+      "path": "packages/i18n/src/locales/es/index.ts",
+      "sha256": "d9cc2e79fa13076cf3e9a323f75785c8b3f5fea9d3b92f189ccd4335d4ee9b60"
+    },
+    {
+      "path": "packages/i18n/src/locales/fr/index.ts",
+      "sha256": "0a9c39df042ea448a9c3329e4ac82d6236f1529de1777a4da74f947c8f518e3a"
+    },
+    {
+      "path": "packages/i18n/src/locales/ko/index.ts",
+      "sha256": "1906899493b457b38ba95842363a623f4992b975bcd0de4811c2b0a0b14e389b"
+    },
+    {
+      "path": "packages/i18n/src/locales/pt-BR/index.ts",
+      "sha256": "ad2d2be79621114fea4b3f2a0c0c8c70d4217ad41ae6e0bd07748f149829bedb"
+    },
+    {
+      "path": "packages/i18n/src/locales/tr/index.ts",
+      "sha256": "5be16d63a478b25647c015eadbc1b9f8a36786e67b8ea2ab25a3bcc5a20c5b6b"
+    },
+    {
+      "path": "packages/i18n/src/locales/zh-CN/index.ts",
+      "sha256": "77d80156e2157edf9d58623a45e0288df22cafaf903ec61f09239bb55e5485d5"
+    },
+    {
+      "path": "packages/i18n/src/locales/zh-TW/index.ts",
+      "sha256": "61cf5bdff0a1b32e7edc1ac90d17bd41b3983de447e5e5fa1c629dab1b6e6c5d"
+    },
+    {
+      "path": "packages/i18n/src/pets/de.ts",
+      "sha256": "a7f071c37d9aa6bfcdd9b00ee48f81ec14798416c46a77876c51cb2eed9ced11"
+    },
+    {
+      "path": "packages/i18n/src/pets/en.ts",
+      "sha256": "dcbdd99462c948de383b8d11ed6386febe076c0e42504de9fd479f4773793a8a"
+    },
+    {
+      "path": "packages/i18n/src/pets/es.ts",
+      "sha256": "d29966599740506854521748e43db6fbdc1fb3a75cfa8a54b8e41bc13f8e9be0"
+    },
+    {
+      "path": "packages/i18n/src/pets/fr.ts",
+      "sha256": "7799bc7602df98b5ae93c5b2e7563f3dd09b80880514222b485f0e7a3216abf1"
+    },
+    {
+      "path": "packages/i18n/src/pets/ko.ts",
+      "sha256": "59bc985187d1aa604efbb56acfcd43f44dd9cbb62d97cf31c85bcd9d012ef58a"
+    },
+    {
+      "path": "packages/i18n/src/pets/pt-BR.ts",
+      "sha256": "1d07bedb63c57ba2fc4caaecc4e6d10254b208528cfd14491648561ab4bb274e"
+    },
+    {
+      "path": "packages/i18n/src/pets/tr.ts",
+      "sha256": "4449f8802b6bd3f192f7d8c06dcc8146e900322fc44de1218823b04a7e29b25a"
+    },
+    {
+      "path": "packages/i18n/src/pets/zh-CN.ts",
+      "sha256": "5ba4f7d4958357c43c9c211eced4f1549226260451be0b0c939252ebb8391894"
+    },
+    {
+      "path": "packages/i18n/src/pets/zh-TW.ts",
+      "sha256": "c625ed7d1acb1323a78cb783bd42145456b08a8435b7e2771571710c9440fd52"
+    },
+    {
+      "path": "packages/shared/src/index.ts",
+      "sha256": "2928f54eff0e4c290067d909bf1b0528b3078423662175ab1df71ad167a09341"
+    },
+    {
+      "path": "packages/shared/src/keyboard-shortcuts.ts",
+      "sha256": "e2ee94cfde3c3618a285e261c126bc890252899348ce529d51f34586cba063b7"
+    },
+    {
+      "path": "packages/shared/src/pets.test.ts",
+      "sha256": "12eff6c64bf222fcaf4d281335d657cecc718f68ef98c497916b9d8c59edda92"
+    },
+    {
+      "path": "packages/shared/src/pets.ts",
+      "sha256": "7e8b2e2c558592b4489d6efc40490d9bb63ff65d02708542b1ea022f02b04b88"
+    },
+    {
+      "path": "packages/shared/src/protocol.ts",
+      "sha256": "447da081163015e60bf4476dc52b08b9ae02ea12199dd607ad6b823a1211c358"
+    },
+    {
+      "path": "scripts/e2e-mini-pets.mjs",
+      "sha256": "840eeefdfe8ef52e78a7f11fbb0d405fed8518f247e97802c065b9dc25ac1611"
+    }
+  ]
+}

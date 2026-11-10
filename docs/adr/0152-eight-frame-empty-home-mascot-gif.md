@@ -1,10 +1,13 @@
 # ADR 0152: Eight-frame empty-home mascot GIF
 
-- Status: Accepted
+- Status: Superseded for the Super-Desktop pet integration
 - Date: 2026-09-04
 - Deciders: PI-Desktop core
 - Related: D293, D294, E2E-046, E2E-099, US-UI-17
 - Supersedes: ADR 0150
+- Superseded by: [Mini and virtual pets](mini-and-virtual-pets.md). The selected
+  host-owned pet now supplies the welcome figure; None hides it. The historical
+  GIF decision below is retained as context, not the current rendering contract.
 
 ## Context
 

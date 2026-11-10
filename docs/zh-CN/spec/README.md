@@ -31,6 +31,7 @@
 | [04-ux/02-i18n-english-first.md](/zh-CN/spec/04-ux/02-i18n-english-first) | 国际化政策 |
 | [04-ux/07-ui-design-system.md](/zh-CN/spec/04-ux/07-ui-design-system) | 设计系统（令牌、运动、密度） |
 | [04-ux/01-ui-ia.md](/zh-CN/spec/04-ux/01-ui-ia) | 已发货的外壳和目的地地图 |
+| [04-ux/mini-and-virtual-pets.md](/zh-CN/spec/04-ux/mini-and-virtual-pets) | 宠物图库、原生 Mini、仅草稿听写与确认后的创建 |
 | [../project/plan-mode-implementation-plan.md](/project/plan-mode-implementation-plan) | Plan 运行状态实施计划 |
 | [07-plugins/01-plugin-system.md](/zh-CN/spec/07-plugins/01-plugin-system) | 插件系统 |
 | [06-delivery/03-ai-development-workflow.md](/zh-CN/spec/06-delivery/03-ai-development-workflow) | AI开发工作流程规则 |

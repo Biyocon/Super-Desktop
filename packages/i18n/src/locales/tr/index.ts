@@ -1,6 +1,8 @@
 import type { EnglishCatalog } from "../en/index.js";
+import { petsTr } from "../../pets/tr.js";
 
 export const tr = {
+  pets: petsTr,
   app: {
     shellName: "Super-Desktop",
     tagline: "Yerel AI kodlama ortağı",
@@ -933,6 +935,7 @@ sklm: {
       openWorkPanel: "Yan paneli aç/kapat",
       abort: "Aktif görevi durdur",
       toggleWindow: "Pencereyi göster veya gizle",
+      toggleMini: "Mini'yi göster veya gizle",
       resetZoom: "Yakınlaştırmayı sıfırla",
       zoomIn: "Yakınlaştır",
       zoomOut: "Uzaklaştır",

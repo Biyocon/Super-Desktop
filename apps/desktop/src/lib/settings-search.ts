@@ -19,6 +19,7 @@ export type SettingsTabId =
   | "sync"
   | "remoteHosts"
   | "voice"
+  | "pets"
   | "about";
 
 export type SettingsNavGroupId =
@@ -54,6 +55,10 @@ export type SettingsNavEntry = {
 };
 
 export const SETTINGS_NAV: SettingsNavEntry[] = [
+  {
+    id: "pets", labelKey: "pets.title", titleKey: "pets.title", group: "preferences",
+    keywordKeys: ["pets.title", "pets.gallery", "pets.import", "pets.createTitle", "pets.dictationNotice", "pets.shortcutHelp"],
+  },
   {
     id: "general",
     labelKey: "settings.nav.general",

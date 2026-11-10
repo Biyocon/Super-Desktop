@@ -32,6 +32,8 @@ import { createComposerTemplateLoader, registerWorkspaceIpc } from "./workspace-
 import { registerComposerIpc } from "./composer-ipc";
 import { registerSpeechIpc } from "./speech-ipc";
 import { registerVoiceIpc } from "./voice-ipc";
+import { createPetsService } from "../pets/service";
+import { registerPetsIpc } from "./pets-ipc";
 import type { IpcRegistrar } from "./types";
 import type { createTraySessions } from "../tray-sessions";
 import type { createTaskbarUnreadBadge } from "../taskbar-unread-badge";
@@ -222,6 +224,8 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     handleWithEvent,
     assertMainWindowSender,
   };
+  const pets = createPetsService({ dataDir, getHost, getMainWindow, speech, logger });
+  registerPetsIpc({ registrar, pets, getMainWindow });
 
   registerAppIpc({
     registrar,
@@ -269,6 +273,7 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
     applyPreventScreenSleep,
     applyKeepAwakeWhileRunning,
     resolveEffectiveCommandShell,
+    onSaved: pets.refreshSettings,
   });
   registerConfigSyncIpc({
     registrar,

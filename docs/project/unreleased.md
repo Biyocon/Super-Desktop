@@ -1,5 +1,14 @@
 # Unreleased changes
 
+- Super-Desktop now has a native Mini and virtual pets settings page with
+  bundled Hassan, explicit None, v1/v2 animation and gaze, safe previewed
+  imports, and persisted selection. A single sandboxed transparent Mini uses
+  real selected-session activity, configurable show/hide shortcut, position,
+  size and topmost preferences. Dictation uses the configured speech provider
+  and only opens an editable draft; it never sends automatically. AI-assisted
+  creation starts a confirmed normal agent task; installation remains a
+  separate reviewed import. No private ChatGPT pet APIs or builtin art are used.
+
 - Google Gemini rows send requests again. A provider row on the native
   generative-AI endpoint no longer hands pi-ai's Google adapter the internal
   response-capture `fetch` it refuses before the request leaves, custom provider

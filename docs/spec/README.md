@@ -29,6 +29,7 @@ is v16 (see `00-baseline.md`).
 | [04-ux/02-i18n-english-first.md](04-ux/02-i18n-english-first.md) | i18n policy |
 | [04-ux/07-ui-design-system.md](04-ux/07-ui-design-system.md) | Design system (tokens, motion, density) |
 | [04-ux/01-ui-ia.md](04-ux/01-ui-ia.md) | Shipped shell and destination map |
+| [04-ux/mini-and-virtual-pets.md](04-ux/mini-and-virtual-pets.md) | Pet gallery, native Mini, draft-only dictation and confirmed creation |
 | [../project/plan-mode-implementation-plan.md](../project/plan-mode-implementation-plan.md) | Plan operating-state implementation plan |
 | [07-plugins/01-plugin-system.md](07-plugins/01-plugin-system.md) | Plugin system |
 | [06-delivery/03-ai-development-workflow.md](06-delivery/03-ai-development-workflow.md) | AI dev workflow rules |

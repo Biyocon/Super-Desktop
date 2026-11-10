@@ -307,7 +307,7 @@ test("the recovery copy is catalog-backed in every mirrored locale", () => {
     }
   }
   assert.match(english, /stalledTitle: "Super-Desktop couldn't finish starting"/);
-  assert.match(chinese, /stalledTitle: "Super-Desktop æœªèƒ½å®Œæˆå¯åŠ¨"/);
+  assert.match(chinese, /stalledTitle: "Super-Desktop 未能完成启动"/);
   // User-facing copy: the local service is never called a host or a backend.
   const startupDomain = english.match(/\n  startup: \{[\s\S]*?\n  \},/)?.[0] ?? "";
   assert.ok(startupDomain.length > 0, "the English startup domain was not found");

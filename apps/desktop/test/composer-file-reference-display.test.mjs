@@ -111,7 +111,8 @@ test("text file chips expand into editable draft text", () => {
 });
 
 test("unanswered stop restores compact references instead of serialized paths", () => {
-  assert.match(composer, /setValue\(composerPrefill\.text\)/);
+  assert.match(composer, /setValue\(\(current\) => composerPrefill\.append[\s\S]*?: composerPrefill\.text\)/);
+  assert.match(composer, /if \(!composerPrefill\.append\) setFileReferences/);
   assert.match(composer, /composerPrefill\.fileReferences\.map/);
   assert.match(composer, /composerPrefill\.sessionId !== activeSessionId/);
   assert.match(
