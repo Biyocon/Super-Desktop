@@ -1,5 +1,9 @@
 # Unreleased changes
 
+- Super-Desktop's empty chat home now greets you with the supplied Hassan pet
+  instead of the outline mascot. The transparent wave works in light and dark
+  themes and switches to a still image when reduced motion is enabled.
+
 - Google Gemini rows send requests again. A provider row on the native
   generative-AI endpoint no longer hands pi-ai's Google adapter the internal
   response-capture `fetch` it refuses before the request leaves, custom provider

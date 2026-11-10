@@ -124,13 +124,13 @@ Codex as a visual reference. The identity contract is deliberately small:
   and NSIS shortcut identity stay aligned so native notifications,
   notification settings, and taskbar groups identify the app as `PI-Desktop`
   rather than Electron.
-- The empty-home hero uses a 100px `HomeMascotLogo` GIF: an eight-frame waving
-  mascot compiled from the supplied light and dark action sets, with a short
-  idle hold on the first frame. CSS selects the pair from
-  `document.documentElement[data-theme]`; anything other than `light` uses the
-  dark artwork. Playback is native to the GIF. There is no random pose
-  selection, JavaScript timer, or hover-driven speed change. Reduced motion
-  swaps the GIF for the matching first-frame PNG without changing the 100px
+- The empty-home hero uses a 100px `HomeMascotLogo` GIF: the user-supplied
+  Hassan pet's four-frame waving loop, with its original 140ms frame cadence.
+  CSS selects the asset pair from `document.documentElement[data-theme]`;
+  anything other than `light` uses the dark slot. Both slots contain the
+  same transparent full-color artwork. Playback is native to the GIF with
+  no random pose selection, JavaScript timer, or hover-driven speed change.
+  Reduced motion swaps the GIF for the matching first-frame PNG without changing the 100px
   slot.
   `BrandLogo` remains 20px/18px in the expanded/collapsed sidebar and 64px in
   the startup splash. Composer prompt rows do not render a leading brand icon
@@ -857,11 +857,10 @@ model):
   controls remain icon-only and use the semantic hover wash
 - Empty hero title uses `var(--ds-text-primary)` (light override `#1a1c1f`);
   never hardcode light ink for shared hero styles
-- Empty-home branding stays quiet: the 100px eight-frame mascot GIF is the
-  sole animated hero mark. Light and dark themes each use a dedicated asset
-  pair. It loops a short wave with an idle hold so the composer remains the
-  primary task surface. Pointer hover does not change the cadence; reduced
-  motion shows the matching still first frame.
+- Empty-home branding stays quiet: the 100px four-frame Hassan GIF is the
+  sole animated hero mark. Light and dark themes use the same transparent
+  full-color artwork in the existing asset slots. Pointer hover does not
+  change the cadence; reduced motion shows the matching still first frame.
 - Night home composer plate styles are **dark-scoped only** (elevated-primary
   `#212121f5` + standard elevation-prominent)
 - Empty draft row keeps **one visible line / 28px optical minimum** so the

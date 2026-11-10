@@ -51,3 +51,14 @@ hover does not change cadence.
   reduced-motion state the GIF plus CSS swap already cover.
 - Use one GIF for both themes: the supplied light and dark artwork would
   clash with the opposite surface.
+
+## Super-Desktop fork artwork amendment (2026-11-09)
+
+The fork replaces the original artwork with the user-supplied Hassan pet's
+existing transparent four-frame waving GIF (140ms per frame). Both theme
+asset slots use that same full-color image, with matching first-frame PNGs.
+This supersedes the eight-frame and theme-specific artwork requirements
+above for Super-Desktop only. The 100px decorative slot, native GIF playback,
+no hover/timer behavior, and CSS reduced-motion freeze are unchanged.
+No Codex pet runtime, control bar, settings page, or local filesystem lookup
+is introduced: the artwork is bundled with the renderer.
