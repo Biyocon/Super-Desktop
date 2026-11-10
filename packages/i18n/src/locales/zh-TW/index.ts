@@ -1,6 +1,8 @@
 import type { EnglishCatalog } from "../en/index.js";
+import { petsZhTW } from "../../pets/zh-TW.js";
 
 export const zhTW = {
+  pets: petsZhTW,
   app: {
     shellName: "Super-Desktop",
     tagline: "本地 AI 程式設計助手",
@@ -920,6 +922,7 @@ sklm: {
       openWorkPanel: "切換側邊面板",
       abort: "停止當前任務",
       toggleWindow: "喚出或隱藏視窗",
+      toggleMini: "顯示或隱藏 Mini",
       resetZoom: "重置縮放",
       zoomIn: "放大",
       zoomOut: "縮小",

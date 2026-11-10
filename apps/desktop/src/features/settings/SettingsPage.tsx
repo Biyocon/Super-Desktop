@@ -63,6 +63,7 @@ import { PromptEnhancementCard } from "./prompt-enhancement-card";
 import { CloseBehaviorSection, DeveloperSection } from "./developer-sections";
 import { PluginScenicThemesDestination } from "../../components/settings/PluginScenicThemesDestination";
 import { ConfigSyncPage } from "../../components/settings/ConfigSyncPage";
+import { PetsPage } from "../pets/PetsPage";
 
 type SettingsTab = ReturnType<typeof useAppStore.getState>["settingsTab"];
 
@@ -233,6 +234,7 @@ export function SettingsPage() {
       sync: <IconCloudDown size={14} />,
       remoteHosts: <IconGlobe size={14} />,
       voice: <IconMic size={14} />,
+      pets: <IconBot size={14} />,
       about: <IconInfo size={14} />,
     };
     return navEntries.map((entry) => ({
@@ -546,6 +548,7 @@ export function SettingsPage() {
             </div>
           )}
 
+          {tab === "pets" && <PetsPage saveSettings={saveSettings} />}
           {tab === "agent" && <ModelConfigPage />}
 
           {tab === "skills" && <AgentSkillsPage />}

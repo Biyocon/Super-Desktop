@@ -1,6 +1,8 @@
 import type { EnglishCatalog } from "../en/index.js";
+import { petsPtBR } from "../../pets/pt-BR.js";
 
 export const ptBR = {
+  pets: petsPtBR,
   app: {
     shellName: "Super-Desktop",
     tagline: "Parceiro local de programação com IA",
@@ -761,6 +763,7 @@ export const ptBR = {
       openWorkPanel: "Alternar painel lateral",
       abort: "Interromper tarefa ativa",
       toggleWindow: "Mostrar ou ocultar a janela",
+      toggleMini: "Mostrar ou ocultar Mini",
       resetZoom: "Redefinir zoom",
       zoomIn: "Aumentar zoom",
       zoomOut: "Diminuir zoom",

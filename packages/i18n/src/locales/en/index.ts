@@ -1,4 +1,6 @@
+import { petsEn } from "../../pets/en.js";
 export const en = {
+  pets: petsEn,
   app: {
     shellName: "Super-Desktop",
     tagline: "Local AI coding partner",
@@ -783,6 +785,7 @@ sklm: {
       openWorkPanel: "Toggle side panel",
       abort: "Stop active task",
       toggleWindow: "Show or hide the window",
+      toggleMini: "Show or hide Mini",
       resetZoom: "Reset zoom",
       zoomIn: "Zoom in",
       zoomOut: "Zoom out",

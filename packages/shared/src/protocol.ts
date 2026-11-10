@@ -50,6 +50,19 @@ export type WindowControlAction = (typeof WINDOW_CONTROL_ACTIONS)[number];
 
 export const IPC = {
   invoke: {
+    petsList: "pi-desktop/pets/list",
+    petsImage: "pi-desktop/pets/image",
+    petsPreviewImport: "pi-desktop/pets/previewImport",
+    petsConfirmImport: "pi-desktop/pets/confirmImport",
+    petsPreferences: "pi-desktop/pets/preferences",
+    miniGetState: "pi-desktop/mini/getState",
+    miniSetVisible: "pi-desktop/mini/setVisible",
+    miniPublish: "pi-desktop/mini/publish",
+    miniAction: "pi-desktop/mini/action",
+    miniStartCapture: "pi-desktop/mini/startCapture",
+    miniCancelCapture: "pi-desktop/mini/cancelCapture",
+    miniTranscribe: "pi-desktop/mini/transcribe",
+    miniOpenDraft: "pi-desktop/mini/openDraft",
     appGetVersion: "pi-desktop/app/getVersion",
     appOpenFeedback: "pi-desktop/app/openFeedback",
     appHealth: "pi-desktop/app/health",
@@ -348,6 +361,9 @@ export const IPC = {
     nativeMenuAction: "pi-desktop/menu/nativeAction",
   },
   event: {
+    petsChanged: "pi-desktop/pets/event/changed",
+    miniState: "pi-desktop/mini/event/state",
+    miniActionRequested: "pi-desktop/mini/event/actionRequested",
     pluginChanged: "pi-desktop/event/pluginChanged",
     /** Progress of an install or update, while it is still running. */
     pluginInstallProgress: "pi-desktop/plugin/event/installProgress",

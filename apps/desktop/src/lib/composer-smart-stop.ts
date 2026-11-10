@@ -14,6 +14,8 @@ export type ComposerDraftSnapshot = {
 
 export type ComposerPrefill = ComposerDraftSnapshot & {
   sessionId: string;
+  /** User-confirmed dictation appends without replacing text or attachments. */
+  append?: boolean;
 };
 
 type AbortMessage = {

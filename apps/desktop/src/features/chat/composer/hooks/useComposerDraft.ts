@@ -101,6 +101,7 @@ type UseComposerDraftOptions = {
     sessionId: string;
     text: string;
     fileReferences: ComposerDraftSnapshot["fileReferences"];
+    append?: boolean;
   } | null;
   clearComposerPrefill: () => void;
   prefill?: ComposerPrefill | null;
@@ -498,8 +499,10 @@ export function useComposerDraft({
   useEffect(() => {
     if (!composerPrefill || composerPrefill.sessionId !== activeSessionId) return;
     markComposerDraftEdited(draftKeyForSession(composerPrefill.sessionId));
-    setValue(composerPrefill.text);
-    setFileReferences((current) => [
+    setValue((current) => composerPrefill.append
+      ? [current, composerPrefill.text].filter(Boolean).join("\n\n")
+      : composerPrefill.text);
+    if (!composerPrefill.append) setFileReferences((current) => [
       ...current.filter(
         (fileReference) => fileReference.sessionId !== composerPrefill.sessionId,
       ),

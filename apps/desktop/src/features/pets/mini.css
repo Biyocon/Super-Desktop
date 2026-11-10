@@ -1,0 +1,13 @@
+html[data-surface="mini"], html[data-surface="mini"] body, html[data-surface="mini"] #root { background: transparent !important; height: 100%; overflow: hidden; }
+.mini-shell { height: 100%; display: flex; flex-direction: column; justify-content: end; padding: 8px; color: var(--ds-text-primary); }
+.mini-drag-handle { -webkit-app-region: drag; user-select: none; cursor: grab; text-align: center; border-radius: var(--radius-lg); padding: 8px; background: var(--ds-bg-primary); color: var(--ds-text-secondary); font-size: var(--text-xs); }
+.mini-pet-area { min-height: 156px; display: flex; align-items: end; justify-content: center; pointer-events: none; }
+.mini-card { min-height: 0; padding: 16px; border: 1px solid var(--ds-border-default); border-radius: var(--radius-xl); background: var(--ds-bg-primary); max-height: 310px; overflow: auto; box-shadow: var(--ds-raised-shadow); }
+.mini-heading { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+.mini-heading strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mini-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-block: 8px; }
+.mini-hint { font-size: var(--text-sm); color: var(--ds-text-secondary); margin-block: 12px; }
+.mini-draft { margin-top: 12px; }
+.mini-draft textarea { min-height: 70px; width: 100%; }
+.mini-card p[role="alert"] { color: var(--color-error); }
+.pets-creation-form { display: flex; flex-direction: column; gap: 12px; padding: 16px; }

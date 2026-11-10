@@ -23,6 +23,7 @@ export type SettingsIpcDependencies = {
   applyPreventScreenSleep: (settings?: { preventScreenSleep?: unknown } | null) => void;
   applyKeepAwakeWhileRunning: (settings?: { keepAwakeWhileRunning?: unknown } | null) => void;
   resolveEffectiveCommandShell: () => Promise<unknown>;
+  onSaved?: () => Promise<void>;
 };
 
 /** Register app settings and command-shell channels. */
@@ -41,6 +42,7 @@ export function registerSettingsIpc({
   applyPreventScreenSleep,
   applyKeepAwakeWhileRunning,
   resolveEffectiveCommandShell,
+  onSaved,
 }: SettingsIpcDependencies): void {
   let host: HostProcess | null = null;
   let sidecar: AgentSidecar | null = null;
@@ -95,6 +97,7 @@ export function registerSettingsIpc({
       } | null,
     );
     applyDeveloperMode(validatedSettings as { developerMode?: unknown } | null);
+    await onSaved?.();
     return result;
   });
 

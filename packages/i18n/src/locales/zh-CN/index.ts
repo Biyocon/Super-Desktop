@@ -1,6 +1,8 @@
 import type { EnglishCatalog } from "../en/index.js";
+import { petsZhCN } from "../../pets/zh-CN.js";
 
 export const zhCN = {
+  pets: petsZhCN,
   app: {
     shellName: "Super-Desktop",
     tagline: "本地 AI 编程助手",
@@ -920,6 +922,7 @@ sklm: {
       openWorkPanel: "切换侧边面板",
       abort: "停止当前任务",
       toggleWindow: "呼出或隐藏窗口",
+      toggleMini: "显示或隐藏 Mini",
       resetZoom: "重置缩放",
       zoomIn: "放大",
       zoomOut: "缩小",

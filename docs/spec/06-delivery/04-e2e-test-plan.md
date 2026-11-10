@@ -8,6 +8,28 @@
 
 ## 1. Goals
 
+### E2E-PETS-native-mini-draft-dictation
+
+- **Preconditions:** Candidate shared/desktop and host builds; isolated profile,
+  data, workspace and agent directories. No live user app or registry as fixture.
+- **Steps:** Open the searchable pet gallery, save None, preview/import an owned
+  v2 atlas, show/hide Mini, change scale/topmost/theme and restart. Configure
+  dictation with an existing provider. Record, stop, edit and explicitly Open
+  draft over an existing unsent composer draft. Review/cancel AI creation, then
+  separately confirm a normal task and inspect its real transcript.
+- **Expected:** One restricted sandboxed Mini; clamped bounds and persisted
+  preferences; full decode before reviewed install; no generic Mini IPC access.
+  Dictation never sends, preserves unsent text/attachments and cleans tracks and
+  temporary audio. Speech settings preserve synthesis and compatible custom
+  fields. AI review/cancel invokes no provider; confirmation uses the existing
+  task engine and full-package prompt, never auto-installs a task reply.
+- **Coverage:** `node scripts/e2e-mini-pets.mjs` uses the real app/host with a
+  picker fixture, external media fixture and loopback speech/model HTTP server.
+  Host/shared/component tests cover invalid inputs, stale/cancelled results,
+  animation/reduced motion and cleanup. Paid image quality, physical microphone
+  and cross-platform window behavior require separately authorized acceptance;
+  local fixture success does not claim those checks.
+
 ### E2E-CHAT-fork-completed-reply-while-running
 
 - **Preconditions:** Isolated real desktop profile, configured model, two turns

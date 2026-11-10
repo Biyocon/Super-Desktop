@@ -1,4 +1,5 @@
 mod config_sync_rpc;
+mod pets_rpc;
 mod scheduled_rpc;
 mod scheduled_tools;
 
@@ -4560,6 +4561,11 @@ async fn handle_request(
             Ok(json!({ "skill": skill }))
         }
 
+        method if method.starts_with("pets.") => {
+            let st = state.lock().await;
+            pets_rpc::handle(&st.data_dir, method, &params)
+                .map_err(|e| rpc_err(-32602, e.to_string(), "PET_INVALID_REQUEST"))
+        }
         "agents.list" => {
             let mut st = state.lock().await;
             Ok(json!({ "subagents": st.user_subagents.list().map_err(subagent_err)? }))

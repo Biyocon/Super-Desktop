@@ -1,0 +1,24 @@
+{
+  "results": [
+    "actual Settings gallery loads bundled Hassan",
+    "gallery None selection persists through host",
+    "native picker -> complete WebP decode -> preview -> explicit install",
+    "one sandboxed native Mini; scale/topmost and offscreen clamping",
+    "restricted Mini preload denies general settings and import writes",
+    "Mini hide/show reuses window and records visibility",
+    "unconfigured dictation is disabled; light/dark state synchronized",
+    "dictation UI saves existing provider binding and preserves synthesis",
+    "model-only dictation edits preserve compatible custom path/extra fields",
+    "record -> local speech -> edit -> Open draft preserves existing unsent text; no automatic send; tracks/audio cleaned",
+    "AI review/cancel is free; explicit confirm launches normal targeted task with complete package prompt and transcript; no auto-install",
+    "restart retains explicit None, imported copy, Mini visibility and scale"
+  ],
+  "root": "C:\\Users\\Biyocon\\.pi-desktop\\scratch\\6f8a1369-2085-4444-a938-62d017767074\\mini-pets-e2e-9Rz18G",
+  "candidate": "0d87930b6d1c5dfb9310886b77c7db0e99832b15",
+  "base": "0d87930b6d1c5dfb9310886b77c7db0e99832b15",
+  "uncommittedCandidate": true,
+  "paidProviders": "not invoked",
+  "microphone": "external media fixture; no physical microphone",
+  "speechRequests": 1,
+  "chatRequests": 1
+}

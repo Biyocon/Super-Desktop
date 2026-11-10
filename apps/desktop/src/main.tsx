@@ -6,6 +6,7 @@ import { catalogs, flattenCatalog, resolveLocale } from "@pi-desktop/i18n";
 import { MAC_TRAFFIC_LIGHT_EDGE_DIP } from "@pi-desktop/shared";
 import App from "./App";
 import { PluginLauncher } from "./components/PluginLauncher";
+import { Mini } from "./features/pets/Mini";
 import { initLanguageSync, resolveOsLocale } from "./lib/app-language";
 import { installScrollbarReveal } from "./lib/scrollbar-reveal";
 import "./styles/globals.css";
@@ -47,7 +48,7 @@ void i18n.use(initReactI18next).init({
 });
 
 // Settings load async after mount; switch i18n when the stored language lands.
-initLanguageSync();
+if (rendererSurface !== "mini") initLanguageSync();
 
 const rootEl = document.getElementById("root");
 if (!rootEl) {
@@ -57,7 +58,7 @@ if (!rootEl) {
 try {
   ReactDOM.createRoot(rootEl).render(
     <React.StrictMode>
-      {rendererSurface === "plugin-launcher" ? <PluginLauncher /> : <App />}
+      {rendererSurface === "mini" ? <Mini /> : rendererSurface === "plugin-launcher" ? <PluginLauncher /> : <App />}
     </React.StrictMode>,
   );
 } catch (error) {

@@ -1,6 +1,8 @@
 import type { EnglishCatalog } from "../en/index.js";
+import { petsDe } from "../../pets/de.js";
 
 export const de = {
+  pets: petsDe,
   "app": {
     "shellName": "Super-Desktop",
     "tagline": "Lokaler AI-Codierungspartner",
@@ -935,6 +937,7 @@ sklm: {
       "openWorkPanel": "Seitenpanel umschalten",
       "abort": "Aktive Aufgabe stoppen",
       "toggleWindow": "Fenster zeigen oder verbergen",
+      "toggleMini": "Mini anzeigen oder ausblenden",
       "resetZoom": "Zoom zurücksetzen",
       "zoomIn": "Vergrößern",
       "zoomOut": "Verkleinern",
