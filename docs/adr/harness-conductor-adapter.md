@@ -1,8 +1,9 @@
 # ADR: Harness Conductor adapter
 
-- Status: Proposed
+- Status: Accepted
 
-Implementation is in progress; complete product acceptance is pending.
+The source candidate is verified with local fixtures. Remote integration and
+source-delivery receipts are tracked in the acceptance matrix below.
 
 ## Context
 
@@ -63,7 +64,7 @@ checkpoint adapter now preserve it through the separate `conductorStore.*` RPC
 boundary. Sender-guarded main/preload/API wiring and the dedicated nine-locale
 chat entry/history/consent components are fixture-verified. Isolated native
 whole-app form, consent, mouse/Enter/Space and reload/relaunch acceptance passes;
-final committed candidate and fork integration qualification remain pending.
+the committed source candidate also passes; fork integration has separate receipts.
 
 The journal uses bounded versioned `kv` indexes and immutable content-addressed
 payload files, not Node-owned SQLite or a second gate schema. Transactional

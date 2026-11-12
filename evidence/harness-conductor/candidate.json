@@ -1,0 +1,66 @@
+{
+  "format": 1,
+  "fixtureOnly": true,
+  "liveModelAccepted": false,
+  "nativeElectronAccepted": true,
+  "passed": true,
+  "testedCommit": "0aa2c6b766b8793016ddfa157e94b170640e6a3c",
+  "testedTree": "1e91989540487f6af5e5c96b350dbb4443be4f38",
+  "baseCommit": "5899fe3dee7d59a52de8a2223cf444b68ff6109c",
+  "baseTree": "aab5aa13aa133ceca33fbcb8fa0e914b7d707c64",
+  "uncommittedCandidate": false,
+  "concurrentCandidateChange": false,
+  "sourceMapSha256": "4aecd4e8805f726ed5d8109088d97169297a8f9b1ca666368e949769a3154ab7",
+  "privateRawReceiptSha256": "570977eae4d55b09975e98563e822c4c867fbc53bdcc1678bba8ca6a48e5c865",
+  "engine": {
+    "revision": "879ab27bdd22203675d6f0cc678652779fc089cd",
+    "version": "0.1.0-rc.7",
+    "license": "MIT",
+    "recordFormat": 5
+  },
+  "command": "node scripts/e2e-harness-conductor.mjs <owned-host> <cached-docker> <image-digest> <owned-scratch>",
+  "imageDigest": "sha256:14078204b6bb268c107ceff6d3c43f45a888105e5c2b18b14c32b3409d93a1b0",
+  "counts": {
+    "loopbackProviderRequests": 16,
+    "nativeDisclosureInteractions": 41,
+    "separateWriteAllowOnce": 1,
+    "screenshots": 10,
+    "faults": 0,
+    "ownedChildrenObservedExitedOrAbsent": 8
+  },
+  "ownedRuntimeRemoved": true,
+  "runs": [
+    { "purpose": "analysis", "runId": "CON-2026-0487", "externalActionAuthorized": false },
+    { "purpose": "implementation", "runId": "CON-2026-7116", "externalActionAuthorized": false }
+  ],
+  "rendererReload": { "historyIdentical": true, "providerReplay": 0, "writeReplay": 0, "dispatchReplay": 0 },
+  "fullAppRelaunch": { "historyIdentical": true, "providerReplay": 0, "writeReplay": 0, "dispatchReplay": 0 },
+  "buildSha256": {
+    "apps/desktop/out/main/index.js": "9f899f2f9ab65c024bc4a5c26d449efe2d095897138341d51e598b815369cbf5",
+    "apps/desktop/out/preload/index.cjs": "e39bba6d26d35d049924b8728dc84d1c00ce9c27591d69188af10e37e749f44a",
+    "packages/agent-runtime/dist/sidecar.js": "8b7a372bc373a94d6c0d43161655134a57518a268d3d3c171efe4f27130c968e",
+    "packages/agent-runtime/dist/conductor/service.js": "26271210ea82cd145bdf81ebfd4eca0f2dfdc66bd2d6b1db402edb0aee16d6d3",
+    "packages/conductor-runtime/dist/engine.mjs": "bd93c6c9548eac35e21f60b77f8249d114feff1a7625b0d51bd0278a52f3b0a9",
+    "packages/conductor-runtime/dist/adapter.mjs": "a1003cc808e6fbe89068864e8b8ffa72c0d2d6767ed45fcc761d30975c42cce7",
+    "owned-host-binary": "6f4bf1354d087ba37f4f695e57a24b022e4666c5cb6f53bc9bdab6aae7b61196"
+  },
+  "screenshotSha256": {
+    "analysis-entry.png": "e1499f8dcb53ff26afb8b86d33e8dffcf34570e97508791af17ef467d9e620e1",
+    "analysis-completed.png": "db43c57c739abf78fc5f59f23c6ed2ca960eda0a02a611b845ee7fd858fabf68",
+    "implementation-entry.png": "694f07ace2e27f23a102c864653cbf68ec667e327da4d9dc7bee47496a7e6975",
+    "implementation-exact-gate-c.png": "4427c2c050b9d35cdb30292f7b0954adc79984ecdd320bea37ef730b8e24684f",
+    "separate-write-permission.png": "25445794d4305186de2786165489c7eaa2c8caf11d8596568a913f03ae67cb6f",
+    "implementation-completed.png": "3e7bc39305e8bb47f0e07ed0347a7cb5df096c69783ccc7eef6f93591d8d1155",
+    "renderer-reload-analysis.png": "f1473e3ae03360882cfca2944c361a14f2d28d50c37fe4ae491f5a97a1524637",
+    "renderer-reload-implementation.png": "2176fa4f0277db03a198fde74948308ddf2660aae5eefba8cdc535d54328ba68",
+    "full-app-relaunch-analysis.png": "f1473e3ae03360882cfca2944c361a14f2d28d50c37fe4ae491f5a97a1524637",
+    "full-app-relaunch-implementation.png": "2176fa4f0277db03a198fde74948308ddf2660aae5eefba8cdc535d54328ba68"
+  },
+  "limits": [
+    "No live model quality acceptance or OS-firewall claim",
+    "Native happy paths do not execute every backend negative scenario",
+    "Raw screenshots and receipts stay private because they contain owned local paths",
+    "No separate visual image-review pass",
+    "Final PR integration and normal fork landing are recorded separately"
+  ]
+}

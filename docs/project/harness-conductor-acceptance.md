@@ -6,9 +6,12 @@ This is local-fixture evidence, not live-model acceptance. The unchanged MIT
 Harness engine is revision `879ab27bdd22203675d6f0cc678652779fc089cd`, package
 `0.1.0-rc.7`, record format 5. The fork base is
 `5899fe3dee7d59a52de8a2223cf444b68ff6109c` (tree
-`aab5aa13aa133ceca33fbcb8fa0e914b7d707c64`). Final committed-candidate and actual
-PR integration qualification remain pending; development results below do not
-substitute for those receipts.
+`aab5aa13aa133ceca33fbcb8fa0e914b7d707c64`). Committed candidate
+`0aa2c6b766b8793016ddfa157e94b170640e6a3c` (tree
+`1e91989540487f6af5e5c96b350dbb4443be4f38`) passed native acceptance with a clean
+worktree. Its [redacted receipt](../../evidence/harness-conductor/candidate.json)
+pins measured hashes and no-replay outcomes. Final PR integration and normal
+fork landing are recorded separately; local acceptance is not remote delivery.
 
 All tests use owned profiles, repositories, credentials, ports and processes.
 Provider fixtures are loopback SSE; Docker uses a previously cached image digest,
@@ -31,7 +34,7 @@ execution of every negative backend scenario.
 | 5. Actual accessible chat | Native mouse/Enter/Space opens matching workers, gates and reports; exact consent, source hashes, authority and outcomes are visible. UI/controller/projection tests cover rework, skips, NO-GO, repeated workers and stale responses. All nine catalogs have complete matching keys/placeholders. | Native UI is exercised in English; catalog checks do not certify native-language editorial quality. No color-only status. |
 | 6. Persistence and lifecycle | Native renderer reload/full owned-app relaunch preserves deep-equal history, zero additional provider/dispatch/write replay and unchanged file identity/timestamps/hash. Actual host-store, lifecycle and resource-loss accepts exercise cancellation, crashes, replacement, explicit validated resume and cleanup. | History is observational. Source-effect acknowledgement failure is not rollback; cleanup failures remain visible and block resume. |
 | 7. Representative local acceptance | Actual API/native analysis plus real implementation/verification, unchanged-driver negatives and real Rust/Docker lifecycle tests are mapped below. Screenshots are hashed. | Native crash/rework/missing-engine UI negatives are not claimed; lower actual boundary tests and UI components cover those behaviors. macOS native quit and live-model accept are not run. |
-| 8. Checks and controlled delivery | Full JS regression, Rust checks and builds have run; results below. ADR, EN/Chinese specs, README, unreleased changelog and feature status describe actual behavior. | Final static rechecks, reviewed commits, exact committed candidate, PR integration tree, green fork gates, normal merge and clean main fast-forward remain pending. |
+| 8. Checks and controlled delivery | Full JS regression, Rust checks/builds, static checks, reviewed implementation commit and exact committed native candidate have passed with documented Windows limitations. ADR, EN/Chinese specs, README, unreleased changelog and feature status describe actual behavior. | PR integration tree, normal green fork gates, merge and clean main fast-forward require separate delivery receipts; local acceptance does not prove those actions. |
 
 ### Negative controls
 
@@ -161,3 +164,35 @@ cached Docker executable/image and scratch arguments as required by each script:
 The scripts retain assertions and write task-owned result receipts. Final
 candidate/integration identities, result hashes and fork delivery receipts must
 be added after those actions actually occur.
+
+## Committed candidate qualification
+
+The native command above passed on the committed candidate with analysis
+`CON-2026-0487` and implementation `CON-2026-7116`: 16 loopback requests, 41
+native disclosure interactions, one separate Write allow-once, ten screenshot
+hashes, zero faults, eight owned children observed exited/absent, and the owned
+runtime directory removed. Reload and full relaunch both have identical saved
+history and zero provider/write/dispatch replay.
+
+Native acceptance fingerprints the compiled development `dist` runtime through
+the actual built Electron main/preload/renderer. The separate actual API, sidecar
+and isolated-bundle accepts verify the packaged lazy service/engine chain; these
+are distinct evidence boundaries, not an assertion that native used `dist-bundle`.
+All ten host-store/host-tools/API/service/sidecar/resource-loss/bundle/lifecycle/
+quality-container/output-hardlink acceptance variants also passed with the final
+host binary. These commands are listed above; only explicit local external
+provider/OS boundaries are fixtures.
+
+`node evidence/harness-conductor/verify-evidence.mjs` verifies public source/base
+trees, no executable-source difference from the tested commit, receipt structure
+and absence of private paths. Supplying the private raw receipt as an explicit
+argument additionally compares its digest, actual native fields, build hashes
+and screenshots. Both forms are run before source delivery. Documentation and
+redacted evidence may follow the tested commit without changing executable
+source; PR integration must verify that equivalence again.
+
+The architecture check after the implementation commit includes 112 new TS/TSX
+files and passes. Its one documented size exception is the unchanged pinned
+Harness persistence source (871 lines, exact revision/hash); the checker and
+normal adapter limits are unchanged. Final delivery must use normal green fork
+checks, never a bypass.
