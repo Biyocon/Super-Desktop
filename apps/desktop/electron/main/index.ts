@@ -881,6 +881,7 @@ function registerIpc() {
     approvedExecutionIdsBySession,
     claimedExecutionSessions,
     resolveAgentRuntimeLaunch,
+    resolveRuntimeProvider: createdSessionLaunchRuntime.resolveRuntimeProvider,
     finishTurn,
     lockAbortReason,
     finishApprovedExecution,

@@ -1,8 +1,10 @@
+import { conductorTr } from "../../conductor/tr.js";
 import type { EnglishCatalog } from "../en/index.js";
 import { petsTr } from "../../pets/tr.js";
 
 export const tr = {
   pets: petsTr,
+  conductor: conductorTr,
   app: {
     shellName: "Super-Desktop",
     tagline: "Yerel AI kodlama ortağı",

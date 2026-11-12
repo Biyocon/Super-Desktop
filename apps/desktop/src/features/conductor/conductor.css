@@ -1,0 +1,56 @@
+.conductor-panel {
+  position: relative;
+  z-index: 8; /* Above the transcript width handles, below application overlays. */
+  flex: 0 1 auto;
+  min-height: 0;
+  margin-top: var(--ds-toolbar-height);
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--ds-border-default);
+  color: var(--ds-text-primary);
+  font-size: var(--text-sm);
+}
+.conductor-panel-body {
+  max-height: 62vh;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 12px 0;
+  scrollbar-gutter: stable;
+}
+.conductor-panel h2, .conductor-panel h3, .conductor-panel h4 {
+  font-weight: var(--font-weight-semibold);
+  margin: 12px 0 8px;
+}
+.conductor-panel p { margin: 8px 0; }
+.conductor-panel code, .conductor-panel pre, .conductor-panel dd {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  max-width: 100%;
+}
+.conductor-panel pre { font-size: var(--text-xs); }
+.conductor-panel dl { margin: 8px 0; }
+.conductor-panel dt { color: var(--ds-text-secondary); }
+.conductor-panel dd { margin: 0; }
+.conductor-value { margin: 8px 0; }
+.conductor-actions, .conductor-authority-link, .conductor-roles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.conductor-actions { margin: 12px 0; }
+.conductor-stage { display: inline-flex; align-items: center; gap: 8px; }
+.conductor-roles { align-items: start; }
+.conductor-roles > span { flex: 1 1 180px; }
+.conductor-panel .btn { min-height: 36px; white-space: normal; text-align: start; }
+.conductor-panel .btn:focus-visible { outline: 2px solid var(--ds-text-primary); outline-offset: 2px; }
+.conductor-disclosure { margin: 8px 0; }
+.conductor-disclosure > .btn { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; }
+.conductor-disclosure > .btn::before { content: "+"; flex: none; }
+.conductor-disclosure > .btn[aria-expanded="true"]::before { content: "−"; }
+.conductor-detail { padding: 8px 12px; border-inline-start: 2px solid var(--ds-border-default); }
+.conductor-workers { display: grid; gap: 8px; }
+.conductor-workers .panel-card, .conductor-consent { padding: 12px; }
+.conductor-consent { margin: 16px 0; border: 2px solid var(--ds-border-default); }
+.conductor-entry fieldset { min-width: 0; display: grid; gap: 12px; margin: 12px 0; }
+.conductor-entry legend { font-weight: var(--font-weight-semibold); }
+.conductor-entry ul, .conductor-detail ul { list-style: disc; padding-inline-start: 20px; }

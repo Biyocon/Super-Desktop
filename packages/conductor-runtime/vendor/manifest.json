@@ -1,0 +1,163 @@
+{
+  "revision": "879ab27bdd22203675d6f0cc678652779fc089cd",
+  "license": "MIT",
+  "packageVersion": "0.1.0-rc.7",
+  "files": [
+    {
+      "source": "LICENSE",
+      "path": "LICENSE",
+      "bytes": 1065,
+      "sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be"
+    },
+    {
+      "source": "packages/conductor/conductor/src/analysis-challenge.ts",
+      "path": "conductor/analysis-challenge.ts",
+      "bytes": 9544,
+      "sha256": "ad2d8845478547c7895bf11cdcca19cfb8c00d9c123768949c2d3bbbf87045c1"
+    },
+    {
+      "source": "packages/conductor/conductor/src/analysis-materials.ts",
+      "path": "conductor/analysis-materials.ts",
+      "bytes": 8334,
+      "sha256": "da140b2d3be1695d7d98aa67bdb279591576a4739b7d965d4794717eae250896"
+    },
+    {
+      "source": "packages/conductor/conductor/src/analysis-persistence.ts",
+      "path": "conductor/analysis-persistence.ts",
+      "bytes": 15143,
+      "sha256": "37ba99113c3465b4fba003ee3510f196476cbb19db9bd574238fcdde9bf83eb6"
+    },
+    {
+      "source": "packages/conductor/conductor/src/analysis.ts",
+      "path": "conductor/analysis.ts",
+      "bytes": 21408,
+      "sha256": "fc75a2fc49f1fc46b86592ad11ae1f3c053573c3a38d9cb4e787f497788221f2"
+    },
+    {
+      "source": "packages/conductor/conductor/src/child-projection.ts",
+      "path": "conductor/child-projection.ts",
+      "bytes": 3143,
+      "sha256": "70cb9627495b65733fc523840a35cd7bd8e97ed3ce04822234cfff6801d24e60"
+    },
+    {
+      "source": "packages/conductor/conductor/src/child-types.ts",
+      "path": "conductor/child-types.ts",
+      "bytes": 2322,
+      "sha256": "b2ef62063b587d16d9d1025b2a74edfffa88109069f80e016b9e383e848e5f71"
+    },
+    {
+      "source": "packages/conductor/conductor/src/drive.ts",
+      "path": "conductor/drive.ts",
+      "bytes": 34462,
+      "sha256": "7bebfae49651439f9ba95759d37d59371f9983c02dff748417d68829bdbae884"
+    },
+    {
+      "source": "packages/conductor/conductor/src/index.ts",
+      "path": "conductor/index.ts",
+      "bytes": 4570,
+      "sha256": "04b2014aacfe7402521599f38e1a6a808a62b6f7b35b75c1b739aac1ea531195"
+    },
+    {
+      "source": "packages/conductor/conductor/src/intake-history.ts",
+      "path": "conductor/intake-history.ts",
+      "bytes": 7385,
+      "sha256": "1d1831d4978a3da06c18593a222abc58b302991656a92e9342dbea9fa5468e14"
+    },
+    {
+      "source": "packages/conductor/conductor/src/intake.ts",
+      "path": "conductor/intake.ts",
+      "bytes": 14464,
+      "sha256": "f8d45b4656daac8194ceca66b0169b5b303e7d78be6a9a6c6b3421886a638d99"
+    },
+    {
+      "source": "packages/conductor/conductor/src/invariant.ts",
+      "path": "conductor/invariant.ts",
+      "bytes": 1998,
+      "sha256": "55d164df8465cc1f24019270efbdd1b8b39f28d09ce014bfd60529fa4099b2dd"
+    },
+    {
+      "source": "packages/conductor/conductor/src/owner-events.ts",
+      "path": "conductor/owner-events.ts",
+      "bytes": 11113,
+      "sha256": "ad4efa02e48e6ffa7559d824b7ede1e08751afef445bde1ea21020bc902f9cfa"
+    },
+    {
+      "source": "packages/conductor/conductor/src/owner-ledger.ts",
+      "path": "conductor/owner-ledger.ts",
+      "bytes": 28298,
+      "sha256": "9a8b79991fa3117716948445d027345ab70a0af18f50efd3f07356dd94f5e13c"
+    },
+    {
+      "source": "packages/conductor/conductor/src/owner-types.ts",
+      "path": "conductor/owner-types.ts",
+      "bytes": 3899,
+      "sha256": "b90158803ce27def8b90bfeecd7e3aa511b313d83d4bd0c1c7a41213d0a95efe"
+    },
+    {
+      "source": "packages/conductor/conductor/src/persistence.ts",
+      "path": "conductor/persistence.ts",
+      "bytes": 46777,
+      "sha256": "7a7477ea5b8049b4d34f3060c3bf2a3dfb0df52153ec010e022bec5f5d166e73"
+    },
+    {
+      "source": "packages/conductor/conductor/src/quality.ts",
+      "path": "conductor/quality.ts",
+      "bytes": 2453,
+      "sha256": "87e776aac39175a2546dcebcd80dfa5bd4dd2d1667fec0f08bc9679aa6b30463"
+    },
+    {
+      "source": "packages/conductor/conductor/src/report-json.ts",
+      "path": "conductor/report-json.ts",
+      "bytes": 833,
+      "sha256": "b53440c2479497c6a85647637f37fea82c240bea125c48d9c931418c8335a67c"
+    },
+    {
+      "source": "packages/conductor/conductor/src/routing.ts",
+      "path": "conductor/routing.ts",
+      "bytes": 4853,
+      "sha256": "cc69a1caf6cf60802922d5a25c0047892a67efe3e5b0c8250d02980c85ef8a71"
+    },
+    {
+      "source": "packages/conductor/conductor/src/run-availability-types.ts",
+      "path": "conductor/run-availability-types.ts",
+      "bytes": 465,
+      "sha256": "0b2a247137837869d0d2f7d2f0b2ef85b6c85441bbfc8c0716ed2fa1ca4bdd4b"
+    },
+    {
+      "source": "packages/conductor/conductor/src/run-availability.ts",
+      "path": "conductor/run-availability.ts",
+      "bytes": 1258,
+      "sha256": "4905486d10f10f612e276e5289aca2f3d905ff423632df943e206b2fded51ce7"
+    },
+    {
+      "source": "packages/conductor/conductor/src/run-id.ts",
+      "path": "conductor/run-id.ts",
+      "bytes": 1236,
+      "sha256": "edde37579752bcf779bd2f12e388a20abd977987cc31f9c2f5c04204740a26ef"
+    },
+    {
+      "source": "packages/conductor/conductor/src/state.ts",
+      "path": "conductor/state.ts",
+      "bytes": 25831,
+      "sha256": "9e82dc7eaddf80ced45314fdd0f9c72f60d33eb6c9f9999123fc367df8b5f499"
+    },
+    {
+      "source": "packages/conductor/conductor/src/types.ts",
+      "path": "conductor/types.ts",
+      "bytes": 25481,
+      "sha256": "b46331478ca2d44ea09e1885327768e0e8603531c4082d29493431e8f18c5f0a"
+    },
+    {
+      "source": "packages/conductor/tool-conductor/src/capability.ts",
+      "path": "guards/capability.ts",
+      "bytes": 6475,
+      "sha256": "d75054cf98bfa48c5ee28fe822838ddd62db7c6c2da07b96591f8ebd55af40d3"
+    },
+    {
+      "source": "packages/conductor/tool-conductor/src/path-policy.ts",
+      "path": "guards/path-policy.ts",
+      "bytes": 1624,
+      "sha256": "916f97132e5b6f7339437790b992ee5c31fe582e97683c1d6fa5729067f8633c"
+    }
+  ]
+}

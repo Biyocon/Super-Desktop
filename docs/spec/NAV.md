@@ -61,6 +61,7 @@
 - [11-asktool-question-card.md](04-ux/11-asktool-question-card.md)
 - [12-prompt-enhancement.md](04-ux/12-prompt-enhancement.md)
 - [mini-and-virtual-pets.md](04-ux/mini-and-virtual-pets.md)
+- [harness-conductor.md](04-ux/harness-conductor.md)
 
 ## 5. Security
 - [README.md](05-security/README.md)

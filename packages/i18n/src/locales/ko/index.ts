@@ -1,8 +1,10 @@
+import { conductorKo } from "../../conductor/ko.js";
 import type { EnglishCatalog } from "../en/index.js";
 import { petsKo } from "../../pets/ko.js";
 
 export const ko = {
   pets: petsKo,
+  conductor: conductorKo,
   app: {
     shellName: "Super-Desktop",
     tagline: "로컬 AI 코딩 파트너",

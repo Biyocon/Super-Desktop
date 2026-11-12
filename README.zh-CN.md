@@ -39,6 +39,17 @@
 
 ---
 
+## Super-Desktop：Harness Conductor 集成候选
+
+本分支为仓库聊天提供独立 Conductor 入口，复用未修改的 Harness 引擎，支持明确范围的
+只读分析与授权实现。The Emperor 代表用户权限；普通 Task 与外部 MCP 运行不具有此流程
+的关卡权限。Gate C 之后必须批准确切来源/基线，文件工具权限仍独立；GO 不授权合并、
+部署或发布。Rust 管理历史，重新读取不重放执行。界面支持全部九种语言。
+本地 API 链、组件与隔离原生整应用检查已通过；最终已提交候选及 fork 集成验收仍在进行，
+不宣称 live 模型质量已验收。
+见 [行为与初始命令限制](docs/zh-CN/spec/04-ux/harness-conductor.md)。
+
+
 ## 为什么是 PI-Desktop？
 
 终端 Agent 擅长执行，IDE Agent 擅长嵌入编辑器。

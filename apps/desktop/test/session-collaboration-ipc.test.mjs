@@ -4,7 +4,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import test from "node:test";
 import ts from "typescript";
-import { ErrorCodes } from "../../../packages/shared/src/errors.ts";
+import { ErrorCodes } from "@pi-desktop/shared";
 import { IPC, IPC_WHITELIST } from "../../../packages/shared/src/protocol.ts";
 
 function load(relative, imports, globals = {}) {

@@ -9,6 +9,8 @@ import {
   resolveBindingLimits,
   trustedExtensionAgentKeyFromProviderId,
   type CommandShellCatalog,
+  type AppSettings,
+  type SessionSummary,
   type McpServerRecord,
   type ModelBinding,
   type Mode,
@@ -250,21 +252,15 @@ export function createSessionLaunchRuntime({
     return catalog;
   }
 
-  async function resolveAgentRuntimeLaunch(
-    sessionId: string,
-    session: any,
-    settings: any,
-    overrides: {
-      mode?: Mode;
-      turnId?: string;
-      providerId?: string;
-      modelId?: string;
-      thinkingLevel?: SessionThinkingLevel;
-    } = {},
+  /** Provider binding only: no shell, project prompts, plugins, skills or Tasks. */
+  async function resolveRuntimeProvider(
+    session: Pick<SessionSummary, "providerId" | "modelId" | "thinkingLevel">,
+    settings: Pick<AppSettings, "defaultProviderId" | "defaultModelId" | "imageGenerationModels" | "imageGeneration">,
+    overrides: { providerId?: string; modelId?: string; thinkingLevel?: SessionThinkingLevel } = {},
+    allowExtension = true,
   ) {
     if (!runtimeState.host) throw new Error("host unavailable");
     await modelsDevCatalog.ensureLoaded();
-    const commandShell = (await resolveEffectiveCommandShell()).effective!;
     const providers = await runtimeState.host!.call<{ providers: RuntimeProvider[] }>(
       "providers.list",
       { includeDisabled: false },
@@ -273,6 +269,9 @@ export function createSessionLaunchRuntime({
     const extensionAgentKey = requestedProviderId
       ? trustedExtensionAgentKeyFromProviderId(requestedProviderId)
       : undefined;
+    if (extensionAgentKey && !allowExtension) {
+      throw Object.assign(new Error("Conductor requires a direct model provider"), { errorCode: "CONDUCTOR_PROVIDER_INVALID" });
+    }
     const provider: RuntimeProvider = extensionAgentKey
       ? {
           id: requestedProviderId!,
@@ -291,6 +290,9 @@ export function createSessionLaunchRuntime({
       throw Object.assign(new Error("No provider configured"), {
         errorCode: ErrorCodes.MODEL_NOT_CONFIGURED,
       });
+    }
+    if (!allowExtension && requestedProviderId && provider.id !== requestedProviderId) {
+      throw Object.assign(new Error("Selected Conductor provider is unavailable"), { errorCode: "CONDUCTOR_PROVIDER_INVALID" });
     }
     // Plugin-owned agents resolve credentials and transport inside the trusted
     // extension; the host never reads or injects a secret for them.
@@ -368,6 +370,27 @@ export function createSessionLaunchRuntime({
           storedModel?.defaultThinkingLevel,
       ),
     );
+    return { providers, provider, modelId, thinkingLevel, runtimeProvider: {
+      id: provider.id, name: provider.name, vendorKey: provider.vendorKey, baseUrl, modelId,
+      apiKey: secret.value || "", authKind: provider.authKind, extensionAgentKey: provider.extensionAgentKey,
+      apiStyle, ...optionalProviderHeaders(provider.headers),
+      supportsReasoning: thinkingCapabilities.supportsReasoning,
+      supportsVision: visionFromModelConfig(modelConfig),
+      supportedThinkingLevels: [...thinkingCapabilities.supportedThinkingLevels],
+      ...(modelConfig ? { modelConfig } : {}),
+    } };
+  }
+
+  async function resolveAgentRuntimeLaunch(
+    sessionId: string,
+    session: any,
+    settings: any,
+    overrides: { mode?: Mode; turnId?: string; providerId?: string; modelId?: string; thinkingLevel?: SessionThinkingLevel } = {},
+  ) {
+    if (!runtimeState.host) throw new Error("host unavailable");
+    await modelsDevCatalog.ensureLoaded();
+    const commandShell = (await resolveEffectiveCommandShell()).effective!;
+    const { providers, provider, modelId, thinkingLevel, runtimeProvider } = await resolveRuntimeProvider(session, settings, overrides);
     const projectPath =
       typeof session.projectPath === "string" && session.projectPath.trim()
         ? session.projectPath.trim()
@@ -626,22 +649,7 @@ export function createSessionLaunchRuntime({
         customSystemPrompt,
         projectInstructions,
         projectMemory,
-        provider: {
-          id: provider.id,
-          name: provider.name,
-          vendorKey: provider.vendorKey,
-          baseUrl,
-          modelId,
-          apiKey: secret.value || "",
-          authKind: provider.authKind,
-          extensionAgentKey: provider.extensionAgentKey,
-          apiStyle,
-          ...optionalProviderHeaders(provider.headers),
-          supportsReasoning: thinkingCapabilities.supportsReasoning,
-          supportsVision: visionFromModelConfig(modelConfig),
-          supportedThinkingLevels: [...thinkingCapabilities.supportedThinkingLevels],
-          ...(modelConfig ? { modelConfig } : {}),
-        },
+        provider: runtimeProvider,
         pluginTools: [
           ...plugins
             .getTools()
@@ -694,6 +702,7 @@ export function createSessionLaunchRuntime({
     disabledBuiltinSubagents,
     loadUserSkillBody,
     resolveEffectiveCommandShell,
+    resolveRuntimeProvider,
     resolveAgentRuntimeLaunch,
   };
 }

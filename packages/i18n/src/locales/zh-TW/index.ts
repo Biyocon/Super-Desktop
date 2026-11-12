@@ -1,8 +1,10 @@
+import { conductorZhTW } from "../../conductor/zh-TW.js";
 import type { EnglishCatalog } from "../en/index.js";
 import { petsZhTW } from "../../pets/zh-TW.js";
 
 export const zhTW = {
   pets: petsZhTW,
+  conductor: conductorZhTW,
   app: {
     shellName: "Super-Desktop",
     tagline: "本地 AI 程式設計助手",

@@ -1,3 +1,4 @@
+mod conductor_rpc;
 mod config_sync_rpc;
 mod pets_rpc;
 mod scheduled_rpc;
@@ -1311,7 +1312,8 @@ fn bash_cancellation_requested(receiver: &Option<tokio::sync::watch::Receiver<bo
 }
 
 async fn clear_bash_cancellation(state: &Arc<Mutex<AppState>>, p: &ToolsExecuteParams) {
-    if !matches!(p.tool_name.as_str(), "Bash" | "GenerateImages") {
+    if p.conductor.is_none() && !matches!(p.tool_name.as_str(), "Read" | "Bash" | "GenerateImages")
+    {
         return;
     }
     let mut st = state.lock().await;
@@ -3444,14 +3446,36 @@ async fn handle_request(
                 if st.shutting_down {
                     return Err(rpc_err(1001, "host is shutting down", "HOST_SHUTTING_DOWN"));
                 }
-                sessions::session_mode(&st.db, &p.session_id)
+                let mode = sessions::session_mode(&st.db, &p.session_id)
                     .map_err(|e| rpc_err(1000, e.to_string(), "INTERNAL"))?
-                    .ok_or_else(|| rpc_err(1007, "session not found", "SESSION_NOT_FOUND"))?
+                    .ok_or_else(|| rpc_err(1007, "session not found", "SESSION_NOT_FOUND"))?;
+                if let Some(binding) = &p.conductor {
+                    crate::conductor::validate_tool_access(
+                        &st.db,
+                        &p.session_id,
+                        binding,
+                        &p.tool_name,
+                        &p.args,
+                    )
+                    .map_err(|e| rpc_err(1008, e.to_string(), "CONDUCTOR_TOOL_DENIED"))?;
+                    if p.permission_scope
+                        .as_deref()
+                        .is_some_and(|scope| scope != "inherit")
+                    {
+                        return Err(rpc_err(
+                            1008,
+                            "Conductor cannot override permissions",
+                            "CONDUCTOR_TOOL_DENIED",
+                        ));
+                    }
+                }
+                mode
             };
 
             // Register before permission evaluation so tools.abort can cancel
             // an approval wait as well as an already-spawned process.
-            let cancellation_receiver = if matches!(p.tool_name.as_str(), "Bash" | "GenerateImages")
+            let cancellation_receiver = if p.conductor.is_some()
+                || matches!(p.tool_name.as_str(), "Read" | "Bash" | "GenerateImages")
             {
                 let mut st = state.lock().await;
                 match st.register_bash_cancellation(&p.session_id, &p.tool_call_id) {
@@ -3747,6 +3771,23 @@ async fn handle_request(
 
                 if matches!(final_decision, PermissionDecision::AllowSession) {
                     let mut st = state.lock().await;
+                    if let Some(binding) = &p.conductor {
+                        crate::conductor::validate_tool_access(
+                            &st.db,
+                            &p.session_id,
+                            binding,
+                            &p.tool_name,
+                            &p.args,
+                        )
+                        .map_err(|e| rpc_err(1008, e.to_string(), "CONDUCTOR_TOOL_DENIED"))?;
+                        if bash_cancellation_requested(&cancellation_receiver) {
+                            return Err(rpc_err(
+                                1008,
+                                "Conductor tool was interrupted",
+                                "CONDUCTOR_TOOL_DENIED",
+                            ));
+                        }
+                    }
                     st.session_grants
                         .entry(p.session_id.clone())
                         .or_default()
@@ -3797,7 +3838,7 @@ async fn handle_request(
                     session_id: p.session_id.as_str(),
                     store: &hashline_store,
                 };
-                let pending_review = review::prepare_change(
+                let mut pending_review = review::prepare_change(
                     &data_dir,
                     &p.session_id,
                     &p.tool_call_id,
@@ -3869,7 +3910,63 @@ async fn handle_request(
                     });
                 }
 
-                let mut result = if tools::is_desktop_dispatched(&p.tool_name) {
+                let mut result = if let Some(binding) = &p.conductor {
+                    let st = state.lock().await;
+                    let root = crate::conductor::validate_tool_access(
+                        &st.db,
+                        &p.session_id,
+                        binding,
+                        &p.tool_name,
+                        &p.args,
+                    )
+                    .map_err(|e| {
+                        if let Some(pending) = pending_review.take() {
+                            review::discard_change(pending);
+                        }
+                        rpc_err(1008, e.to_string(), "CONDUCTOR_TOOL_DENIED")
+                    })?;
+                    if st.shutting_down
+                        || bash_cancellation_requested(&cancellation_receiver)
+                        || sessions::session_mode(&st.db, &p.session_id)
+                            .ok()
+                            .flatten()
+                            .as_deref()
+                            != Some(durable_mode.as_str())
+                    {
+                        if let Some(pending) = pending_review.take() {
+                            review::discard_change(pending);
+                        }
+                        return Err(rpc_err(
+                            1008,
+                            "Conductor tool was interrupted",
+                            "CONDUCTOR_TOOL_DENIED",
+                        ));
+                    }
+                    // Keep the existing ignore/sensitive-path/hashline executor and
+                    // permission decision. Conductor can only narrow its roots.
+                    let result = tools::execute_tool_with_path_access(
+                        Some(&root),
+                        None,
+                        &p.tool_name,
+                        &p.args,
+                        tools::ToolExecutionOptions {
+                            timeout_ms: execution_timeout_ms,
+                            bash_options: None,
+                            allow_external_paths: false,
+                            hashline: Some(hashline_ctx),
+                        },
+                    )
+                    .await;
+                    if result.ok && matches!(p.tool_name.as_str(), "Write" | "Edit") {
+                        crate::conductor::source::record_effect(&st.db, &p.session_id, binding, &p.tool_name, &p.args)
+                            .map_err(|e| {
+                                if let Some(pending) = pending_review.take() { review::discard_change(pending); }
+                                rpc_err(1008, format!("Conductor file effect occurred but source acknowledgement failed: {e}"), "CONDUCTOR_SOURCE_EFFECT_UNCERTAIN")
+                            })?;
+                    }
+                    drop(st);
+                    result
+                } else if tools::is_desktop_dispatched(&p.tool_name) {
                     // Plugin and MCP dispatch has its own bounded default, sized
                     // to outlast Electron's budgets; command-shell timeout
                     // semantics apply only to Bash.
@@ -4559,6 +4656,12 @@ async fn handle_request(
                 .transfer(&id, &from, &to)
                 .map_err(skill_err)?;
             Ok(json!({ "skill": skill }))
+        }
+
+        method if method.starts_with("conductorStore.") => {
+            let st = state.lock().await;
+            conductor_rpc::handle(&st.db, method, params)
+                .map_err(|e| rpc_err(-32602, e.to_string(), "CONDUCTOR_STORE_REJECTED"))
         }
 
         method if method.starts_with("pets.") => {
@@ -6031,6 +6134,45 @@ mod tests {
 
     async fn assert_bash_registry_empty(state: &Arc<Mutex<AppState>>) {
         assert!(state.lock().await.active_bash_cancellations.is_empty());
+    }
+
+    #[tokio::test]
+    async fn completed_reads_release_their_cancellation_registration() {
+        let data_dir = tempfile::tempdir().unwrap();
+        let project = data_dir.path().join("project");
+        fs::create_dir_all(&project).unwrap();
+        fs::write(project.join("notes.txt"), "owned read fixture").unwrap();
+        let mut app_state = AppState::open(data_dir.path()).unwrap();
+        app_state.handshook = true;
+        let session = sessions::create_session(
+            &app_state.db,
+            Some("Read cleanup".into()),
+            Some("agent".into()),
+            None,
+            None,
+            Some(project.to_string_lossy().into_owned()),
+        )
+        .unwrap();
+        let state = Arc::new(Mutex::new(app_state));
+        let (tx, _rx) = mpsc::unbounded_channel();
+        for path in ["notes.txt", "missing.txt", "notes.txt"] {
+            let result = handle_request(
+                state.clone(),
+                "tools.execute",
+                json!({
+                    "sessionId": session.id,
+                    "toolCallId": "reusable-read-id",
+                    "toolName": "Read",
+                    "args": { "path": path },
+                    "mode": "agent"
+                }),
+                tx.clone(),
+            )
+            .await
+            .unwrap();
+            assert_eq!(result["ok"], path == "notes.txt");
+            assert_bash_registry_empty(&state).await;
+        }
     }
 
     #[test]

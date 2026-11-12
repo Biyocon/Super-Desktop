@@ -1,4 +1,12 @@
 import type {
+  ConductorAvailability,
+  ConductorConsentAnswer,
+  ConductorEntry,
+  ConductorHistory,
+  ConductorIndex,
+  ConductorQualityCommand,
+  ConductorResume,
+  ConductorRunRef,
   ScheduledTaskRun,
   ActivationScope,
   AgentCapabilityMove,
@@ -511,6 +519,15 @@ function normalizePlansChangedEvent(value: unknown): PlanningStateEvent {
 }
 
 export const api = {
+  conductorAvailability: () => invoke<ConductorAvailability>(IPC.invoke.conductorAvailability, {}),
+  conductorCatalog: () => invoke<{ commands: ConductorQualityCommand[] }>(IPC.invoke.conductorCatalog, {}),
+  conductorStart: (input: ConductorEntry) => invoke<ConductorHistory>(IPC.invoke.conductorStart, input),
+  conductorList: (sessionId: string) => invoke<{ runs: ConductorIndex[] }>(IPC.invoke.conductorList, { sessionId }),
+  conductorHistory: (input: ConductorRunRef) => invoke<ConductorHistory>(IPC.invoke.conductorHistory, input),
+  conductorResume: (input: ConductorResume) => invoke<ConductorHistory>(IPC.invoke.conductorResume, input),
+  conductorCancel: (input: ConductorRunRef) => invoke<ConductorHistory>(IPC.invoke.conductorCancel, input),
+  conductorCancelAdmission: (input: { sessionId: string; requestId: string }) => invoke<{ cancelled: true }>(IPC.invoke.conductorCancelAdmission, input),
+  conductorAuthorize: (input: ConductorConsentAnswer) => invoke<{ acknowledged: true }>(IPC.invoke.conductorAuthorize, input),
   getVersion: () => invoke<AppVersionInfo>(IPC.invoke.appGetVersion),
   health: () => invoke<HostHealth>(IPC.invoke.appHealth),
   getOnboarding: () => invoke<OnboardingState>(IPC.invoke.appGetOnboarding),

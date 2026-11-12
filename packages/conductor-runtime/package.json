@@ -1,0 +1,17 @@
+{
+  "name": "@pi-desktop/conductor-runtime",
+  "version": "0.15.7-super.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./engine": { "types": "./dist/engine.d.mts", "import": "./dist/engine.mjs" },
+    "./adapter": { "types": "./dist/adapter.d.mts", "import": "./dist/adapter.mjs" }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "node --test test/*.test.mjs",
+    "typecheck": "node typecheck.mjs"
+  },
+  "dependencies": { "zod": "4.4.3" },
+  "devDependencies": { "esbuild": "0.25.12", "typescript": "5.9.3", "@types/node": "24.13.3" }
+}

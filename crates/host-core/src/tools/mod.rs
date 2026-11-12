@@ -578,6 +578,9 @@ pub struct ToolsExecuteParams {
     /// execute time.
     #[serde(default)]
     pub plan_safe_actions: Option<Vec<String>>,
+    /// Private runtime binding; never supplied by a model or renderer tool schema.
+    #[serde(default)]
+    pub conductor: Option<crate::conductor::ToolAccess>,
 }
 
 #[derive(Debug, Serialize)]

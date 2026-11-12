@@ -170,35 +170,20 @@ test("tool-call disclosure headers span the conversation band", () => {
   assert.match(row, /min-width:\s*0;/);
 });
 
-test("delegation topology shows the full Conductor team and distinguishes active roles", () => {
-  for (const role of [
-    "conductor",
-    "detective",
-    "strategist",
-    "devils-advocate",
-    "headsman",
-    "auditor",
-    "integrator",
-    "arbiter",
-  ]) {
+test("generic delegation topology preserves Tasks without inventing Conductor roles", async () => {
+  const source = await readFile(
+    new URL("../src/features/chat/transcript/SubagentDetail.tsx", import.meta.url),
+    "utf8",
+  );
+  for (const role of ["conductor", "detective", "strategist", "devils-advocate", "headsman", "auditor", "integrator", "arbiter"]) {
     assert.match(agentAvatarSource, new RegExp(`"${role}"`), role);
   }
-  assert.match(
-    transcriptSource,
-    /CONDUCTOR_ROLES\.filter\(\(role\) => role !== "conductor"\)\.map/,
-  );
-  assert.match(transcriptSource, /const roleItems = itemsByRole\.get\(role\);/);
-  assert.match(transcriptSource, /if \(roleItems\) return roleItems\.map\(renderTask\);/);
-  assert.match(transcriptSource, /className="subagent-topology-node subagent-topology-idle"/);
-  assert.match(transcriptSource, /<AgentAvatar agentName=\{role\} size=\{28\} \/>/);
-  assert.match(transcriptSource, /<ConductorAvatar size=\{28\} \/>/);
-  assert.match(transcriptSource, /<AgentAvatar agentName=\{agentName\} size=\{28\} \/>/);
-
-  const idle = stylesSource.match(
-    /\.subagent-topology-node\.subagent-topology-idle \{([^}]*)\}/,
-  )?.[1];
-  assert.ok(idle);
-  assert.match(idle, /opacity:\s*0\.38;/);
+  assert.match(source, /latestDelegationItems\(items\)/);
+  assert.match(source, /currentItems\.map\(\(item\) =>/);
+  assert.match(source, /key=\{item\.message\.id\}/);
+  assert.match(source, /message=\{item\.message\}/);
+  assert.match(source, /<AgentAvatar size=\{28\} \/>/);
+  assert.doesNotMatch(source, /CONDUCTOR_ROLES|itemsByRole|subagent-topology-idle|ConductorAvatar/);
 });
 
 test("delegation node copy wraps within the responsive card", () => {

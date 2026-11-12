@@ -6,6 +6,7 @@
 import { randomUUID } from "node:crypto";
 import type { ModelAuth } from "@earendil-works/pi-ai";
 import { ParentHostProxy } from "./parent-host-proxy.js";
+import { conductorRpc } from "./conductor/rpc.js";
 import { visionFromModelConfig } from "./model-capabilities.js";
 import { hydrateAttachmentHistory } from "./attachment-history.js";
 import { classifyAgentError } from "./agent-errors.js";
@@ -52,6 +53,15 @@ type RuntimeMap = Map<string, DesktopAgentRuntime>;
 const runtimes: RuntimeMap = new Map();
 const hostProxy = new ParentHostProxy();
 const testRuntimeIds = new WeakMap<DesktopAgentRuntime, string>();
+const conductor = conductorRpc({
+  host: hostProxy,
+  runtimeId: process.env.PI_DESKTOP_CONDUCTOR_RUNTIME_ID ?? randomUUID(),
+  notify,
+  chatBusy: sessionId => runtimes.get(sessionId)?.getStatus().isRunning === true,
+});
+hostProxy.onClose(() => {
+  void conductor.dispose().catch(() => process.stderr.write("[conductor] CONDUCTOR_DISPOSE_FAILED\n"));
+});
 function testRuntimeIdentity(sessionId: string) {
   if (process.env.PI_DESKTOP_PLAN_UI_PROBE !== "1") {
     throw Object.assign(new Error("test runtime identity RPC is unavailable"), {
@@ -159,6 +169,7 @@ async function runtimeFor(
   currentPrompt?: string,
 ): Promise<DesktopAgentRuntime> {
   const sessionId = String(params.sessionId);
+  if (conductor.owns(sessionId)) throw Object.assign(new Error("CONDUCTOR_SESSION_BUSY"), { errorCode: "CONDUCTOR_SESSION_BUSY" });
   const mode = normalizeMode(params.mode);
   if (!isCommandShellOption(params.commandShell) || !params.commandShell.available) {
     throw Object.assign(new Error("active command shell is invalid or unavailable"), {
@@ -265,6 +276,7 @@ async function runtimeFor(
       history = history.slice(0, -1);
     }
   }
+  if (conductor.owns(sessionId)) throw Object.assign(new Error("CONDUCTOR_SESSION_BUSY"), { errorCode: "CONDUCTOR_SESSION_BUSY" });
   const runtime = new DesktopAgentRuntime({
     host: hostProxy,
     sessionId,
@@ -347,6 +359,7 @@ function classifiedRuntimeError(err: unknown) {
 // permission dialog delivery).
 
 async function handle(method: string, params: any): Promise<unknown> {
+  if (method.startsWith("conductor.")) return conductor.handle(method, params);
   switch (method) {
     case "sidecar.configure": {
       // Main owns host-core; sidecar only keeps config metadata.
@@ -544,6 +557,7 @@ async function handle(method: string, params: any): Promise<unknown> {
     }
     case "agent.disposeSession": {
       const sessionId = String(params.sessionId);
+      await conductor.disposeSession(sessionId);
       if (sessionId.startsWith(NATIVE_PI_SESSION_PREFIX)) {
         nativePiService().dispose(sessionId);
         return { ok: true };

@@ -1,8 +1,10 @@
+import { conductorZhCN } from "../../conductor/zh-CN.js";
 import type { EnglishCatalog } from "../en/index.js";
 import { petsZhCN } from "../../pets/zh-CN.js";
 
 export const zhCN = {
   pets: petsZhCN,
+  conductor: conductorZhCN,
   app: {
     shellName: "Super-Desktop",
     tagline: "本地 AI 编程助手",

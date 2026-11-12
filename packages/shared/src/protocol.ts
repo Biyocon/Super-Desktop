@@ -51,6 +51,15 @@ export type WindowControlAction = (typeof WINDOW_CONTROL_ACTIONS)[number];
 
 export const IPC = {
   invoke: {
+    conductorAvailability: "pi-desktop/conductor/availability",
+    conductorCatalog: "pi-desktop/conductor/catalog",
+    conductorStart: "pi-desktop/conductor/start",
+    conductorList: "pi-desktop/conductor/list",
+    conductorHistory: "pi-desktop/conductor/history",
+    conductorResume: "pi-desktop/conductor/resume",
+    conductorCancel: "pi-desktop/conductor/cancel",
+    conductorCancelAdmission: "pi-desktop/conductor/cancelAdmission",
+    conductorAuthorize: "pi-desktop/conductor/authorize",
     petsList: "pi-desktop/pets/list",
     petsImage: "pi-desktop/pets/image",
     petsPreviewImport: "pi-desktop/pets/previewImport",
@@ -362,6 +371,8 @@ export const IPC = {
     nativeMenuAction: "pi-desktop/menu/nativeAction",
   },
   event: {
+    conductorChanged: "pi-desktop/conductor/event/changed",
+    conductorFault: "pi-desktop/conductor/event/fault",
     petsChanged: "pi-desktop/pets/event/changed",
     miniState: "pi-desktop/mini/event/state",
     miniActionRequested: "pi-desktop/mini/event/actionRequested",

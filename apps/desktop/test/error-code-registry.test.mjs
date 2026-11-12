@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { ErrorCodes } from "@pi-desktop/shared";
@@ -44,4 +44,19 @@ test("every code host-core emits is registered in ErrorCodes", () => {
   const registry = new Set(Object.values(ErrorCodes));
   const missing = [...hostEmittedCodes()].filter((code) => !registry.has(code)).sort();
   assert.deepEqual(missing, []);
+});
+
+test("Conductor production diagnostics are registered and documented", () => {
+  const codes = new Set();
+  function scan(relative) {
+    for (const item of readdirSync(join(root, relative), { withFileTypes: true })) {
+      const path = join(relative, item.name);
+      if (item.isDirectory()) { scan(path); continue; }
+      if (!/\.(?:ts|mjs|rs)$/.test(item.name) || /(?:test|acceptance)/.test(item.name)) continue;
+      for (const match of read(path).matchAll(/\bCONDUCTOR_[A-Z_]+\b/g)) if (!match[0].endsWith("_")) codes.add(match[0]);
+    }
+  }
+  for (const path of ["apps/desktop/electron/main/conductor", "apps/desktop/electron/main/ipc", "packages/agent-runtime/src/conductor", "packages/conductor-runtime/src", "crates/host-core/src/conductor"]) scan(path);
+  const registered = new Set(Object.values(ErrorCodes));
+  assert.deepEqual([...codes].filter(code => !registered.has(code) || !documented.has(code)).sort(), []);
 });

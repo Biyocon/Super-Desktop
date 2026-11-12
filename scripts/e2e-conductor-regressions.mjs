@@ -158,8 +158,8 @@ try {
   await invoke("agent/prompt", { sessionId: session.id, content: "Run the settlement fixture." });
   await waitFor(() => held.some(x => x.marker === "cancel") && !!releaseParent && requests.filter(x => !x.parent && ["alpha", "beta"].includes(x.marker) && x.read).length === 2, 40_000, "real child Reads and held cancellation");
   await waitFor(async () => (await cards()).length === 4, 15_000, "four independent explorer cards");
-  assert.ok((await cards()).every(card => card.html.includes('detective-')), 'explorer portrait on each independent card');
-  assert.equal(await main.evaluate(`document.querySelectorAll('.subagent-topology-idle').length`), 6);
+  assert.ok((await cards()).every(card => !card.html.includes('agent-avatar') && card.text.includes('explorer')), 'generic explorer keeps exact name and bot glyph');
+  assert.equal(await main.evaluate(`document.querySelectorAll('.subagent-topology-idle').length`), 0);
   assert.equal(await main.evaluate(`document.querySelectorAll('.subagent-topology-root').length`), 1);
   await writeFile(join(root, "inflight-history.json"), JSON.stringify(await history(), null, 2));
   await waitFor(async () => (await history()).messages.filter(m=>['task-alpha','task-beta'].includes(m.id)&&m.toolResult?.details?.status==='completed').length===2, 10_000, 'successful siblings durably settled');

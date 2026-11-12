@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
 import ts from "typescript";
-import { ErrorCodes } from "../../../packages/shared/src/errors.ts";
+import { ErrorCodes } from "@pi-desktop/shared";
 import { IPC } from "../../../packages/shared/src/protocol.ts";
 import * as modelsDev from "../electron/main/models-dev-catalog.ts";
 

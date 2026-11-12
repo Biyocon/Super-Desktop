@@ -22,6 +22,25 @@ generated-pet quality remain unaccepted; physical multi-monitor/disconnect is de
 
 ## 1. Goals
 
+### E2E-HARNESS-CONDUCTOR-process
+
+- **Preconditions:** Candidate builds; task-owned profiles, metadata, data, agents
+  and fixture repository; loopback SSE only; cached pinned Docker image. No live
+  provider, existing credentials or active user application.
+- **Steps:** Use the visible Conductor form for read-only analysis and harmless
+  implementation. Inspect source-bound Gate-C consent, then separately answer
+  the real file-tool permission once. Open workers, gates and reports by native
+  mouse/Enter/Space. Reload the renderer and restart the owned whole application.
+- **Expected:** Actual Harness A–G handovers, justified analysis skips, separate
+  worker/dispatch identities, real D/E verification and Arbiter outcome. Reopen
+  exact durable history without replay. Missing engine blocks visibly. Negative
+  fixtures cover stale/duplicate data, rework/defect classes, unauthorized mutation,
+  cancellation and GO without external-action authority. Generic Tasks stay generic.
+- **Coverage:** Component/controller/catalog tests and the actual API-chain
+  acceptance are implemented. Native candidate execution and final evidence are
+  still required; fixtures do not certify live model quality. See
+  [UI behavior](../04-ux/harness-conductor.md).
+
 ### E2E-CONDUCTOR-budget-and-lifecycle
 
 - **Preconditions:** Candidate Desktop/runtime/host builds, isolated Windows
@@ -30,8 +49,9 @@ generated-pet quality remain unaccepted; physical multi-monitor/disconnect is de
   successes and a nonretryable provider error while holding one child. Reload
   renderer in flight, open cards by mouse and focus + Enter/Space, then use real
   TaskStop/TaskWait. Start a second held Task, close and restart the whole app.
-- **Expected:** Every independent Task has its own portrait/card/id/transcript;
-  coordinator/placeholders persist; failed/stopped are not successes. Group
+- **Expected:** Every independent Task has its own exact agent name/card/id/transcript;
+  generic builtins and parent use bot glyphs, with no future specialist placeholders.
+  These Tasks are not authoritative Harness runs; failed/stopped are not successes. Group
   reports issues, completed siblings stay completed, no dispatch is repeated.
   Reload preserves activity and rows; full restart preserves history and marks
   unfinished work interrupted. Detail status works even without child messages.
