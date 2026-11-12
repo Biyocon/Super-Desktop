@@ -1,6 +1,8 @@
+import { conductorEn } from "../../conductor/en.js";
 import { petsEn } from "../../pets/en.js";
 export const en = {
   pets: petsEn,
+  conductor: conductorEn,
   app: {
     shellName: "Super-Desktop",
     tagline: "Local AI coding partner",

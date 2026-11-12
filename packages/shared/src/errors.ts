@@ -1,3 +1,5 @@
+import { ConductorErrorCodes } from "./conductor-errors.js";
+
 export type AppError = {
   code: string;
   message: string;
@@ -27,6 +29,7 @@ export function err<T = never>(
 }
 
 export const ErrorCodes = {
+  ...ConductorErrorCodes,
   PROTOCOL_MISMATCH: "PROTOCOL_MISMATCH",
   HOST_UNAVAILABLE: "HOST_UNAVAILABLE",
   HOST_OVERLOADED: "HOST_OVERLOADED",

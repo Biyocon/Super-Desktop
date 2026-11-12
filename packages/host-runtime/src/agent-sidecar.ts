@@ -2,6 +2,7 @@ import { spawn, type ChildProcessWithoutNullStreams } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { DEFAULT_RPC_TIMEOUT_MS, IMAGE_BATCH_TIMEOUT_MS, imageGenerationPrompts, readNdjsonLines, rpcTimeoutMs, rpcErrorFromWire, rpcErrorToWire } from "@pi-desktop/shared";
 import type { ProcessExitHandler, StderrHandler } from "./host-process.js";
+import { ConductorFence } from "./conductor-fence.js";
 
 // stderr lines kept per sidecar so an unexpected exit can be reported with the
 // process's last words instead of a bare "agent sidecar exited".
@@ -65,6 +66,17 @@ const HOST_PROXY_ALLOWED = new Set([
   "provider.resolveAuth",
   "provider.resolveSubagentModel",
   "app.health",
+  "conductorStore.create",
+  "conductorStore.append",
+  "conductorStore.resume",
+  "conductorStore.load",
+  "conductorStore.list",
+  "conductorStore.events",
+  "conductorStore.captureSource",
+  "conductorStore.validateSource",
+  "conductorStore.interruptRun",
+  "conductorStore.createQuality",
+  "conductorStore.releaseQuality",
   // Trusted extensions (D387): answered by the embedding host, plus the
   // session methods the ExtensionAPI reaches (spec 16 §10.1).
   "extensions.commands.publish",
@@ -156,13 +168,17 @@ export class AgentSidecar {
   // Vendor-account rows this session was launched with. The sidecar can only
   // ask for auth it is already using, and a session that never bound an OAuth
   // row can ask for nothing at all.
+  private conductorHostSuspended = false;
+  private conductorHostGeneration = 0;
+  private conductorHostTransition: Promise<void> = Promise.resolve();
   private vendorAuthBindings = new Map<string, Set<string>>();
+  private readonly conductorFence = new ConductorFence();
 
   constructor(options: AgentSidecarOptions) {
     const { launch, onStderr } = options;
     this.child = spawn(launch.command, launch.args, {
       stdio: ["pipe", "pipe", "pipe"],
-      env: launch.env ?? process.env,
+      env: { ...(launch.env ?? process.env), PI_DESKTOP_CONDUCTOR_RUNTIME_ID: this.conductorFence.runtimeId },
       ...(launch.cwd ? { cwd: launch.cwd } : {}),
     });
 
@@ -200,6 +216,7 @@ export class AgentSidecar {
   private closeTransport(error: Error) {
     if (this.closed) return;
     this.closed = true;
+    this.conductorFence.close();
     this.unsubscribeHost?.();
     this.unsubscribeHost = null;
     this.unsubscribeHostExit?.();
@@ -232,8 +249,12 @@ export class AgentSidecar {
     // Snapshot the sidecar's last stderr lines: the dying process emits no
     // stdout, so they are the only context a crash report gets.
     const stderrTail = this.stderrTail.slice();
-    for (const h of this.exitHandlers) h({ ...info, stderrTail });
-    this.exitHandlers.clear();
+    void this.conductorFence.settled().catch(() => {
+      stderrTail.push("[conductor] CONDUCTOR_RECOVERY_FAILED");
+    }).then(() => {
+      for (const h of this.exitHandlers) h({ ...info, stderrTail });
+      this.exitHandlers.clear();
+    });
   }
 
   private writeToChild(payload: string): boolean {
@@ -357,9 +378,22 @@ export class AgentSidecar {
     this.vendorAuthBindings.delete(sessionId.trim());
   }
 
+  private revokeConductorHost(host: SidecarHostLink) {
+    this.conductorHostSuspended = true;
+    const generation = ++this.conductorHostGeneration;
+    const detached = this.conductorFence.detach(host);
+    const revoked = this.conductorHostTransition.then(() => this.call("conductor.hostLost"));
+    // Observe both immediately. No failed host operation is replayed on a new host.
+    this.conductorHostTransition = Promise.allSettled([detached, revoked]).then(results => {
+      if (results.some(result => result.status === "rejected")) this.recordStderr("[conductor] CONDUCTOR_RECOVERY_FAILED");
+      if (generation === this.conductorHostGeneration) this.conductorHostSuspended = false;
+    });
+  }
+
   setHost(host: SidecarHostLink) {
     if (this.closed) return;
     if (this.host && this.host !== host) {
+      this.revokeConductorHost(this.host);
       for (const controller of this.localToolControllers.values()) controller.abort();
     }
     this.host = host;
@@ -380,6 +414,7 @@ export class AgentSidecar {
       this.writeToChild(payload);
     });
     this.unsubscribeHostExit = host.onExit(() => {
+      this.revokeConductorHost(host);
       for (const controller of this.localToolControllers.values()) controller.abort();
       this.unsubscribeHost?.();
       this.unsubscribeHost = null;
@@ -563,7 +598,10 @@ export class AgentSidecar {
           return;
         }
         if (!this.host) throw new Error("host unavailable");
-        const result = await this.host.call(method, params);
+        if (this.conductorHostSuspended && (method.startsWith("conductorStore.") || method === "tools.execute" && params.conductor)) throw new Error("CONDUCTOR_HOST_LOST");
+        const result = method === "conductorStore.create" || method === "conductorStore.resume"
+          ? await this.conductorFence.acquire(this.host, method, params)
+          : await this.host.call(method, params);
         this.writeToChild(
           JSON.stringify({ jsonrpc: "2.0", id: msg.id, result }) + "\n",
         );
@@ -605,6 +643,7 @@ export class AgentSidecar {
   }
 
   async call<T = unknown>(method: string, params: unknown = {}): Promise<T> {
+    if (method.startsWith("conductor.") && method !== "conductor.hostLost") await this.conductorHostTransition;
     if (this.closed) throw new Error("agent sidecar is unavailable");
     const id = randomUUID();
     const timeoutMs = rpcTimeoutMs(method, params);
@@ -644,7 +683,10 @@ export class AgentSidecar {
     this.vendorAuthBindings.clear();
     this.closeTransport(new Error("agent sidecar disposed"));
     this.exitHandlers.clear();
-    if (this.child.exitCode !== null || this.child.signalCode !== null) return;
+    if (this.child.exitCode !== null || this.child.signalCode !== null) {
+      await this.conductorFence.settled();
+      return;
+    }
     // Wait for the process to actually leave so quit's settle step is real
     // rather than returning while the sidecar is still tearing down.
     await new Promise<void>((resolve) => {
@@ -656,6 +698,7 @@ export class AgentSidecar {
       });
       this.child.kill();
     });
+    await this.conductorFence.settled();
   }
 }
 

@@ -1,17 +1,6 @@
-// Kombi patch on the PI-Desktop baseline: per-agent avatars in the delegation
-// views. The main agent is the Conductor; each delegate resolves to the
-// Conductor role whose mandate matches its work, so every agent busy on a
-// task is recognisable at a glance.
-//
-// Built-in delegate ids map to roles with the same mandate:
-//   explorer      -> detective       (afklar, find og dokumentér evidens)
-//   code-reviewer -> devils-advocate (falsificerbar kritik af leverancen)
-//   test-runner   -> auditor         (reproducerbar verifikation)
-//   fixer         -> headsman        (implementér mod baseline)
-//
-// A user-defined delegate named after a role (`detective`, `strategist`, … or
-// `conductor-detective`, …) resolves to that role's image. Anything else falls
-// back to the generic bot glyph, so an unknown agent still reads correctly.
+// Agent-name portraits are decorative, not evidence of a Conductor role.
+// Only explicit role names resolve to portraits; generic builtins and unknown
+// agents keep the bot glyph. Authoritative Conductor UI uses roleAvatarUrl.
 
 import { normalizeSubagentName } from "@pi-desktop/shared";
 
@@ -38,10 +27,7 @@ const ROLE_AVATARS: Record<string, string> = {
   "the-arbiter": arbiterUrl,
 };
 
-/**
- * The full Conductor role set, in workflow order. `SubagentTopology` renders
- * this whole team (dimmed), then highlights the roles actually in use.
- */
+/** The authoritative Conductor role set, in workflow order. */
 export const CONDUCTOR_ROLES = [
   "conductor",
   "detective",
@@ -61,35 +47,25 @@ export function roleAvatarUrl(role: ConductorRole): string {
 }
 
 /**
- * Resolve an arbitrary agent name to a Conductor role id, or `undefined` when
- * the name is outside the role set. This is `avatarUrlFor` minus the asset
- * lookup, so the team view and the per-agent avatar stay on one path.
+ * Resolve an explicit role name for decoration only. Generic builtin names
+ * never establish role identity or authority.
  */
 export function resolveRoleId(agentName: string | undefined): ConductorRole | undefined {
   if (!agentName) return undefined;
   const id = normalizeSubagentName(agentName)
     .replace(/^conductor-/, "")
     .replace(/['\u2019]/g, "");
-  const role = BUILTIN_ROLE_ALIASES[id] ?? id;
-  return CONDUCTOR_ROLES.includes(role as ConductorRole) ? (role as ConductorRole) : undefined;
+  return CONDUCTOR_ROLES.includes(id as ConductorRole) ? (id as ConductorRole) : undefined;
 }
 
-/** Built-in delegate ids mapped to the Conductor role with the same mandate. */
-const BUILTIN_ROLE_ALIASES: Record<string, string> = {
-  explorer: "detective",
-  "code-reviewer": "devils-advocate",
-  "test-runner": "auditor",
-  fixer: "headsman",
-};
-
 /**
- * Delegate id (or Conductor role id) to its avatar asset, if one exists.
+ * Explicit role name to its decorative avatar asset, if one exists.
  *
  * Uses the canonical `normalizeSubagentName` from `@pi-desktop/shared` — the
  * same function the runtime uses to turn a definition file (or frontmatter
  * name) into a Task argument. Normalizing identically here means the avatar
  * lookup can never drift from the id the UI actually receives, and it strips
- * paths and `.md` for free (`/…/Code_Reviewer.md` -> `code-reviewer`).
+ * paths and `.md` for free (`/…/Detective.md` -> `detective`).
  *
  * The canonical normalizer keeps apostrophes, so a definition named
  * `Devil's Advocate.md` becomes `devil's-advocate` — an id the asset is not
@@ -101,7 +77,7 @@ function avatarUrlFor(agentName: string | undefined): string | undefined {
   const id = normalizeSubagentName(agentName)
     .replace(/^conductor-/, "")
     .replace(/['\u2019]/g, "");
-  return ROLE_AVATARS[BUILTIN_ROLE_ALIASES[id] ?? id];
+  return Object.prototype.hasOwnProperty.call(ROLE_AVATARS, id) ? ROLE_AVATARS[id] : undefined;
 }
 
 
@@ -131,7 +107,7 @@ export function AgentAvatar({
   );
 }
 
-/** The coordinating session agent: the Conductor of the role set. */
+/** Portrait for an explicitly authoritative Conductor, not a generic parent. */
 export function ConductorAvatar({ size }: { size: number }) {
   return (
     <img

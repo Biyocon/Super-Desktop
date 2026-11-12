@@ -153,6 +153,8 @@ export type SubagentRunOptions = {
     context: AfterToolCallContext,
   ) => SubagentToolOutcome | undefined;
   signal?: AbortSignal;
+  /** Exact independently budgeted input: never summarize or discard its context. */
+  contextPolicy?: "exact";
   /**
    * Prior chain messages that seed this run (ADR 0279). Omitted for a cold
    * start. The original `task` is still passed to `prompt()` as the new user
@@ -427,6 +429,7 @@ export class SubagentRun {
     turn: PrepareNextTurnContext,
     signal?: AbortSignal,
   ): Promise<AgentLoopTurnUpdate | undefined> {
+    if (this.opts.contextPolicy === "exact") return undefined;
     const outcome = await prepareDelegateTurnContext({
       messages: this.agent.state.messages,
       systemPrompt: this.agent.state.systemPrompt,

@@ -1,8 +1,10 @@
+import { conductorPtBR } from "../../conductor/pt-BR.js";
 import type { EnglishCatalog } from "../en/index.js";
 import { petsPtBR } from "../../pets/pt-BR.js";
 
 export const ptBR = {
   pets: petsPtBR,
+  conductor: conductorPtBR,
   app: {
     shellName: "Super-Desktop",
     tagline: "Parceiro local de programação com IA",

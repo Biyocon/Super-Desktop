@@ -1,5 +1,6 @@
 {
   "typescript": {
+    "packages/conductor-runtime/vendor/conductor/persistence.ts": "Unmodified MIT Harness 0.1.0-rc.7 persistence source at revision 879ab27bdd22203675d6f0cc678652779fc089cd (871 LOC; SHA-256 7a7477ea5b8049b4d34f3060c3bf2a3dfb0df52153ec010e022bec5f5d166e73). Splitting this pinned third-party source would invalidate unchanged-engine provenance. Build verifies its manifest; desktop adapter modules retain normal limits.",
     "apps/desktop/electron/main/bootstrap/window.ts": "Existing window lifecycle extraction from the main-process facade; further decomposition is outside this follow-up scope.",
     "packages/agent-runtime/src/native-pi-session.test.ts": "Native Pi continuation regression coverage is kept with the source boundary while the protocol and fixture contract stabilise; split by lifecycle once the native adapter surface settles.",
     "packages/agent-runtime/src/native-pi-session.ts": "Native Pi discovery, immutable projection, guarded continuation, and fork publication share one sidecar-private source boundary; split by lifecycle once the native adapter contract stabilises without widening path ownership."

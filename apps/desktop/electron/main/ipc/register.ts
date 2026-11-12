@@ -34,6 +34,7 @@ import { registerSpeechIpc } from "./speech-ipc";
 import { registerVoiceIpc } from "./voice-ipc";
 import { createPetsService } from "../pets/service";
 import { registerPetsIpc } from "./pets-ipc";
+import { registerConductorIpc } from "./conductor-ipc";
 import type { IpcRegistrar } from "./types";
 import type { createTraySessions } from "../tray-sessions";
 import type { createTaskbarUnreadBadge } from "../taskbar-unread-badge";
@@ -58,6 +59,7 @@ export type RegisterIpcDependencies = {
   setNotificationViewingSessionId: (sessionId: string | null) => void;
   activeUserSubagentDocuments: (...args: any[]) => Promise<any>;
   disabledBuiltinSubagents: () => Promise<string[]>;
+  resolveRuntimeProvider: ReturnType<typeof import("../runtime/session-launch").createSessionLaunchRuntime>["resolveRuntimeProvider"];
   mcpOAuth?: McpOAuthManager;
   [name: string]: any;
 };
@@ -226,6 +228,7 @@ export function registerIpcHandlers(dependencies: RegisterIpcDependencies) {
   };
   const pets = createPetsService({ dataDir, getHost, getMainWindow, speech, logger });
   registerPetsIpc({ registrar, pets, getMainWindow });
+  registerConductorIpc({ registrar, getMainWindow, getHost, getSidecar, activeTurns, acquireSessionOperation, resolveRuntimeProvider: dependencies.resolveRuntimeProvider });
 
   registerAppIpc({
     registrar,

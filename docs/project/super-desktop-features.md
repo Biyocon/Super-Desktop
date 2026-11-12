@@ -5,7 +5,7 @@ activation backups, original agent profiles and runtime data remain outside it.
 
 | Delivery | History | Result |
 |---|---|---|
-| Conductor portraits/full-team visualization and initial fork identity | [PR #1](https://github.com/Biyocon/Super-Desktop/pull/1), implementation `2bf6f22d2` | Main coordinator plus seven visible role slots; actual Task participants and dimmed unused roles |
+| Historical Conductor portraits/full-team visualization and initial fork identity | [PR #1](https://github.com/Biyocon/Super-Desktop/pull/1), implementation `2bf6f22d2` | Decorative Task aliases/idle roster only; not gate-process proof. Superseded by the dedicated Harness surface below. |
 | Safe importer collision handling | [PR #2](https://github.com/Biyocon/Super-Desktop/pull/2) | Parent-folder fallback for unnamed profile.md; collisions rejected before writing |
 | Separate CustomAgents library | [PR #3](https://github.com/Biyocon/Super-Desktop/pull/3) | Read-only source, no-clobber, bounded parser-validated import; registry preserved |
 | Selectable library in Settings | [PR #4](https://github.com/Biyocon/Super-Desktop/pull/4) | Qualified IDs, default-off library records, activation, migration and config-sync exclusions |
@@ -14,6 +14,7 @@ activation backups, original agent profiles and runtime data remain outside it.
 | Native Mini, gallery, safe pet import, draft dictation and confirmed AI task | `2de387294` plus this delivery | Host-owned preferences/catalog, restricted Mini, original Hassan atlas, real selected-session status and draft-only speech |
 | Fork README and reproducible screenshots | This delivery | Fork additions separated from inherited upstream features; generic fixtures clearly labeled |
 | User budget and Conductor lifecycle regressions | Unreleased; [test procedure](conductor-smoke/README.md#automated-lifecycle-regression-external-provider-fixture) | Settings excludes builtins; independent same-role Tasks remain visible; terminal Task snapshots persist; reload restores activity; isolated Windows native input/failure/cancellation/restart coverage |
+| Harness Conductor process integration | Candidate qualification; [behavior and limits](../spec/04-ux/harness-conductor.md), [acceptance matrix](harness-conductor-acceptance.md) | Unchanged pinned MIT engine, explicit analysis/implementation entry, exact Gate-C consent, source/permission guards, actual worker/report/gate projection and Rust-owned no-replay history. Local API-chain, components and isolated native whole-app acceptance passed; final committed candidate and fork landing remain pending. |
 
 ## Preserved experiment
 

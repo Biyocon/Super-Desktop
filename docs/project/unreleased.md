@@ -1,5 +1,19 @@
 # Unreleased changes
 
+## Harness Conductor integration — candidate qualification in progress
+
+- Add a dedicated chat entry for the unchanged, pinned MIT Harness engine,
+  separate from generic Tasks and external MCP runs. Capture bounded analysis or
+  implementation mandates and show actual workers, gate evidence and Arbiter outcomes.
+- Require exact source/baseline consent after Gate C and preserve existing file-tool
+  permissions. GO grants no external-action permission. Rust owns durable history,
+  source lineage and cleanup; reading/reopening history never replays execution.
+- Remove misleading builtin-to-specialist portrait aliases and unused role
+  placeholders from ordinary Tasks without losing identities or resumed chains.
+- UI has nine locale catalogs. Local API-chain, real Docker verification,
+  component/controller and isolated native whole-app checks pass. Final committed
+  candidate/fork qualification remains required. No live-model acceptance is claimed.
+
 ## Internal Windows candidate 0.15.7-super.1 — awaiting user acceptance
 
 - Permanent separate Windows identity, executable, NSIS/shortcut names and

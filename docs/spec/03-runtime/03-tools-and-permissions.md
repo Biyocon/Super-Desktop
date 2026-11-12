@@ -623,3 +623,42 @@ Naming:
 before the trusted desktop executes the request. Plan/Goal remain denied even
 under Auto. See [image generation](21-image-generation.md) for cancellation,
 limits and result semantics.
+
+## Conductor file-call boundary (integration in progress)
+
+The dedicated adapter exposes only read/grep/glob and, when Harness permits,
+write/edit. It shares the existing host file schemas and normalizes one effective
+`path`/`file_path` before the Harness guard and host execution. Conflicting aliases,
+Edit rename/register indirection, shell, MCP, plugin, image and delegation tools
+are rejected. Quality commands use the separate immutable confined catalog runner.
+
+Private runtime calls carry an opaque run lease and dispatch/worker/stage binding,
+never a model-supplied permission override. `tools.execute` retains durable session
+permissions, contract-mode denial, ignore/sensitive-file checks and hashline rules.
+The host additionally verifies the acknowledged active dispatch and canonical
+baseline scope before permission evaluation, before an allow-session grant and
+again after permission/budget waits. It holds the host state lock through the
+confined file execution to fence interruption/project changes. No external or
+scratch path is admitted by this narrower bridge. The lease is not a gate decision
+or user execution approval; Harness and explicit Gate-C owner consent remain required.
+
+Runtime cancellation invokes `tools.abort` for Write/Edit approval waits as well
+as other active Conductor file calls, waits for owned operations, and revokes late
+callbacks. Intake material Read also uses the existing cancellable permission
+path: cancel/dispose waits for its abort acknowledgement, and late approval cannot
+grant session access. Read cancellation is available without a run lease and does
+not change file access or permission decisions. Interrupted/stale calls and scope
+junction retargeting fail closed even after late allow-once/allow-session; rejected
+tools discard their own pending review snapshots. Generic Task permissions and
+historical messages are unchanged. Host-process, loopback and packaged-sidecar
+fixtures verify the service, owner/source checks and permission boundaries;
+main/preload and native desktop workflow acceptance remain pending.
+
+Production quality containers are created by Rust from the admitted immutable
+catalog only after the acknowledged implementation dispatch, source and baseline
+checks. Fixed local Docker endpoint, empty owned config, digest image and
+`--pull never` are mandatory. The shared default-deny seccomp asset, read-only
+root/repo, no network/capabilities, non-root user and bounded CPU/memory/PIDs remain
+unchanged. Runtime can start only the already-created named container. Durable
+resource ownership supports exact-name cleanup on sidecar loss/host restart;
+cleanup errors and uncertain creation remain visible and never become gate passes.

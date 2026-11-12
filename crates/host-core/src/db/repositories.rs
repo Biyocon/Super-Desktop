@@ -214,6 +214,8 @@ impl Database {
         let db = Self { conn, data_dir };
         db.boot_maintenance()?;
         crate::session_collaboration::recover(&db)?;
+        crate::conductor::interrupt(&db, None)?;
+        crate::conductor::sweep(&db)?;
         Ok(db)
     }
 

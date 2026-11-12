@@ -27,7 +27,7 @@ Projects, model providers, tools and delegated agents in one persistent workspac
 | Addition | What is implemented | Where to find it |
 |---|---|---|
 | **Super-Desktop identity** | Windows owns `io.github.biyocon.super-desktop`, `Super-Desktop.exe`, shortcuts and separate default profiles; no automatic migration. Other platforms retain legacy IDs. | Application shell and Windows build overlay |
-| **Conductor team in chat** | Main coordinator plus seven specialist role portraits. Actual delegated tasks show their status; unused roles remain visible but dimmed. | Expanded delegation group in a conversation |
+| **Harness Conductor in chat** | Separate unchanged Harness engine, explicit bounded analysis/implementation entry, A–G reports, exact Gate-C consent and Rust-owned history. Ordinary Tasks are not Conductor runs. | Open Conductor in the selected repository's desktop chat |
 | **Safe CustomAgents import** | Validated, idempotent import into a separate read-only library, collision/no-clobber protection and qualified library IDs. Existing active registry files are preserved. | `scripts/import-customagents.mjs` and Settings > Subagents |
 | **Selectable agent library** | Library agents start disabled and can be selected without overwriting local definitions. The runtime budget is **16 user handles**, with builtins outside that budget. Explicit builtin-off is respected. | Settings > Subagents |
 | **Virtual-pet gallery** | Search, bundled owner-supplied Hassan, explicit None, saved choice and animation previews. The welcome figure follows the selected pet. | Settings > Mini and virtual pets |
@@ -40,22 +40,24 @@ The local source collection used to validate the CustomAgents importer contained
 94 profiles. **Those profiles and any associated personal material are not bundled
 in this repository.** Use only sources you are authorized to import.
 
-### Conductor roles
+### Harness Conductor
 
-| Visual role | Task handle / source |
-|---|---|
-| Conductor | Main session, not a delegated agent |
-| Detective | `explorer` builtin |
-| Strategist | `strategist` user definition |
-| Devil's Advocate | `code-reviewer` builtin |
-| Headsman | `fixer` builtin |
-| Auditor | `test-runner` builtin |
-| Integrator | `integrator` user definition |
-| Arbiter | `arbiter` user definition |
+Open **Conductor** in a local repository chat, then choose **New run** and enter
+an objective, analysis/implementation type, scope and acceptance criteria.
+Implementation also needs permitted paths and a fixed verification command.
+After Gate C, review the exact source/baseline request and separately approve any
+existing file-tool permission. GO does not authorize merge, deployment or publishing.
 
-A portrait does not make a role callable: the matching handle must be available.
-The graph represents a fan-out group, not a cumulative cross-turn execution graph.
-See the [read-only seven-role smoke-test guide](docs/project/conductor-smoke/README.md).
+The Emperor is you, not another autonomous agent. The Conductor and the actual
+specialist dispatches use the existing role portraits. Generic Tasks retain their
+exact identities; they do not gain gate authority from an avatar or role name.
+History loading never replays work; interrupted runs require explicit validated
+resume. Missing engine or local verification prerequisites block the operation.
+See [the behavior and initial catalog limits](docs/spec/04-ux/harness-conductor.md).
+Local fixtures verify the actual API/engine and native whole-app paths; final
+committed-candidate/fork qualification is tracked in the
+[acceptance matrix](docs/project/harness-conductor-acceptance.md).
+No live-model-quality claim is made.
 
 ## Screenshots
 
@@ -77,14 +79,13 @@ Bundled Hassan, explicit None, import and creation entry points, with native Min
 Transcription shown above came from a **loopback speech fixture and external media
 fixture**, not a physical microphone. Open draft is explicit and never submits a prompt.
 
-### Conductor team in the conversation
+### Historical generic delegation screenshot
 
-![Conductor coordinator and a visible portion of its scrollable role roster](docs/image/readme/super-desktop/conductor-topology.png)
+![Historical seeded role roster, not an authoritative Harness run](docs/image/readme/super-desktop/conductor-topology.png)
 
-**Seeded transcript fixture, cropped to the chat panel:** the roster contains
-seven role cards; this capture shows its visible portion and coordinator. It is
-not a claim that seven production-provider agents executed successfully.
-The manual/live seven-agent acceptance remains a separate test.
+This earlier seeded transcript capture shows the old decorative role roster.
+It is not the current Harness process view or evidence of accepted gates.
+Current generic Tasks no longer display unused specialist placeholders.
 
 ### Read-only agent library
 
@@ -132,7 +133,7 @@ A successful task reply alone never installs a pet.
 
 Subagents Settings counts unique active **user handles** across owned and library
 definitions; builtins do not consume the 16-user budget. Independent same-role
-Conductor Tasks keep separate cards and transcripts; resume chains keep one
+generic Tasks keep separate cards and transcripts; resume chains keep one
 current card. `node scripts/e2e-conductor-regressions.mjs` exercises the real
 Windows Electron/runtime chain with an external loopback provider fixture:
 mouse/Enter/Space, failure/cancellation, in-flight reload and full app restart.

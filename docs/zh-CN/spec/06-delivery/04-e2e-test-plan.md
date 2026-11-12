@@ -20,6 +20,20 @@
 
 ---
 
+### E2E-HARNESS-CONDUCTOR-process
+
+- **前提：** 候选构建、任务自有配置/元数据/数据/agents/fixture 仓库，只有 loopback SSE，
+  本地缓存的固定 Docker 镜像。不使用 live provider、已有凭据或用户活动应用。
+- **步骤：** 通过可见 Conductor 表单运行只读分析与无害实现；检查来源绑定 Gate-C 同意，
+  另行回答一次真实文件工具权限。用原生鼠标/Enter/Space 打开执行者、关卡与报告；
+  reload renderer，再完整重启自有应用。
+- **预期：** 真实 Harness A–G 交接、说明理由的分析跳过、独立 worker/dispatch 标识、
+  实际 D/E 验证及 Arbiter 决定。重开精确历史不重放。引擎缺失可见阻塞。负向 fixture
+  覆盖陈旧/重复数据、返工/缺陷分类、未授权写入、取消以及 GO 不授予外部操作权限。
+  普通 Task 保持普通身份。
+- **覆盖：** 已实现组件/controller/语言目录测试与真实 API 链验收。仍需原生候选执行
+  及最终证据；fixture 不证明 live 模型质量。见 [UI 行为](../04-ux/harness-conductor.md)。
+
 ### E2E-CONDUCTOR-budget-and-lifecycle
 
 - **前提：** 候选 Desktop/runtime/host 构建，隔离 Windows Electron 配置、数据、
@@ -27,7 +41,8 @@
 - **步骤：** 四个同角色 Task 执行真实 Read；两项成功，一项永久 provider 失败，
   一项保持活动。reload renderer，鼠标及焦点加 Enter/Space 打开卡片，
   通过真实 TaskStop/TaskWait 收敛。再启动保持活动的 Task，完整关闭并重启应用。
-- **预期：** 每个独立 Task 的头像、卡片、id、子转录独立；协调者/占位符保留。
+- **预期：** 每个独立 Task 保留准确 agent 名、卡片、id 与子转录；通用内置及父 agent
+  使用机器人图标，无未来专家占位符。这些 Task 不是权威 Harness 运行。
   失败、停止不算成功；组显示问题，成功同伴保持成功，无重复派发。reload 恢复活动
   与行；完整重启保留历史并将未完成工作标记中断；无子消息时详情也显示状态。
 - **覆盖：** `node scripts/e2e-conductor-regressions.mjs`，结果/截图记录精确候选、

@@ -2345,3 +2345,65 @@ done and total for that phase, and the bytes when they are known. A long upload
 of many resource objects is therefore not an interface with nothing to show.
 Background polls report nothing, since only the manual path has a caller
 watching.
+
+## Dedicated Harness Conductor boundary
+
+Shared types: `packages/shared/src/types/conductor.ts`. The following channels
+use `pi-desktop/conductor/<action>` and require the live main window's exact main
+frame before any backend effect. Native/remote sessions cannot start local runs.
+No renderer request contains a project path, credentials, provider launch,
+executable, image, arbitrary argv or private host lease.
+
+| Action | Input | Result |
+|---|---|---|
+| `availability` | empty object | `ConductorAvailability`: verified pinned engine provenance or visible unavailable/incompatible code |
+| `catalog` | empty object | Fixed host quality-command definitions; no execution/download |
+| `start` | `ConductorEntry`: session/request UUID, objective, purpose, scoped relative paths, acceptance criteria, captured material paths, quality-command IDs | Initial durable `ConductorHistory`; subsequent work runs in the dedicated sidecar service |
+| `list` | session ID | Bounded owned `ConductorIndex[]`; no dispatch/provider/auth lookup |
+| `history` | session/run ID | Exact motor checkpoint, intake/provenance, resource issues, observer projection and only the current acknowledged consent request |
+| `resume` | session/run ID and expected host version | Explicit engine/source/catalog validation and fresh lease; never implicit history replay |
+| `cancelAdmission` | session/request UUID | Abort and await owned main/sidecar admission only |
+| `cancel` | session/run ID | Abort and await owned work, or interrupt a parked run without inventing a gate |
+| `authorize` | exact session/run/request UUID/baseline hash and boolean answer | Acknowledged source-bound owner answer; existing tools permissions remain separate |
+
+Main resolves the durable repo through `session.get`, uses the existing session
+operation lock and rechecks owner repo/provider/model after asynchronous setup.
+The provider-only launch extractor reuses the existing selection, catalog limits,
+thinking capabilities and request-time OAuth binding. It excludes shell discovery,
+project prompts, skills, MCP, plugins and generic Task catalogs. A missing selected
+provider does not silently become another provider; plugin agent identities are
+not Conductor specialists. Only the selected OAuth account is bound.
+
+The initial `node-tests` catalog uses a fixed cached Linux/amd64 image digest and
+`/usr/local/bin/node --test --test-isolation=none`. The single-process test mode
+retains assertions without requesting process-spawn privileges forbidden by the
+unchanged seccomp policy. Main inspects only fixed local Docker installations and
+the fixed local endpoint using an empty owned config. No pull/install, PATH-based
+program selection, user Docker context or model/renderer command override exists.
+Analysis does not execute Docker. Unsupported prerequisites visibly block the
+implementation path rather than weakening confinement.
+
+`pi-desktop/conductor/event/changed` carries session/run invalidation;
+`pi-desktop/conductor/event/fault` adds a safe registered machine code. They are
+separate from generic `AgentEventEnvelope` and confer no transition authority.
+Consumers reload actual history, fence stale responses by owner/run/host version,
+and unsubscribe their preload listeners when unmounted. A version-5 observer
+projection uses only the loaded checkpoint's acknowledged journal prefix: role,
+worker UUID, dispatch UUID, task, raw worker output, validated motor reports,
+quality evidence and historical gate decisions remain distinct. A completed worker
+is not a gate pass; unfinished workers on an interrupted host are not fabricated
+as completed. GO remains `awaiting_authorization`, not deployment/merge authority.
+
+`conductorStore.*` stays private to the parent/host transport. No public IPC for
+writing checkpoints, passing gates, adding reports or mutating leases is exposed.
+The fixture-only `desktop-api.acceptance.mjs` exercises the actual API/preload/
+main/provider-resolution/packaged sidecar/Harness/Rust chain, including actual D/E
+commands, separate owner/file approvals, missing engine and no-replay history.
+Its Electron boundary and provider/owner responses are fixtures; chat rendering,
+native mouse/keyboard and live-model quality are not established by this test.
+
+A lost start/resume transport response triggers narrowly scoped main cleanup:
+cancel the same admission, then stop only an active run matching that session and
+immutable request UUID (or the exact resumed run). A normal duplicate-entry
+refusal does not cancel an earlier run. Uncertain cleanup surfaces
+`CONDUCTOR_RECOVERY_FAILED`; it is never reported as rollback or silently retried.

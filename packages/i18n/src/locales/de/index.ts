@@ -1,8 +1,10 @@
+import { conductorDe } from "../../conductor/de.js";
 import type { EnglishCatalog } from "../en/index.js";
 import { petsDe } from "../../pets/de.js";
 
 export const de = {
   pets: petsDe,
+  conductor: conductorDe,
   "app": {
     "shellName": "Super-Desktop",
     "tagline": "Lokaler AI-Codierungspartner",

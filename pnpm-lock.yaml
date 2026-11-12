@@ -247,6 +247,9 @@ importers:
       '@earendil-works/pi-coding-agent':
         specifier: 0.87.1
         version: 0.87.1(patch_hash=f343e44e55203618be186df28a5ae64e8d84992452b456169afc57b2eed5310e)(ws@8.21.1)(zod@4.4.3)
+      '@pi-desktop/conductor-runtime':
+        specifier: workspace:*
+        version: link:../conductor-runtime
       '@pi-desktop/shared':
         specifier: workspace:*
         version: link:../shared
@@ -272,6 +275,22 @@ importers:
       vitest:
         specifier: ^4.1.10
         version: 4.1.10(@opentelemetry/api@1.9.0)(@types/node@24.13.3)(vite@7.3.6(@types/node@24.13.3)(jiti@2.7.0)(lightningcss@1.33.0)(yaml@2.9.0))
+
+  packages/conductor-runtime:
+    dependencies:
+      zod:
+        specifier: 4.4.3
+        version: 4.4.3
+    devDependencies:
+      '@types/node':
+        specifier: 24.13.3
+        version: 24.13.3
+      esbuild:
+        specifier: 0.25.12
+        version: 0.25.12
+      typescript:
+        specifier: 5.9.3
+        version: 5.9.3
 
   packages/host-runtime:
     dependencies:

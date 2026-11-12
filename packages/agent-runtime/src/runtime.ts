@@ -4,6 +4,7 @@ import { readLocalRequestErrorDetails } from "./local-request-errors.js";
 import { imageGenerationDescription, imageGenerationParameters } from "./image-generation/tool.js";
 import { scheduledToolParameters, scheduledToolDescriptions } from "./scheduled-tools.js";
 import { withPiFileOpToolNames } from "./pi-file-ops.js";
+import { fileToolParameters } from "./file-tool-parameters.js";
 import { randomUUID } from "node:crypto";
 import {
   settledDelegationMessage,
@@ -2916,75 +2917,10 @@ Do not invent objections or turn speculative risks into blockers. Stop when the 
     // stopped being readable.
     const parameters: Record<string, Parameters<typeof Type.Object>[0]> = {
       GenerateImages: imageGenerationParameters,
-      Read: {
-        path: pathParam(
-          "Existing regular file only, never a directory; workspace-relative or explicitly approved.",
-        ),
-        file_path: aliasParam("path"),
-        offset: Type.Optional(
-          Type.Number({ minimum: 0, description: "0-based line offset; defaults to 0." }),
-        ),
-        limit: Type.Optional(
-          Type.Number({ minimum: 1, description: "Maximum lines to return; defaults to 2000." }),
-        ),
-      },
+      ...fileToolParameters(),
       BrowserPreview: {
         path: pathParam("File to preview; workspace-relative."),
         file_path: aliasParam("path"),
-      },
-      Glob: {
-        pattern: pathParam("Glob pattern, for example **/*.ts."),
-        query: aliasParam("pattern"),
-        path: Type.Optional(
-          Type.String({
-            description:
-              "Directory to search; defaults to the workspace root and accepts an absolute scratch path.",
-          }),
-        ),
-        limit: Type.Optional(
-          Type.Number({ minimum: 1, description: "Maximum entries; defaults to 100." }),
-        ),
-      },
-      Grep: {
-        pattern: pathParam("Rust-compatible regex matched per line."),
-        query: aliasParam("pattern"),
-        path: Type.Optional(
-          Type.String({
-            description:
-              "File or directory to search; defaults to the workspace root and accepts an absolute scratch path.",
-          }),
-        ),
-        include: Type.Optional(
-          Type.String({ description: "Glob filter, for example **/*.{ts,tsx}." }),
-        ),
-        outputMode: Type.Optional(
-          Type.Union([
-            Type.Literal("content"),
-            Type.Literal("filesWithMatches"),
-            Type.Literal("count"),
-          ]),
-        ),
-        headLimit: Type.Optional(
-          Type.Number({ minimum: 1, description: "Maximum matches or files; defaults to 200." }),
-        ),
-        caseInsensitive: Type.Optional(Type.Boolean()),
-      },
-      Write: {
-        path: pathParam("File to write; workspace-relative."),
-        file_path: aliasParam("path"),
-        content: Type.String(),
-      },
-      Edit: {
-        path: pathParam("File to edit; workspace-relative."),
-        file_path: aliasParam("path"),
-        tag: Type.String({
-          description:
-            "4 uppercase hex from the latest Read, Grep, Write, or Edit for this path.",
-        }),
-        ops: Type.String({
-          description:
-            "One or more operation headers with + body rows, newline separated. A PUT with body rows must end its header with `:` (for example, `PUT 48.=48:`); `PUT 48.=48` followed by + rows is invalid. A colonless PUT is only for a register paste such as `PUT <1 @name`.",
-        }),
       },
       Bash: {
         command: Type.String(),

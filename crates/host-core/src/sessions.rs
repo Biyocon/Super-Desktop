@@ -1778,6 +1778,7 @@ pub fn delete_session(db: &Database, id: &str) -> Result<bool> {
         // failed scheduled-run cleanup) also drops the transcript files.
         invalidate_transcript_layout(id);
         transcripts::remove_session_files(db.data_dir(), id);
+        crate::conductor::remove_session(db, id)?;
     }
     Ok(n > 0)
 }

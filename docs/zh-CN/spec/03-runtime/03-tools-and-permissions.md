@@ -574,3 +574,34 @@ sidecar 不附加覆盖，委托使用会话的有效权限模式；因此父会
 ## 图片生成与编辑
 
 `GenerateImages` 是仅供 Agent 使用的高风险能力，可信桌面执行请求前必须由 host-core 授权。即使处于 Auto，Plan/Goal 仍被拒绝。取消、限制和结果语义见[图片生成规格](/zh-CN/spec/03-runtime/21-image-generation)。
+
+## Conductor 文件调用边界（集成进行中）
+
+独立适配器只公开 read/grep/glob，以及 Harness 允许时的 write/edit。
+它复用现有 host 文件参数结构，在 Harness 检查和 host 执行之前将
+`path`/`file_path` 规范化为同一个目标。冲突别名、Edit 重命名或寄存器间接操作、
+shell、MCP、插件、图像和委派工具均被拒绝。质量命令使用独立的不可变受限目录运行器。
+
+私有 runtime 调用携带不透明的 run lease 和 dispatch/worker/stage 绑定，
+不能由模型覆盖权限。`tools.execute` 保留持久会话权限、契约模式拒绝、忽略规则、
+敏感文件检查及 hashline 规则。host 在权限评估前、授予 allow-session 前以及
+权限/预算等待后，验证已确认的活动 dispatch 和规范化 baseline 范围。
+受限文件执行期间持有 host 状态锁，以防中断或项目变更造成竞态。
+这个更窄的边界不允许外部路径或 scratch 路径。lease 不代表 gate 决定或用户执行许可；
+仍须 Harness 及明确的 Gate-C 所有者同意。
+
+取消 runtime 会对等待 Write/Edit 批准的调用及其他活动 Conductor 文件调用发送
+`tools.abort`，等待自身操作结束并撤销延迟回调。Intake 材料 Read 同样使用可取消的
+现有权限路径：cancel/dispose 等待 abort 确认，延迟批准不能授予会话访问权。
+Read 取消不要求 run lease，也不改变文件访问或权限决定。已中断或 stale 调用，以及
+scope junction 重新指向的情况，即使后来收到 allow-once/allow-session 也拒绝执行；
+被拒绝的工具清理自身待定 review snapshot。通用 Task 权限和历史消息不变。
+host 进程、loopback 和实际打包 sidecar fixture 已验证服务、所有者/源校验及权限边界；
+main/preload 与原生桌面流程的整体验收仍未完成。
+
+正式质量容器只能由 Rust 从接纳时固定的 catalog 创建，前提是已确认的实现 dispatch、
+源与 baseline 检查。必须使用固定本地 Docker endpoint、自有空 config、digest image 和
+`--pull never`。共享的默认拒绝 seccomp、只读根/repo、无网络/能力、非 root 用户以及
+CPU/内存/PID 限制保持不变。Runtime 只能启动已经创建的指定容器。
+持久资源归属支持 sidecar 丢失/host 重启后的精确名称清理；失败或不确定创建保持可见，
+绝不能当作 gate 通过。

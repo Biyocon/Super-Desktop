@@ -1863,3 +1863,50 @@ unchanged. See [provider configuration](12-provider-config-schema.md).
 输入密码只会被传给需要它的操作。原始秘密、vault key、解密资源或远端 archive 不会返回到 Renderer。`configSync.changed` 事件携带相同的脱敏状态，并由 Host 发起的变更（包括 Host scheduler）触发。Main 只是传输/生命周期协调器，不负责调度、合并、加密或应用配置。
 
 手动同步会在运行期间报告 `configSync.progress`：当前阶段（`capture`、`download`、`merge`、`upload`、`apply` 或 `cleanup`）、该阶段已完成与总量，以及已知时的字节数。因此上传大量资源对象时，界面不会无内容可显示。后台轮询不报告进度，因为只有手动路径有调用方在等待。
+
+## 专用 Harness Conductor 接口
+
+共享类型为 `packages/shared/src/types/conductor.ts`。所有
+`pi-desktop/conductor/<action>` 调用在任何副作用之前验证当前主窗口的确切 main frame。
+native/remote session 不能启动本地 run。renderer 不能提供 repo 路径、credentials、
+provider launch、executable、image、任意 argv 或私有 lease。
+
+| Action | 输入 | 结果 |
+|---|---|---|
+| `availability` | 空对象 | 验证后的固定 engine provenance 或可见的 unavailable/incompatible code |
+| `catalog` | 空对象 | 固定质量命令定义；不执行、不下载 |
+| `start` | `ConductorEntry`：session/request UUID、objective、purpose、相对 scope/路径、acceptance criteria、material paths、质量命令 ID | 初始持久化历史，随后由专用 sidecar service 执行 |
+| `list` | session ID | 有界的 owner 索引；不 dispatch、不读取 auth |
+| `history` | session/run ID | 实际 checkpoint、intake/provenance、资源问题、只读投影及当前已确认的 consent request |
+| `resume` | session/run ID、expected host version | 显式验证 engine/source/catalog 后取得新 lease；历史加载不重放 |
+| `cancelAdmission` | session/request UUID | 仅取消并等待对应 main/sidecar admission |
+| `cancel` | session/run ID | 取消并等待自有工作，或中断 parked run；不伪造 gate |
+| `authorize` | 精确 session/run/request UUID/baseline hash、布尔回答 | source 绑定的 owner 确认；原有文件权限独立保留 |
+
+main 从 `session.get` 获取持久化 repo，使用原有 session operation lock，并在异步准备后
+再次检查 repo/provider/model。provider-only extractor 复用现有模型选择、catalog limits、
+thinking capabilities 和请求时 OAuth binding，不加载 shell、project prompts、skills、MCP、
+plugins 或普通 Task catalogs。选中 provider 缺失时不静默切换；只绑定所选 OAuth account。
+
+初始 `node-tests` 目录固定 Linux/amd64 缓存 image digest 及
+`/usr/local/bin/node --test --test-isolation=none`。single-process 模式保留 assertions，
+无需放宽原 seccomp 的 process-spawn 禁令。main 只使用固定本地 Docker 路径、固定本地 endpoint
+及空的自有 config。不 pull/install、不使用用户 context、PATH 程序选择或 renderer/model argv。
+分析不执行 Docker；实现所需条件不可用时显式阻止，而非弱化隔离。
+
+`pi-desktop/conductor/event/changed` 仅携带 session/run invalidation，`fault` 增加安全机器码。
+它们独立于普通 `AgentEventEnvelope`，不授予状态转换。消费者重新读取真实历史，以
+owner/run/host version 拒绝 stale response，并在 unmount 时取消 preload 订阅。
+format-5 投影只使用 checkpoint 对应的已确认 journal prefix；角色、worker UUID、dispatch UUID、
+任务、worker 原始输出、已验证 motor report、质量证据及历史 gate 决策分别保留。
+worker 完成不代表 gate pass；中断时未结束的 worker 不伪造为完成。GO 仍为
+`awaiting_authorization`，不授权部署、发布或 merge。
+
+`conductorStore.*` 只属于私有 parent/host transport。preload 不暴露 checkpoint/gate/report/lease 写入。
+`desktop-api.acceptance.mjs` 使用真实 API/preload/main/provider-resolution/packaged sidecar/Harness/Rust，
+验证真实 D/E、独立 owner/file approval、缺失 engine 及无 replay 历史。但 Electron 边界和
+provider/owner 回答是本地 fixtures，不证明 chat rendering、native mouse/keyboard 或真实模型质量。
+
+start/resume transport 响应丢失时，main 仅清理同一 admission，以及匹配该 session 和
+不可变 request UUID 的 active run（或确切 resumed run）。普通重复入口拒绝不能取消旧 run。
+cleanup 无法确认时显示 `CONDUCTOR_RECOVERY_FAILED`，不声称 rollback、不静默重试。

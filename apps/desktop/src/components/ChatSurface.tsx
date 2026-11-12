@@ -15,6 +15,7 @@ import { ConversationWidthHandles } from "./ConversationWidthHandles";
 import { useAppStore } from "../stores/app-store";
 import { headPermission } from "../lib/pending-permissions";
 import { headAsk } from "../lib/pending-asks";
+import { ConductorPanel } from "../features/conductor/ConductorPanel";
 
 const StableComposer = memo(Composer);
 
@@ -152,6 +153,7 @@ export const ChatSurface = memo(function ChatSurface({
         </div>
       ) : null}
       <ConversationWidthHandles />
+      {visible && activeSession && !sessionSwitching && <ConductorPanel key={activeSession.id} session={activeSession} chatRunning={isRunning} />}
       {showEmptyState ? (
         <div
           className="home-main-content"
