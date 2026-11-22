@@ -3,6 +3,8 @@
 - Status: Accepted (capability storage and UI portions superseded by ADR 0112)
 - Date: 2026-08-05
 
+Superseded by: [ADR 0112](0112-agent-capability-management-roots-and-settings-ia.md). Only capability storage and capability-management UI are replaced; the other capability-delivery rationale remains historical context.
+
 ## Context
 
 Until now the only way to add an MCP server or a skill to PI-Desktop was to

@@ -5,6 +5,8 @@
 - Deciders: PI-Desktop core
 - Amends: ADR 0027, D136, D243
 
+Superseded by: [ADR 0134](0134-models-dev-sole-model-metadata-source.md). The pi-ai metadata fallback is replaced by models.dev as the sole metadata source with a bundled snapshot.
+
 ## Context
 
 PI-Desktop's pinned `@earendil-works/pi-ai` package provides high-quality

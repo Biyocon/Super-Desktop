@@ -10,6 +10,8 @@
   inline again, the model-facing tool and budget reminders return, and every
   compaction is visible)
 
+Superseded by: [ADR 0061](0061-imperceptible-background-context-compaction.md); [ADR 0064](0064-codex-parity-context-compaction.md). Partial sequence: ADR 0061 replaces the soft-boundary, model-tool and visibility clauses; ADR 0064 then partly restores inline, model-visible compaction. These links do not withdraw all other clauses or erase the intermediate decision.
+
 ## Context
 
 A long pi agent run can contain many model/tool turns before `agent_end`.

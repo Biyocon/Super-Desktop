@@ -561,7 +561,7 @@ shipped product locale, with aligned highlight counts) with its `changelog.test.
 `host-core` lockfile entry, `APP_VERSION`, and the release line stated in
 `README.md` + `README.zh-CN.md`. `node scripts/check-release-docs.mjs` must
 pass; `scripts/release.mjs` runs it and refuses to tag otherwise. See
-[06-release-runbook.md §4.1](06-release-runbook.md#41-mandatory-release-version-surface-gate-d164--d260),
+[06-release-runbook.md §4.1](06-release-runbook.md#_4-1-mandatory-release-version-surface-gate-d164-d260),
 D164, and D260. GitHub release notes are not a substitute.
 
 ---

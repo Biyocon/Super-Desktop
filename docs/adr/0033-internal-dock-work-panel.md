@@ -8,6 +8,8 @@
   [01-ipc-protocol](../spec/03-runtime/01-ipc-protocol.md) · decision D163
 - Supersedes in part: ADR 0032
 
+Superseded by: [ADR 0122](0122-reserve-native-width-while-work-panel-visible.md). ADR 0122 replaces the no-native-reservation direction. Later, ADR 0151 restores the internal-dock direction; the intermediate replacement remains part of the history.
+
 ## Context
 
 ADR 0032 made the work panel a docked flex column but, to keep the chat width

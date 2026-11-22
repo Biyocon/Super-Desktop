@@ -3,6 +3,8 @@
 - Status: Superseded in part by ADR 0025
 - Date: 2026-07-26
 
+Superseded by: [ADR 0025](0025-menu-free-windows-linux-chrome.md). Only the Windows/Linux in-window menubar is removed; macOS menus and the other platform-chrome responsibilities remain as documented.
+
 ## Context
 
 Electron's default chrome does not satisfy all three desktop conventions used

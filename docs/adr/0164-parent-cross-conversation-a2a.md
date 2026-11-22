@@ -9,6 +9,8 @@
 - Amends: ADR 0147 (parent must not call `A2A`) and ADR 0162 (no messaging
   with the parent). Subagent sibling coordination is unchanged.
 
+Superseded by: [ADR 0165](0165-withdraw-a2a-peer-stack.md). Parent-to-parent A2A collaboration is withdrawn together with the A2A peer stack.
+
 ## Context
 
 ADR 0147 kept the `A2A` tool out of the parent catalog so the parent could not

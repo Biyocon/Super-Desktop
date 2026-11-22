@@ -4,6 +4,8 @@
 - Date: 2026-07-25
 - Updated: 2026-07-25
 
+Superseded by: [ADR 0010](0010-rust-backend-host-core.md); [ADR 0011](0011-host-rpc-and-storage-defaults.md). Partial replacement of the original all-in-Electron-main ownership by the Rust host core and the frozen RPC/storage defaults; the retained hybrid-runtime rationale remains historical context.
+
 ## Context
 
 The original MVP placed the full agent loop in Electron main process for simplicity.

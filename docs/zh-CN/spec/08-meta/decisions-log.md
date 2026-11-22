@@ -4128,7 +4128,7 @@ The authoritative English amendment documents semantic local ADR/E2E identities,
 acknowledgement-scoped annotation consumption, text-only Alt+Enter steering, and
 the retained upstream work-panel lifecycle. The annotation and side-chat parts of
 that amendment are retired by ADR 0268; the upstream work-panel lifecycle stays. See
-[the English decision log](../../../spec/08-meta/decisions-log.md#_2026-09-14-preserve-local-annotation-and-side-chat-contracts-across-upstream-integration).
+[the English decision log](../../../spec/08-meta/decisions-log.md#_2026-09-14-—-preserve-local-annotation-and-side-chat-contracts-across-upstream-integration).
 
 ## 2026-09-14 —— Git clone 只接受语法上的公网主机（D416）
 

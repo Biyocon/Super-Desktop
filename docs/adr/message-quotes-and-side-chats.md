@@ -13,6 +13,8 @@
   E2E-CHAT-quote-prefill, E2E-CHAT-side-chat-fork, E2E-CHAT-side-chat-stream, E2E-CHAT-side-chat-add-to-main, E2E-CHAT-side-chat-promote, E2E-CHAT-side-chat-close ·
   Amendment: D-LOCAL-selection-overlay, E2E-CHAT-selection-markdown
 
+Superseded by: [ADR 0268](0268-remove-quotes-annotations-and-side-chats.md). The successor removes quote actions, selection-overlay quoting and side-chat flows; earlier amendments remain historical.
+
 ## Context
 
 A long conversation carries earlier prompts and answers the user wants to reuse.
@@ -37,8 +39,8 @@ main transcript leaves the screen, and coming back costs a session switch.
    that selection is inside the clicked message row, otherwise the message's own
    text (for an assistant turn, its answer text).
 3. Quote text is `> ` per excerpt line, one blank line, then the attribution
-   line rendered from `chat.quoteSource` ("Quoted from {{title}}"; Chinese
-   "引用自 {{title}}"), where the title is the source session's title. The
+   line rendered from `chat.quoteSource` ("Quoted from `{{title}}`"; Chinese
+   "引用自 `{{title}}`"), where the title is the source session's title. The
    excerpt is capped at 2000 characters with a trailing ellipsis. The quote is
    ordinary draft text: D209's smart Stop still restores an unanswered send and
    D301's per-session draft retention is unchanged. Quoting adds no composer

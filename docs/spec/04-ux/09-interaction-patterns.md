@@ -1418,7 +1418,7 @@ Project drag/drop follows these patterns:
   a Session task chip when the session was created by another session; the
   mode/permission chip; live status; collaboration details when present;
   the readable model display name (falling back to the provider's readable
-  name); workspace name and branch on one row; and **Updated {{when}}**
+  name); workspace name and branch on one row; and **Updated `{{when}}`**
   without seconds. Temporary/scratch sessions show the localized
   "Temporary" / "临时对话" placeholder instead of a workspace name. The
   card does not show the session UUID, a Local task chip, a separate

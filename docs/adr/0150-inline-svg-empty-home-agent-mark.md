@@ -5,6 +5,8 @@
 - Deciders: PI-Desktop core
 - Related: D291, E2E-046, E2E-099, US-UI-17
 
+Superseded by: [ADR 0152](0152-eight-frame-empty-home-mascot-gif.md). The inline SVG empty-home mark is replaced by the selected looping mascot artwork at this historical step. Later pet integration remains a separate successor in ADR 0152.
+
 ## Context
 
 The empty-home hero used a raster sprite atlas with randomized pose groups,

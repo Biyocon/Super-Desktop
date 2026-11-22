@@ -3,6 +3,8 @@
 - Status: Accepted; mode-profile clause superseded in part by ADR 0053
 - Date: 2026-07-25
 
+Superseded by: [ADR 0053](0053-plan-checkpoint-artifact-and-execution-epoch.md). Only the mode-profile clause is replaced by the Plan checkpoint workflow; the other defaults are not withdrawn by this link.
+
 ## Context
 
 After baseline 0.3.0, implementation still depended on several high-impact defaults:

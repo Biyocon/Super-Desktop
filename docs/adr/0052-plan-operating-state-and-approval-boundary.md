@@ -12,6 +12,8 @@ ADR 0053 replaces this checkpoint with immutable unique host-written
 with no replay. The structured proposal/request-changes details below remain
 historical context for the superseded design.
 
+Superseded by: [ADR 0053](0053-plan-checkpoint-artifact-and-execution-epoch.md). The successor replaces the structured in-memory proposal checkpoint with host-written artifacts, approval and execution epochs; the old proposal remains historical context.
+
 ## Context
 
 PI-Desktop's former product selector treated Chat and Agent as two tool

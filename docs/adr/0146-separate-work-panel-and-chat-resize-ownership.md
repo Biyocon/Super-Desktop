@@ -4,6 +4,8 @@
 - Date: 2026-09-02
 - Related: ADR 0122, ADR 0132
 
+Superseded by: [ADR 0151](0151-internal-work-panel-dock.md). Only the work-panel boundary and native-reservation clauses are replaced by fixed-window internal docking.
+
 ## Context
 
 The visible work panel is an in-flow right column backed by a native width

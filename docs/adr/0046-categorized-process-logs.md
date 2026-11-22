@@ -8,6 +8,8 @@
   [ADR 0212](0212-remove-diagnostic-timing-log-streams.md) ·
   [Logging and observability](../spec/03-runtime/09-logging-and-observability.md)
 
+Superseded by: [ADR 0212](0212-remove-diagnostic-timing-log-streams.md). Only diagnostic timing streams are removed; the remaining categorized logging responsibilities are not withdrawn by this amendment.
+
 ## Context
 
 The M5 logger reduced unbounded growth by keeping app, host, and agent output

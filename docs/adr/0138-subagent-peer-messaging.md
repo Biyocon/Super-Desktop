@@ -19,6 +19,8 @@
 > invariants it froze (no forged sender, delegate-only tool, settled delegates
 > leave) carry forward unchanged.
 
+Superseded by: [ADR 0147](0147-a2a-protocol-stack.md). The in-process mailbox mechanism is replaced by the A2A stack at this historical step; the coordination rationale is preserved.
+
 ## Context
 
 Delegation as built by ADR 0062 and ADR 0089 has exactly one integration point:

@@ -5,6 +5,8 @@
 - Deciders: PI-Desktop desktop UI maintainers
 - Amends: ADR 0011, ADR 0016
 
+Superseded by: [ADR 0249](0249-chatgpt-style-logical-project-groups.md). Only the independent-path multi-folder project behavior is replaced by host-owned logical groups; this does not erase the earlier rationale or claim a new storage migration.
+
 ## Context
 
 The existing project entry point opens a native directory picker and activates

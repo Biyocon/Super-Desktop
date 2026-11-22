@@ -22,7 +22,7 @@ this repository, complete this gate before the request-start checklist:
 - [ ] No unrelated issue was commented on or closed.
 - [ ] Git push was not inferred from the issue link.
 
-See [R5 — Verify linked GitHub issues](03-ai-development-workflow.md#r5--verify-linked-github-issues-before-work-then-reply-and-close).
+See [R5 — Verify linked GitHub issues](03-ai-development-workflow.md#r5-—-verify-linked-github-issues-before-work-then-reply-and-close).
 
 ---
 
@@ -55,7 +55,7 @@ change or starting follow-up:
 - [ ] The contributor's branch was not force-pushed. Unrelated remote
   publishing was not inferred from the pull request link.
 
-See [R6 — Land a linked pull request only when it fixes the root cause with a minimal diff](03-ai-development-workflow.md#r6--land-a-linked-pull-request-only-when-it-fixes-the-root-cause-with-a-minimal-diff).
+See [R6 — Land a linked pull request only when it fixes the root cause with a minimal diff](03-ai-development-workflow.md#r6-—-land-a-linked-pull-request-only-when-it-fixes-the-root-cause-with-a-minimal-diff).
 
 ---
 
@@ -92,7 +92,7 @@ Before starting implementation, answer these questions:
   scope? If so, what is the smallest targeted check set?
 - [ ] Which milestone deliverable does this relate to? (M1–M6, or none)
 
-Reference the [spec update matrix](03-ai-development-workflow.md#3-spec-update-matrix) to determine required doc updates.
+Reference the [spec update matrix](03-ai-development-workflow.md#_3-spec-update-matrix) to determine required doc updates.
 
 ---
 
@@ -227,7 +227,7 @@ documentation-only work or non-release chores.
 - [ ] Documentation commit is on the release branch **before**
       `node scripts/release.mjs <version> --tag` / `git tag v<version>`.
 - [ ] GitHub auto-generated release body is treated as web-only, not the
-      in-app source ([06-release-runbook.md §4.1](06-release-runbook.md#41-mandatory-release-version-surface-gate-d164--d260)).
+      in-app source ([06-release-runbook.md §4.1](06-release-runbook.md#_4-1-mandatory-release-version-surface-gate-d164-d260)).
 
 ---
 
@@ -238,18 +238,18 @@ user's delivery scope:
 
 | # | Gate | Source |
 |---|---|---|
-| 1 | Request branch and worktree created from an up-to-date `origin/main`; primary environment reused where safe | [R4 — Request branch + worktree + merge gate](03-ai-development-workflow.md#r4--request-branch--worktree--merge-gate) |
-| 2 | Code/doc implements the planned change | Step 4 of [development loop](03-ai-development-workflow.md#2-development-loop) |
-| 3 | All impacted specs updated | [R1 — Spec-sync](03-ai-development-workflow.md#r1--spec-first--spec-sync) |
-| 4 | E2E scenarios documented (or confirmed not needed) | [R3 — E2E coverage doc](03-ai-development-workflow.md#r3--e2e-coverage-doc) |
+| 1 | Request branch and worktree created from an up-to-date `origin/main`; primary environment reused where safe | [R4 — Request branch + worktree + merge gate](03-ai-development-workflow.md#r4-—-request-branch-worktree-merge-gate) |
+| 2 | Code/doc implements the planned change | Step 4 of [development loop](03-ai-development-workflow.md#_2-development-loop) |
+| 3 | All impacted specs updated | [R1 — Spec-sync](03-ai-development-workflow.md#r1-—-spec-first-spec-sync) |
+| 4 | E2E scenarios documented (or confirmed not needed) | [R3 — E2E coverage doc](03-ai-development-workflow.md#r3-—-e2e-coverage-doc) |
 | 5 | Targeted local checks follow the existing risk standard; for a code-bearing change the relevant E2E gate passed on a candidate that contains latest `origin/main` (`pnpm check:pr-base`) before the branch push, the PR/MR, or a commit-only completion (or its `NOT RUN` limitation is recorded); after the remote merge the affected suites were rerun when the landed executable content changed; required tests need no separate user request | Steps 7, 10, and 11 of development loop |
-| 6 | Change committed with conventional message | [R2 — Commit-per-change](03-ai-development-workflow.md#r2--commit-per-change) |
+| 6 | Change committed with conventional message | [R2 — Commit-per-change](03-ai-development-workflow.md#r2-—-commit-per-change) |
 | 7 | BOARD updated if milestone deliverable completed | Step 9 of development loop |
-| 8 | No secrets or local data in commit | [§4.4 Never commit](03-ai-development-workflow.md#44-never-commit) |
-| 9 | Requested local/remote `main` integration completed under R4; expected commits verified and merged worktree/branch removed; any requested launch uses integrated `main` | [R4 — Request branch + worktree + merge gate](03-ai-development-workflow.md#r4--request-branch--worktree--merge-gate) |
-| 10 | No merged worktree left on disk; `git worktree list` has no stale entry for this request | [§6.1 Merge Cleanup Checklist](#61-merge-cleanup-checklist) |
-| 11 | If a GitHub issue was linked: verified before work; commented in the issue language; closed when conclusive | [R5 — Verify linked GitHub issues](03-ai-development-workflow.md#r5--verify-linked-github-issues-before-work-then-reply-and-close) |
-| 12 | If a GitHub pull request was linked: root-cause bar reviewed; merged only when it actually fixes the problem with a minimal diff; follow-up after merge; contributor work not discarded for nits | [R6 — Land a linked pull request only when it fixes the root cause with a minimal diff](03-ai-development-workflow.md#r6--land-a-linked-pull-request-only-when-it-fixes-the-root-cause-with-a-minimal-diff) |
+| 8 | No secrets or local data in commit | [§4.4 Never commit](03-ai-development-workflow.md#_4-4-never-commit) |
+| 9 | Requested local/remote `main` integration completed under R4; expected commits verified and merged worktree/branch removed; any requested launch uses integrated `main` | [R4 — Request branch + worktree + merge gate](03-ai-development-workflow.md#r4-—-request-branch-worktree-merge-gate) |
+| 10 | No merged worktree left on disk; `git worktree list` has no stale entry for this request | [§6.1 Merge Cleanup Checklist](#_6-1-merge-cleanup-checklist) |
+| 11 | If a GitHub issue was linked: verified before work; commented in the issue language; closed when conclusive | [R5 — Verify linked GitHub issues](03-ai-development-workflow.md#r5-—-verify-linked-github-issues-before-work-then-reply-and-close) |
+| 12 | If a GitHub pull request was linked: root-cause bar reviewed; merged only when it actually fixes the problem with a minimal diff; follow-up after merge; contributor work not discarded for nits | [R6 — Land a linked pull request only when it fixes the root cause with a minimal diff](03-ai-development-workflow.md#r6-—-land-a-linked-pull-request-only-when-it-fixes-the-root-cause-with-a-minimal-diff) |
 
 If any applicable gate fails, the requested integration is **not Done**; report
 the blocker without weakening the gate.

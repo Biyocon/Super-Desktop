@@ -16,6 +16,8 @@
 > `SUBAGENT_A2A_TOOLS = ["A2A"]` is the direct successor of the
 > `SUBAGENT_PEER_TOOLS = ["Peer"]` mapping this ADR defined.
 
+Superseded by: [ADR 0147](0147-a2a-protocol-stack.md). The Peer tool surface is replaced by the A2A tool at this historical step; the one-tool rationale is preserved.
+
 ## Context
 
 ADR 0138 introduced peer messaging as three delegate-only tools — `PeerSend`,

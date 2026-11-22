@@ -1,0 +1,50 @@
+# Supersession reference review — 2026-11-15
+
+Scope: the 30 legacy-supersession observations remaining after the documentation audit reconciliation. Each original status, rationale, alternative, historical amendment and implementation qualification is preserved. This review adds navigation to already recorded decisions; it makes no new product decision or runtime/release claim.
+
+## Reviewed successors
+
+| Original ADR | Documented successor | Scope and evidence |
+|---|---|---|
+| [0003](../adr/0003-agent-in-main-process.md) | [0010](../adr/0010-rust-backend-host-core.md); [0011](../adr/0011-host-rpc-and-storage-defaults.md) | Partial replacement of the original all-in-Electron-main ownership by the Rust host core and the frozen RPC/storage defaults; the retained hybrid-runtime rationale remains historical context. |
+| [0011](../adr/0011-host-rpc-and-storage-defaults.md) | [0053](../adr/0053-plan-checkpoint-artifact-and-execution-epoch.md) | Only the mode-profile clause is replaced by the Plan checkpoint workflow; the other defaults are not withdrawn by this link. |
+| [0013](../adr/0013-compact-settings-directory.md) | [0026](../adr/0026-project-archive-in-settings.md) | Only Settings destination count/order is changed by adding the project archive; the retained directory rationale is preserved. |
+| [0019](../adr/0019-work-panel-subsystems.md) | [0108](../adr/0108-remove-built-in-interactive-terminal.md); [0170](../adr/0170-work-panel-browser-as-bundled-plugin.md) | Partial replacement: ADR 0108 removes the built-in interactive terminal; ADR 0170 moves the browser launcher and chrome to a bundled plugin. The remaining subsystem responsibilities are not collectively withdrawn. |
+| [0021](../adr/0021-platform-application-chrome.md) | [0025](../adr/0025-menu-free-windows-linux-chrome.md) | Only the Windows/Linux in-window menubar is removed; macOS menus and the other platform-chrome responsibilities remain as documented. |
+| [0026](../adr/0026-project-archive-in-settings.md) | [0036](../adr/0036-settings-ia-ai-and-shortcuts-tabs.md) | Only Settings destination count/order is replaced by the AI and Shortcuts split; project-archive behavior remains documented here. |
+| [0029](../adr/0029-separate-window-and-panel-resize-ownership.md) | [0032](../adr/0032-reserve-native-width-for-the-docked-work-panel.md) | Only responsive panel clamping and the blanket prohibition of panel-driven native geometry are replaced at this step; Main geometry ownership and renderer divider ownership remain. |
+| [0030](../adr/0030-turn-boundary-context-checkpoint-compaction.md) | [0061](../adr/0061-imperceptible-background-context-compaction.md); [0064](../adr/0064-codex-parity-context-compaction.md) | Partial sequence: ADR 0061 replaces the soft-boundary, model-tool and visibility clauses; ADR 0064 then partly restores inline, model-visible compaction. These links do not withdraw all other clauses or erase the intermediate decision. |
+| [0033](../adr/0033-internal-dock-work-panel.md) | [0122](../adr/0122-reserve-native-width-while-work-panel-visible.md) | ADR 0122 replaces the no-native-reservation direction. Later, ADR 0151 restores the internal-dock direction; the intermediate replacement remains part of the history. |
+| [0042](../adr/0042-message-scoped-inline-review-cards.md) | [0043](../adr/0043-message-owned-review-snapshots-and-rollback.md) | The successor replaces the Git-dependent review source with message-owned snapshots and guarded rollback; the original review-card rationale is retained. |
+| [0046](../adr/0046-categorized-process-logs.md) | [0212](../adr/0212-remove-diagnostic-timing-log-streams.md) | Only diagnostic timing streams are removed; the remaining categorized logging responsibilities are not withdrawn by this amendment. |
+| [0052](../adr/0052-plan-operating-state-and-approval-boundary.md) | [0053](../adr/0053-plan-checkpoint-artifact-and-execution-epoch.md) | The successor replaces the structured in-memory proposal checkpoint with host-written artifacts, approval and execution epochs; the old proposal remains historical context. |
+| [0055](../adr/0055-agent-only-mode.md) | [0052](../adr/0052-plan-operating-state-and-approval-boundary.md); [0053](../adr/0053-plan-checkpoint-artifact-and-execution-epoch.md) | Historical sequence: ADR 0052 reintroduces Plan instead of the removed mode concept, and ADR 0053 replaces that Plan checkpoint. The negative-permission and fail-closed rationale is retained. |
+| [0056](../adr/0056-extension-activation-scope.md) | [0112](../adr/0112-agent-capability-management-roots-and-settings-ia.md) | Only capability storage and capability-management UI are replaced; the other capability-delivery rationale remains historical context. |
+| [0083](../adr/0083-custom-global-ui-font.md) | [0298](../adr/0298-remove-bundled-fonts.md) | Only bundled fonts, their font-face/offline-rendering clauses and installer-size consequences are withdrawn; the system-font picker and stored-stack semantics remain. |
+| [0105](../adr/0105-files-as-a-bundled-plugin.md) | [0241](../adr/0241-vendored-updatable-file-view-plugin.md) | ADR 0241 replaces the first-party Files delivery with a vendored, updatable plugin. The browser and terminal amendments already described in this record remain distinct. |
+| [0122](../adr/0122-reserve-native-width-while-work-panel-visible.md) | [0151](../adr/0151-internal-work-panel-dock.md) | The native width-reservation direction is replaced by an internal dock within fixed window bounds. |
+| [0133](../adr/0133-models-dev-primary-catalog-with-pi-fallback.md) | [0134](../adr/0134-models-dev-sole-model-metadata-source.md) | The pi-ai metadata fallback is replaced by models.dev as the sole metadata source with a bundled snapshot. |
+| [0138](../adr/0138-subagent-peer-messaging.md) | [0147](../adr/0147-a2a-protocol-stack.md) | The in-process mailbox mechanism is replaced by the A2A stack at this historical step; the coordination rationale is preserved. |
+| [0140](../adr/0140-peer-tool-consolidation.md) | [0147](../adr/0147-a2a-protocol-stack.md) | The Peer tool surface is replaced by the A2A tool at this historical step; the one-tool rationale is preserved. |
+| [0146](../adr/0146-separate-work-panel-and-chat-resize-ownership.md) | [0151](../adr/0151-internal-work-panel-dock.md) | Only the work-panel boundary and native-reservation clauses are replaced by fixed-window internal docking. |
+| [0147](../adr/0147-a2a-protocol-stack.md) | [0165](../adr/0165-withdraw-a2a-peer-stack.md) | ADR 0165 withdraws the A2A peer stack; this link preserves rather than skips the mailbox-to-A2A-to-withdrawal history. |
+| [0150](../adr/0150-inline-svg-empty-home-agent-mark.md) | [0152](../adr/0152-eight-frame-empty-home-mascot-gif.md) | The inline SVG empty-home mark is replaced by the selected looping mascot artwork at this historical step. Later pet integration remains a separate successor in ADR 0152. |
+| [0162](../adr/0162-cross-session-a2a-addressing.md) | [0165](../adr/0165-withdraw-a2a-peer-stack.md) | Cross-session A2A addressing is withdrawn together with the A2A peer stack. |
+| [0164](../adr/0164-parent-cross-conversation-a2a.md) | [0165](../adr/0165-withdraw-a2a-peer-stack.md) | Parent-to-parent A2A collaboration is withdrawn together with the A2A peer stack. |
+| [0233](../adr/0233-renderer-owned-multi-folder-project-creation.md) | [0249](../adr/0249-chatgpt-style-logical-project-groups.md) | Only the independent-path multi-folder project behavior is replaced by host-owned logical groups; this does not erase the earlier rationale or claim a new storage migration. |
+| [floating-annotation-index](../adr/floating-annotation-index.md) | [0268](../adr/0268-remove-quotes-annotations-and-side-chats.md) | The successor removes annotation-index presentation along with quotes, annotations and side chats; the old record remains historical. |
+| [message-quotes-and-side-chats](../adr/message-quotes-and-side-chats.md) | [0268](../adr/0268-remove-quotes-annotations-and-side-chats.md) | The successor removes quote actions, selection-overlay quoting and side-chat flows; earlier amendments remain historical. |
+| [response-annotations](../adr/response-annotations.md) | [0268](../adr/0268-remove-quotes-annotations-and-side-chats.md) | The successor removes annotation prompt attachments and their editor; earlier amendments remain historical. |
+| [0067](../adr/0067-chatgpt-inspired-empty-home-starters.md) | [D206](../spec/08-meta/decisions-log.md#_2026-08-07-—-empty-home-removes-developer-starter-cards) | D206 removes the developer starter grid while retaining D204 layout, hero, onboarding and direct composer. |
+
+## Evidence and checker scope
+
+The source records already name these successors in Status, amendment or supersession notices. The successor ADRs were inspected for the replacement behavior. For ADR 0067, the original status and notice name D206; the decision-log row and dated “Empty home removes developer starter cards” entry confirm removal of the starter grid while retaining D204 layout.
+
+Twenty-nine records now expose a structured Superseded by paragraph. ADR 0067 links D206 directly in its existing status instead: D206 is a decision-log entry, not an ADR. The current docctl supersession graph only accepts ADR records, so that valid non-ADR successor remains one legacy observation. No fake ADR, ignore rule, baseline exception or rewritten status is used to silence it.
+
+Partial supersession remains partial. The ADR 0030 / 0061 / 0064 compaction sequence, ADR 0033 / 0122 / 0151 dock sequence, ADR 0055 / 0052 / 0053 Plan sequence and the A2A replacement/withdrawal sequence remain readable through their intermediate decisions. Original text is preserved byte-for-byte apart from the D206 status link markup.
+
+## Validation
+
+Run the offline audit, existing policy-sync, documentation and locale checks, and the documentation-site build. These establish link/layout consistency, not product runtime or release acceptance. Detailed checks and preservation hashes are retained in the task artifacts outside the repository.
