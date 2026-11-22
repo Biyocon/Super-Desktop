@@ -13,6 +13,8 @@
   parent agent register as `kind: "parent"` and call `A2A` to other parents;
   parents still cannot address subagents.
 
+Superseded by: [ADR 0165](0165-withdraw-a2a-peer-stack.md). ADR 0165 withdraws the A2A peer stack; this link preserves rather than skips the mailbox-to-A2A-to-withdrawal history.
+
 ## Context
 
 ADR 0138 introduced a session-scoped `SubagentMailbox` and delegate-only peer

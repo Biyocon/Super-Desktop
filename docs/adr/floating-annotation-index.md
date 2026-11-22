@@ -6,6 +6,8 @@
 - Amends: ADR response-annotations / D-LOCAL-response-annotations (annotation presentation and duplicate identity)
 - Preserves: D209, D301, D261, D-LOCAL-selection-overlay; protocol v11 and schema v15
 
+Superseded by: [ADR 0268](0268-remove-quotes-annotations-and-side-chats.md). The successor removes annotation-index presentation along with quotes, annotations and side chats; the old record remains historical.
+
 ## Context
 
 The comment editor solved missing comment entry, but a composer-only attachment

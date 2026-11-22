@@ -5,6 +5,8 @@
 - Deciders: PI-Desktop core
 - Related: D066, D090, D093, D133, ADR 0013, ADR 0016
 
+Superseded by: [ADR 0036](0036-settings-ia-ai-and-shortcuts-tabs.md). Only Settings destination count/order is replaced by the AI and Shortcuts split; project-archive behavior remains documented here.
+
 ## Context
 
 The home sidebar currently exposes both an independent Projects destination and

@@ -3481,7 +3481,7 @@ Transient, non-blocking feedback for completed actions and failures that have no
 
 - `ToastHost` (in `components/Toast.tsx`) renders the stack; mounted once per shell branch in `App.tsx`
 - Each card: 16px variant icon (semantic tint) · message · X dismiss button
-- Surface: `bg-elevated-opaque` + 1px `border-subtle` + `shadow-dialog`, radius-md-plus — same floating family as menus; metrics in [07-ui-design-system.md §11.8](07-ui-design-system.md#118-toast)
+- Surface: `bg-elevated-opaque` + 1px `border-subtle` + `shadow-dialog`, radius-md-plus — same floating family as menus; metrics in [07-ui-design-system.md §11.8](07-ui-design-system.md#_11-8-toast)
 
 ### 17.3 API
 

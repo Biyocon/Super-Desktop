@@ -6,6 +6,8 @@
 - Protocol: v9 (one additive Electron-main IPC channel; host RPC unchanged)
 - Storage schema: v10 (optional `AppSettings.fontFamily` JSON field)
 
+Superseded by: [ADR 0298](0298-remove-bundled-fonts.md). Only bundled fonts, their font-face/offline-rendering clauses and installer-size consequences are withdrawn; the system-font picker and stored-stack semantics remain.
+
 ## Context
 
 The shell typography is a single hardcoded token stack (`--font-sans`). Users

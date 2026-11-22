@@ -632,7 +632,7 @@ system while preserving their different data ownership:
   runs automatically, and switching kinds never starts one (D007 / D342).
 - Sessions: review candidates through `SessionImportPanel`. Source and
   project-path grouping behavior follows
-  [08-component-spec §18](08-component-spec.md#18-import-destination).
+  [08-component-spec §18](08-component-spec.md#_18-import-destination).
   The Group-by control is the same in-app menu select as the Appearance and
   Permissions pickers, not a platform-drawn `<select>`. A Codex archive larger
   than `CODEX_SCAN_MAX_FILES` (250) is truncated to the newest session files by
@@ -641,7 +641,7 @@ system while preserving their different data ownership:
 
 - Model configuration: review provider drafts through
   `ModelConfigImportPanel`
-  ([08-component-spec §18.5](08-component-spec.md#185-modelconfigimportpanel)).
+  ([08-component-spec §18.5](08-component-spec.md#_18-5-modelconfigimportpanel)).
   Stored API keys from those configs are copied into the host secret store;
   subscription/OAuth logins are not copied. CC Switch (`~/.cc-switch`) is
   scanned as its own source so saved profiles, not only the currently

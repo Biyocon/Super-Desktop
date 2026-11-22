@@ -12,6 +12,8 @@
 > Main ownership of BrowserWindow geometry, renderer ownership of committed
 > panel width, and the divider gesture/commit rules remain in force.
 
+Superseded by: [ADR 0032](0032-reserve-native-width-for-the-docked-work-panel.md). Only responsive panel clamping and the blanket prohibition of panel-driven native geometry are replaced at this step; Main geometry ownership and renderer divider ownership remain.
+
 ## Context
 
 Work-panel visibility and divider commits previously called

@@ -8,6 +8,8 @@
   [01-ipc-protocol](../spec/03-runtime/01-ipc-protocol.md) · decision D255
 - Supersedes: ADR 0033; restores the native-reservation behavior from ADR 0032
 
+Superseded by: [ADR 0151](0151-internal-work-panel-dock.md). The native width-reservation direction is replaced by an internal dock within fixed window bounds.
+
 ## Context
 
 The work panel is correctly rendered as an in-flow flex sibling, but the

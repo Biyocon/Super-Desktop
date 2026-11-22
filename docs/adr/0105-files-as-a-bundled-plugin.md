@@ -15,6 +15,8 @@
 > `contributes.views` channel, and Review stays with the transcript. The
 > terminal clause was already superseded by ADR 0108.
 
+Superseded by: [ADR 0241](0241-vendored-updatable-file-view-plugin.md). ADR 0241 replaces the first-party Files delivery with a vendored, updatable plugin. The browser and terminal amendments already described in this record remain distinct.
+
 ## Context
 
 The work panel has a public extension point for plugin-contributed views. The

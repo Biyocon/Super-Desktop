@@ -9,6 +9,8 @@
   [ADR 0108](0108-remove-built-in-interactive-terminal.md) ·
   [ADR 0170](0170-work-panel-browser-as-bundled-plugin.md)
 
+Superseded by: [ADR 0108](0108-remove-built-in-interactive-terminal.md); [ADR 0170](0170-work-panel-browser-as-bundled-plugin.md). Partial replacement: ADR 0108 removes the built-in interactive terminal; ADR 0170 moves the browser launcher and chrome to a bundled plugin. The remaining subsystem responsibilities are not collectively withdrawn.
+
 ## Context
 
 The work panel was introduced as a docked surface for workspace review,

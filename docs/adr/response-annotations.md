@@ -11,6 +11,8 @@
   [03-runtime/11-provider-model-system.md](../spec/03-runtime/11-provider-model-system.md) ·
   ADR message-quotes-and-side-chats · E2E-CHAT-annotation-attachments, E2E-CHAT-annotation-session-state · Amendment: 2026-09-12 (comment editor)
 
+Superseded by: [ADR 0268](0268-remove-quotes-annotations-and-side-chats.md). The successor removes annotation prompt attachments and their editor; earlier amendments remain historical.
+
 ## Context
 
 ADR message-quotes-and-side-chats (D-LOCAL-message-quotes) made quoting a **draft edit**: the excerpt becomes `> `-prefixed

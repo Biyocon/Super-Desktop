@@ -1196,7 +1196,7 @@ Status badge colors: success (green), warning (amber), error (red), info (indigo
 
 ### 11.8 Toast
 
-Full component contract and usage rules: [08-component-spec.md §17](08-component-spec.md#17-toast).
+Full component contract and usage rules: [08-component-spec.md §17](08-component-spec.md#_17-toast).
 
 | Property | Value |
 |---|---|

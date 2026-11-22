@@ -10,6 +10,8 @@
   durable task lifecycle, and parent-cannot-call-A2A boundary are unchanged.
   Same-context-only addressing is lifted.
 
+Superseded by: [ADR 0165](0165-withdraw-a2a-peer-stack.md). Cross-session A2A addressing is withdrawn together with the A2A peer stack.
+
 ## Context
 
 ADR 0147 bound every A2A agent to `contextId = sessionId` and refused

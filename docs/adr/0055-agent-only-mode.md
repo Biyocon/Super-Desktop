@@ -11,6 +11,8 @@
 > records why the toggle was removed before it was reintroduced with a
 > different contract.
 
+Superseded by: [ADR 0052](0052-plan-operating-state-and-approval-boundary.md); [ADR 0053](0053-plan-checkpoint-artifact-and-execution-epoch.md). Historical sequence: ADR 0052 reintroduces Plan instead of the removed mode concept, and ADR 0053 replaces that Plan checkpoint. The negative-permission and fail-closed rationale is retained.
+
 ## Context
 
 Since D003/D004 a session carried one of two tool profiles. `agent` got the

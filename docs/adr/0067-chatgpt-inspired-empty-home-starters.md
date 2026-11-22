@@ -1,6 +1,6 @@
 # ADR 0067: ChatGPT-inspired empty-home starter guidance
 
-- Status: Superseded by D206
+- Status: Superseded by [D206](../spec/08-meta/decisions-log.md#_2026-08-07-—-empty-home-removes-developer-starter-cards)
 - Date: 2026-08-07
 - Deciders: PI-Desktop core
 - Amends: D204 and the card-specific clause of ADR 0066

@@ -3,6 +3,8 @@
 - Status: Superseded in part by ADR 0026
 - Date: 2026-07-26
 
+Superseded by: [ADR 0026](0026-project-archive-in-settings.md). Only Settings destination count/order is changed by adding the project archive; the retained directory rationale is preserved.
+
 ## Context
 
 Baseline 0.4.0 froze the broad Codex-aligned settings rail in D062–D065.

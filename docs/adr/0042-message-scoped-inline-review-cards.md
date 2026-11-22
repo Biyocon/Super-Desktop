@@ -8,6 +8,8 @@
   [E2E-057](../spec/06-delivery/04-e2e-test-plan.md)
 - Supersedes: D140's global transcript Review changes entry
 
+Superseded by: [ADR 0043](0043-message-owned-review-snapshots-and-rollback.md). The successor replaces the Git-dependent review source with message-owned snapshots and guarded rollback; the original review-card rationale is retained.
+
 ## Context
 
 The transcript previously rendered one session-owned Review changes command at
